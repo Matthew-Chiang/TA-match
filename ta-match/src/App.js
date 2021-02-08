@@ -47,7 +47,8 @@ class App extends React.Component {
           >
           Submit 
         </Button>
-
+        <br/>
+        <br/>
         Choose Instructors File: <input
             type="file"
             id="instructorsData"

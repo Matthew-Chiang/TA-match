@@ -1,4 +1,3 @@
-const http = require("http");
 const express = require('express');
 const bodyParser = require("body-parser");
 const cors = require('cors');
@@ -12,14 +11,17 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
-// var upload = multer({dest: 'temp/'});
+const admin = require('firebase-admin');
+const serviceAccount = require('./ta-match-gcp-service-key.json');
 
-// const admin = require('firebase-admin');
-// admin.initializeApp({
-//     credential: admin.credential.cert(serviceAccount)
-//   });
-  
-// const db = admin.firestore();
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount)
+});
+
+const parseSpreadsheets = require('./parse-spreadsheets.js');
+const parseProfData = parseSpreadsheets.parseProfData;
+const parseApplicantsData = parseSpreadsheets.parseApplicantsData;
+const buildProfsObj = parseSpreadsheets.buildProfsObj;
 
 const storage = multer.diskStorage({
     destination: function(req, file, cb) {
@@ -34,11 +36,12 @@ const storage = multer.diskStorage({
 
 // Upload enpoint for all applicants data
 app.post('/api/uploadApplicantsFile', function (req, res) {
-    let upload = multer({ storage: storage, }).single('ApplicantsFile');
+    let upload = multer({ storage: storage}).single('ApplicantsFile');
 
     upload(req, res, function(err){
         console.log(req.file);
-        res.status(200).send({data:"hell yeah"});
+        parseApplicantsData();
+        res.status(200).send({data:"Successful upload"});
     });
 });
 
@@ -48,48 +51,11 @@ app.post('/api/uploadInstructorsFile', function (req, res) {
 
     upload(req, res, function(err){
         console.log(req.file);
-        res.status(200).send({data:"hell yeah"});
+        parseProfData();
+        res.status(200).send({data:"Successful upload"});
     });
 });
-
-// Get a schedule
-app.get('/api/profs',  (request, response) => {
-
-    try {
-        response.status(200).send({data:"something"});
-    }
-    catch(err){
-        response.send({
-            err: err.message,
-        });
-    }
-});
-
-// app.post('/api/uploadApplicantsFile',  (request, response) => {
-
-//     try {
-//         console.log(request.body);
-//         console.log(request.files);
-//         response.send({data:"something"});
-//     }
-//     catch(err){
-//         response.send({
-//             err: err.message,
-//         });
-//     }
-// });
 
 app.listen(port, hostname, () => {
     console.log('Listening on: ' + port);
 });
-
-
-// const server = http.createServer((req, res) => {
-//     res.statusCode = 200;
-//     res.setHeader("Content-Type", "text/plain");
-//     res.end("Hello World");
-// });
-
-// server.listen(port, hostname, () => {
-//     console.log(`Server running at http://${hostname}:${port}/`);
-// });
