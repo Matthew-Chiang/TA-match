@@ -1,7 +1,7 @@
-import SignUp from '../components/SignUp'
+import SignIn from '../components/SignIn'
 
 const LoginPage = () => {
-    return <SignUp />
+    return <SignIn />
 };
 
 export default LoginPage;
