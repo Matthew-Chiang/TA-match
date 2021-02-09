@@ -7,43 +7,56 @@ import ChairPage from "./pages/ChairPage";
 import ProfPage from "./pages/ProfPage";
 import AdminPage from "./pages/AdminPage";
 import LoginPage from "./pages/LoginPage";
+import SignUp from "./components/SignUp";
+import SignIn from "./components/SignIn";
+import { AuthProvider } from "./contexts/AuthContext"
 
 function App() {
     const context = React.createContext({ user: { type: "prof" } });
 
     return (
+
         <Router>
-            {/* <Button>
-                <Link to="/chair">Home</Link>
-            </Button> */}
+        {/* <Button>
+            <Link to="/chair">Home</Link>
+        </Button> */}
+    
+        <Button
+            component={Link}
+            to={{
+                pathname: `/login`,
+            }}
+        >
+            Login or Register
+        </Button>
 
-            <Button
-                component={Link}
-                to={{
-                    pathname: `/chair`,
-                }}
-            >
-                Chair Page
-            </Button>
+        <Button
+            component={Link}
+            to={{
+                pathname: `/chair`,
+            }}
+        >
+            Chair Page
+        </Button>
 
-            <Button
-                component={Link}
-                to={{
-                    pathname: `/admin`,
-                }}
-            >
-                Admin Page
-            </Button>
+        <Button
+            component={Link}
+            to={{
+                pathname: `/admin`,
+            }}
+        >
+            Admin Page
+        </Button>
 
-            <Button
-                component={Link}
-                to={{
-                    pathname: `/prof`,
-                }}
-            >
-                Prof Page
-            </Button>
-
+        <Button
+            component={Link}
+            to={{
+                pathname: `/prof`,
+            }}
+        >
+            Prof Page
+        </Button>
+        <AuthProvider>
             <Switch>
                 <Route path="/chair">
                     <ChairPage />
@@ -58,7 +71,11 @@ function App() {
                     <LoginPage />
                 </Route>
             </Switch>
-        </Router>
+        </AuthProvider>
+    </Router>
+
+    
+        
     );
 }
 

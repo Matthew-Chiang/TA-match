@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef}  from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -7,6 +7,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
+import { useAuth } from '../contexts/AuthContext'
 
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
@@ -36,6 +37,18 @@ const useStyles = makeStyles((theme) => ({
 
 export default function SignUp() {
   const classes = useStyles();
+  const { signup } = useAuth()
+  const emailRef = useRef('')
+  const passwordRef = useRef('')
+  const fNameRef = useRef('')
+  const lNameRef = useRef('')
+
+  function handleSubmit(a) {
+    a.preventDefault()
+    signup(emailRef.current.value, passwordRef.current.value)
+    console.log(fNameRef.current.value)
+    console.log(lNameRef.current.value)
+  }
 
   return (
     <Container component="main" maxWidth="xs">
@@ -47,7 +60,7 @@ export default function SignUp() {
         <Typography component="h1" variant="h5">
           Sign up
         </Typography>
-        <form className={classes.form} noValidate>
+        <form onSubmit={handleSubmit} className={classes.form} noValidate>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
               <TextField
@@ -59,6 +72,7 @@ export default function SignUp() {
                 id="firstName"
                 label="First Name"
                 autoFocus
+                inputRef={fNameRef}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -70,6 +84,7 @@ export default function SignUp() {
                 label="Last Name"
                 name="lastName"
                 autoComplete="lname"
+                inputRef={lNameRef}
               />
             </Grid>
             <Grid item xs={12}>
@@ -81,6 +96,7 @@ export default function SignUp() {
                 label="Email Address"
                 name="email"
                 autoComplete="email"
+                inputRef={emailRef}
               />
             </Grid>
             <Grid item xs={12}>
@@ -93,6 +109,7 @@ export default function SignUp() {
                 type="password"
                 id="password"
                 autoComplete="current-password"
+                inputRef={passwordRef}
               />
             </Grid>
             {/* <Grid item xs={12}>
@@ -119,4 +136,5 @@ export default function SignUp() {
       </div>
     </Container>
   );
+
 }
