@@ -6,6 +6,7 @@ import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import ChairPage from "./pages/ChairPage";
 import ProfPage from "./pages/ProfPage";
 import AdminPage from "./pages/AdminPage";
+import LoginPage from "./pages/LoginPage";
 
 function App() {
     const context = React.createContext({ user: { type: "prof" } });
@@ -52,6 +53,9 @@ function App() {
                 </Route>
                 <Route path="/prof">
                     <AdminPage />
+                </Route>
+                <Route path="/login">
+                    <LoginPage />
                 </Route>
             </Switch>
         </Router>
