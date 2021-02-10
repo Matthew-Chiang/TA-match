@@ -33,16 +33,16 @@ function App() {
             Login
         </Button>
 
-        <Button
+        {/* <Button
             component={Link}
             to={{
                 pathname: `/signup`,
             }}
         >
             Register
-        </Button>
+        </Button> */}
 
-        <Button
+        {/* <Button
             component={Link}
             to={{
                 pathname: `/chair`,
@@ -67,23 +67,16 @@ function App() {
             }}
         >
             Prof Page
-        </Button>
+        </Button> */}
         <AuthProvider>
             <Switch>
                 <Route path="/chair">
                     <ChairPage />
                 </Route>
-<<<<<<< Updated upstream
                 <Route path="/professor">
                     <ProfPage />
                 </Route>
                 <Route path="/administrator">
-=======
-                <Route path="/prof">
-                    <ProfPage />
-                </Route>
-                <Route path="/admin">
->>>>>>> Stashed changes
                     <AdminPage />
                 </Route>
                 <Route path="/login">

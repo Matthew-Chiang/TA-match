@@ -1,11 +1,14 @@
 import CourseCard from '../components/CourseCard'
+import Dashboard from '../components/Dashboard'
 import '../App.css'
+import { useAuth } from '../contexts/AuthContext';
 
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 
 const ProfPage = () => {
     return <div className='prof-page'>
+        <Dashboard />
         <Button variant="contained" color="primary" className="prof-button">
             New TA Application
         </Button>
