@@ -12,8 +12,10 @@ app.use(bodyParser.urlencoded({ extended: false}));
 
 app.use((req, res, next) => { // for all routes
     console.log(`${req.method} request for ${req.url}`);
-    next(); // keep going
+    next(); 
 });
+
+app.use(express.static(path.join(__dirname, '../ta-match/build')));
 
 const hostname = "127.0.0.1";
 const port = 3000;
@@ -58,6 +60,10 @@ app.get('/api/signin/:email', async (req,res) => {
         res.send(type.data().type)
     } catch(err){console.log(err)}  
 })
+
+app.get('/', (req,res) => {
+    res.sendFile(path.join(__dirname, '../ta-match/build/index.html'));
+  });
 
 app.listen(port, hostname, () => {
     console.log(`Server running at http://${hostname}:${port}/`);

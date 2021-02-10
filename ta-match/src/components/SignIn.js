@@ -12,6 +12,8 @@ import Container from '@material-ui/core/Container';
 import { useAuth } from "../contexts/AuthContext";
 import { useHistory } from "react-router-dom";
 import { Alert } from '@material-ui/lab';
+import { checkUser } from '../services/UserService';
+
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -53,7 +55,23 @@ export default function SignIn() {
       setError("")
       setLoading(true)
       await login(emailRef.current.value, passwordRef.current.value)
-      history.push("/")
+      .then(response=>{console.log(response)
+      }, err=> {console.log(err)}
+      )
+      checkUser(emailRef.current.value)
+      .then(response => {
+        console.log(response);
+        if(response=="professor"){
+          history.push("/professor")
+        }
+        else if(response=="administrator"){
+          history.push("/administrator")
+        }
+        else if(response=="chair"){
+          history.push("/chair")
+        }
+      }, err=>{console.log(err)
+      })
     } catch {
       setError("Failed to log in")
     }

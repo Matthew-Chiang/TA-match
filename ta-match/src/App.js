@@ -11,8 +11,11 @@ import SignUp from "./components/SignUp";
 import SignIn from "./components/SignIn";
 import { AuthProvider } from "./contexts/AuthContext"
 
+
 function App() {
     const context = React.createContext({ user: { type: "prof" } });
+
+
 
     return (
 
@@ -27,7 +30,16 @@ function App() {
                 pathname: `/login`,
             }}
         >
-            Login or Register
+            Login
+        </Button>
+
+        <Button
+            component={Link}
+            to={{
+                pathname: `/signup`,
+            }}
+        >
+            Register
         </Button>
 
         <Button
@@ -42,7 +54,7 @@ function App() {
         <Button
             component={Link}
             to={{
-                pathname: `/admin`,
+                pathname: `/administrator`,
             }}
         >
             Admin Page
@@ -51,7 +63,7 @@ function App() {
         <Button
             component={Link}
             to={{
-                pathname: `/prof`,
+                pathname: `/professor`,
             }}
         >
             Prof Page
@@ -61,10 +73,10 @@ function App() {
                 <Route path="/chair">
                     <ChairPage />
                 </Route>
-                <Route path="/admin">
+                <Route path="/professor">
                     <ProfPage />
                 </Route>
-                <Route path="/prof">
+                <Route path="/administrator">
                     <AdminPage />
                 </Route>
                 <Route path="/login">

@@ -7,13 +7,13 @@ import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
 import { useAuth } from '../contexts/AuthContext';
 import { useHistory } from "react-router-dom";
+import { createUser } from '../services/UserService'
 
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import { Alert } from '@material-ui/lab';
-
 
 
 const useStyles = makeStyles((theme) => ({
@@ -65,7 +65,20 @@ export default function SignUp() {
       setError("")
       setLoading(true)
       await signup(emailRef.current.value, passwordRef.current.value)
-      history.push("/")
+      createUser(emailRef.current.value, fNameRef.current.value, lNameRef.current.value, roleRef.current.value)
+      .then(response => {
+        console.log(response);
+        if(roleRef.current.value=="professor"){
+          history.push("/professor")
+        }
+        else if(roleRef.current.value=="administrator"){
+          history.push("/administrator")
+        }
+        else if(roleRef.current.value=="chair"){
+          history.push("/chair")
+        }
+      }, err=>{console.log(err)
+      })
     } catch {
       setError("Failed to create an account")
     }
