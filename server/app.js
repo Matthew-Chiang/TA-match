@@ -3,9 +3,15 @@ const bodyParser = require("body-parser");
 const cors = require('cors');
 const multer = require('multer');
 const path = require('path');
+const fs = require('fs');
 
+const tempDir = 'temp/';
 const hostname = "127.0.0.1";
 const port = process.env.PORT || 5000;
+
+if (!fs.existsSync(tempDir)){
+    fs.mkdirSync(tempDir);
+}
 
 const app = express();
 app.use(cors());
@@ -25,7 +31,7 @@ const buildProfsObj = parseSpreadsheets.buildProfsObj;
 
 const storage = multer.diskStorage({
     destination: function(req, file, cb) {
-        cb(null, 'temp/');
+        cb(null, tempDir);
     },
 
     // By default, multer removes file extensions so let's add them back

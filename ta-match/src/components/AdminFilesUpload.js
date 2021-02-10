@@ -8,22 +8,25 @@ class AdminFilesUpload extends React.Component {
     constructor(props) {
       super(props);
       this.state = {
-        applicantsFile: null,
-        instructorsFile: null
+        ApplicantsFile: null,
+        InstructorsFile: null
       }
+
+      this.onChangeHandler.bind(this);
+      this.sendFile.bind(this);
     }
   
-    onChangeHandler(event){
-      console.log(event.target.files[0]);
+    onChangeHandler(event, filename){
       this.setState({
-        applicantsFile: event.target.files[0]
+        [filename]: event.target.files[0]
       });
     }
   
     sendFile(filename){
       console.log(filename);
+      console.log(this.state['ApplicantsFile'])
       const data = new FormData();
-      data.append(filename, this.state.applicantsFile);
+      data.append(filename, this.state[filename]);
       axios.post(apiURL + '/upload' + filename, data, { 
   
       }).then(res => {
@@ -39,11 +42,11 @@ class AdminFilesUpload extends React.Component {
               type="file"
               id="applicantData"
               accept=".xlsx, .xls, .csv"
-              onChange={this.onChangeHandler.bind(this)}
+              onChange={(e)=>this.onChangeHandler(e, 'ApplicantsFile')}
             />
           <Button className="submitButton"
             variant="contained"
-            onClick={()=>this.sendFile.bind(this)('ApplicantsFile')}
+            onClick={()=>this.sendFile('ApplicantsFile')}
             >
             Submit 
           </Button>
@@ -53,11 +56,11 @@ class AdminFilesUpload extends React.Component {
               type="file"
               id="instructorsData"
               accept=".xlsx, .xls, .csv"
-              onChange={this.onChangeHandler.bind(this)}
+              onChange={(e)=>this.onChangeHandler(e, 'InstructorsFile')}
             />
           <Button className="submitButton"
             variant="contained"
-            onClick={()=>this.sendFile.bind(this)('InstructorsFile')}
+            onClick={()=>this.sendFile('InstructorsFile')}
             >
             Submit 
           </Button>

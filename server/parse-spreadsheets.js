@@ -85,7 +85,7 @@ async function parseApplicantsData(){
             applicant = sheet[i];
 
             const coursesCol = db.collection('courses');
-
+            
             var courseRef = await coursesCol.doc(applicant[courseCodeKey]).get();
 
             data = {};
