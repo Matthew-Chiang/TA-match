@@ -73,10 +73,17 @@ function App() {
                 <Route path="/chair">
                     <ChairPage />
                 </Route>
+<<<<<<< Updated upstream
                 <Route path="/professor">
                     <ProfPage />
                 </Route>
                 <Route path="/administrator">
+=======
+                <Route path="/prof">
+                    <ProfPage />
+                </Route>
+                <Route path="/admin">
+>>>>>>> Stashed changes
                     <AdminPage />
                 </Route>
                 <Route path="/login">

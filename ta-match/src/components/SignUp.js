@@ -166,6 +166,7 @@ export default function SignUp() {
                 >
                 <option value='professor'>Professor</option>
                 <option value='administrator'>Administrator</option>
+                <option value='chair'>Undergraduate Chair</option>
             </TextField>
             </Grid>
           </Grid>
