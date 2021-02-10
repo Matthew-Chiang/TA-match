@@ -5,17 +5,15 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
 import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
-import { useAuth } from '../contexts/AuthContext'
+import { useAuth } from '../contexts/AuthContext';
+import { useHistory } from "react-router-dom";
 
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
+import { Alert } from '@material-ui/lab';
 
-import FormControl from '@material-ui/core/FormControl';
-import Select from '@material-ui/core/Select';
-import InputLabel from '@material-ui/core/InputLabel';
-import MenuItem from '@material-ui/core/MenuItem';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -40,7 +38,9 @@ const useStyles = makeStyles((theme) => ({
 
 export default function SignUp() {
   const classes = useStyles();
-
+  const [error, setError] = useState("")
+  const [loading, setLoading] = useState(false)
+  const history = useHistory()
   const [role, setRole] = useState('professor');
 
   const handleChange = (event) => {
@@ -54,13 +54,23 @@ export default function SignUp() {
   const lNameRef = useRef('')
   const roleRef = useRef('')
 
-  const handleSubmit = (e) => {
+  async function handleSubmit(e) {
     e.preventDefault()
 
-    if (emailRef.current.value == '')
-        alert('error')
+    if (emailRef.current.value == ''||passwordRef.current.value==''||fNameRef.current.value==''||lNameRef.current.value==''){
+      return setError("Please fill in all required fields")
+    }
 
-    // signup(emailRef.current.value, passwordRef.current.value)
+    try {
+      setError("")
+      setLoading(true)
+      await signup(emailRef.current.value, passwordRef.current.value)
+      history.push("/")
+    } catch {
+      setError("Failed to create an account")
+    }
+
+    setLoading(false)
   }
 
   return (
@@ -73,6 +83,7 @@ export default function SignUp() {
         <Typography component="h1" variant="h5">
           Sign up
         </Typography>
+        {error && <Alert severity="error">{error}</Alert>}
         <form onSubmit={handleSubmit} className={classes.form} noValidate>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>

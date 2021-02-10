@@ -8,6 +8,7 @@ import ProfPage from "./pages/ProfPage";
 import AdminPage from "./pages/AdminPage";
 import LoginPage from "./pages/LoginPage";
 import SignUp from "./components/SignUp";
+import SignIn from "./components/SignIn";
 import { AuthProvider } from "./contexts/AuthContext"
 
 function App() {
