@@ -28,10 +28,6 @@ if (!fs.existsSync(tempDir)) {
     fs.mkdirSync(tempDir);
 }
 
-const app = express();
-app.use(cors());
-app.use(bodyParser.json());
-
 const admin = require("firebase-admin");
 const serviceAccount = require("./ta-match-gcp-service-key.json");
 
