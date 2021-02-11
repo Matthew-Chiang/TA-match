@@ -109,7 +109,8 @@ app.post("/api/uploadInstructorsFile", function (req, res) {
         console.log(req.file);
         parseProfData();
         res.status(200).send({ data: "Successful upload" });
-    });
+    });￼
+    Aradhya-B Add scripts to create users and announcements
 });
 
 app.listen(port, hostname, () => {
