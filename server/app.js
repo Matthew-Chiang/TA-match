@@ -25,9 +25,13 @@ admin.initializeApp({
 });
 
 const parseSpreadsheets = require('./parse-spreadsheets.js');
+const { exit } = require('process');
 const parseProfData = parseSpreadsheets.parseProfData;
 const parseApplicantsData = parseSpreadsheets.parseApplicantsData;
 const buildProfsObj = parseSpreadsheets.buildProfsObj;
+
+buildProfsObj('summer', 2021);
+
 
 const storage = multer.diskStorage({
     destination: function(req, file, cb) {
@@ -46,7 +50,7 @@ app.post('/api/uploadApplicantsFile', function (req, res) {
 
     upload(req, res, function(err){
         console.log(req.file);
-        parseApplicantsData();
+        parseApplicantsData(req.body.semester, req.body.year);
         res.status(200).send({data:"Successful upload"});
     });
 });
