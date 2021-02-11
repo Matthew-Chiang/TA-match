@@ -12,11 +12,30 @@ import TextField from "@material-ui/core/TextField";
 const ProfPage = () => {
     const [openTaApp, setOpenTaApp] = useState(false);
     const [taQuestions, setTaQuestions] = useState([]);
+    const [courseName, setCourseName] = useState("");
 
     const handleQuestionTextChange = (event, index) => {
         let newQuestions = [...taQuestions];
         newQuestions[index] = event.target.value;
         setTaQuestions(newQuestions);
+    };
+
+    const saveQuestions = () => {
+        fetch(`http://localhost:5000/api/addQuestionsForTA`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                semester: "summer2021",
+                courseName: courseName,
+                questions: taQuestions,
+            }),
+        })
+            .then((res) => {
+                console.log(res);
+            })
+            .catch((e) => {
+                console.log(e);
+            });
     };
 
     return (
@@ -58,9 +77,17 @@ const ProfPage = () => {
             >
                 <div style={{ backgroundColor: "white" }}>
                     <h1>Create TA Application</h1>
+                    <p>Course Name: </p>
+                    <TextField
+                        value={courseName}
+                        onChange={(event) => {
+                            setCourseName(event.target.value);
+                        }}
+                    />
                     {taQuestions.map((question, index) => {
                         return (
                             <div key={index}>
+                                <p>Question {index}:</p>
                                 <TextField
                                     value={taQuestions[index]}
                                     onChange={(event) => {
@@ -80,6 +107,7 @@ const ProfPage = () => {
                     <Button
                         onClick={() => {
                             console.log(taQuestions);
+                            saveQuestions();
                         }}
                     >
                         Save
