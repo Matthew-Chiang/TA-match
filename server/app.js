@@ -105,8 +105,6 @@ app.get("/api/getApplicantData/:email", async (req, res) => {
    
     try {
         let profs = await buildProfsObj("summer", 2021)
-        let courses =[]
-        courses.push(profs[email]) 
         res.send(profs[email])
         
     } catch (err) {
