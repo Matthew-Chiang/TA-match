@@ -41,7 +41,7 @@ const parseProfData = parseSpreadsheets.parseProfData;
 const parseApplicantsData = parseSpreadsheets.parseApplicantsData;
 const buildProfsObj = parseSpreadsheets.buildProfsObj;
 
-buildProfsObj("summer", 2021);
+// buildProfsObj("summer", 2021);
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -99,6 +99,19 @@ app.get("/api/signin/:email", async (req, res) => {
         console.log(err);
     }
 });
+
+app.get("/api/getApplicantData/:email", async (req, res) => {
+    const email = req.params.email;
+   
+    try {
+        let profs = await buildProfsObj("summer", 2021)
+        res.send(profs[email])
+        
+    } catch (err) {
+        console.log(err);
+    }
+});
+
 
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "../ta-match/build/index.html"));
