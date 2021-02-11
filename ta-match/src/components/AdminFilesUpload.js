@@ -9,7 +9,9 @@ class AdminFilesUpload extends React.Component {
       super(props);
       this.state = {
         ApplicantsFile: null,
-        InstructorsFile: null
+        InstructorsFile: null,
+        semester: 'summer',
+        year: 2021
       }
 
       this.onChangeHandler.bind(this);
@@ -27,6 +29,8 @@ class AdminFilesUpload extends React.Component {
       console.log(this.state['ApplicantsFile'])
       const data = new FormData();
       data.append(filename, this.state[filename]);
+      data.append('semester', this.state.semester);
+      data.append('year', this.state.year);
       axios.post(apiURL + '/upload' + filename, data, { 
   
       }).then(res => {
