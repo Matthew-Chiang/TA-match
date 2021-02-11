@@ -1,13 +1,61 @@
-import './App.css';
-import AdminFilesUpload from './components/AdminFilesUpload';
+import logo from "./logo.svg";
+import "./App.css";
+import React from "react";
+import Button from "@material-ui/core/Button";
+import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import ChairPage from "./pages/ChairPage";
+import ProfPage from "./pages/ProfPage";
+import AdminPage from "./pages/AdminPage";
 
 function App() {
-  return (
-    <div className="App">
-        <AdminFilesUpload/>
+    const context = React.createContext({ user: { type: "prof" } });
 
-    </div>
-  );
+    return (
+        <Router>
+            {/* <Button>
+                <Link to="/chair">Home</Link>
+            </Button> */}
+
+            <Button
+                component={Link}
+                to={{
+                    pathname: `/chair`,
+                }}
+            >
+                Chair Page
+            </Button>
+
+            <Button
+                component={Link}
+                to={{
+                    pathname: `/admin`,
+                }}
+            >
+                Admin Page
+            </Button>
+
+            <Button
+                component={Link}
+                to={{
+                    pathname: `/prof`,
+                }}
+            >
+                Prof Page
+            </Button>
+
+            <Switch>
+                <Route path="/chair">
+                    <ChairPage />
+                </Route>
+                <Route path="/admin">
+                    <ProfPage />
+                </Route>
+                <Route path="/prof">
+                    <AdminPage />
+                </Route>
+            </Switch>
+        </Router>
+    );
 }
 
 export default App;
