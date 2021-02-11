@@ -1,5 +1,6 @@
 import CourseCard from '../components/CourseCard'
 import Dashboard from '../components/Dashboard'
+import CourseInfo from '../components/CourseInfo'
 import '../App.css'
 import { useAuth } from '../contexts/AuthContext';
 
@@ -15,7 +16,8 @@ const ProfPage = () => {
         
         <h1>Welcome, Professor!</h1>
         <h3>Your Courses:</h3>
-        <Grid container spacing={3}>
+        <CourseInfo></CourseInfo>
+        {/* <Grid container spacing={3}>
             <Grid item xs={12} sm={6} md={4}>
                 <CourseCard />
             </Grid>
@@ -28,7 +30,7 @@ const ProfPage = () => {
             <Grid item xs={12} sm={6} md={4}>
                 <CourseCard />
             </Grid>
-        </Grid>
+        </Grid> */}
     </div>;
 };
 
