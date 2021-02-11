@@ -4,6 +4,7 @@ import "../App.css";
 import { useAuth } from "../contexts/AuthContext";
 import Modal from "@material-ui/core/Modal";
 import React, { useState } from "react";
+import CourseInfo from "../components/CourseInfo";
 
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
@@ -54,20 +55,7 @@ const ProfPage = () => {
 
             <h1>Welcome, Professor!</h1>
             <h3>Your Courses:</h3>
-            <Grid container spacing={3}>
-                <Grid item xs={12} sm={6} md={4}>
-                    <CourseCard />
-                </Grid>
-                <Grid item xs={12} sm={6} md={4}>
-                    <CourseCard />
-                </Grid>
-                <Grid item xs={12} sm={6} md={4}>
-                    <CourseCard />
-                </Grid>
-                <Grid item xs={12} sm={6} md={4}>
-                    <CourseCard />
-                </Grid>
-            </Grid>
+            <CourseInfo></CourseInfo>
 
             <Modal
                 open={openTaApp}
