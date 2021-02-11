@@ -35,14 +35,13 @@ admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
 });
 
-const parseSpreadsheets = require('./parse-spreadsheets.js');
-const { exit } = require('process');
+const parseSpreadsheets = require("./parse-spreadsheets.js");
+const { exit } = require("process");
 const parseProfData = parseSpreadsheets.parseProfData;
 const parseApplicantsData = parseSpreadsheets.parseApplicantsData;
 const buildProfsObj = parseSpreadsheets.buildProfsObj;
 
-buildProfsObj('summer', 2021);
-
+buildProfsObj("summer", 2021);
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -65,7 +64,7 @@ app.post("/api/uploadApplicantsFile", function (req, res) {
     upload(req, res, function (err) {
         console.log(req.file);
         parseApplicantsData(req.body.semester, req.body.year);
-        res.status(200).send({data:"Successful upload"});
+        res.status(200).send({ data: "Successful upload" });
     });
 });
 const db = admin.firestore();
@@ -113,7 +112,7 @@ app.post("/api/uploadInstructorsFile", function (req, res) {
         console.log(req.file);
         parseProfData();
         res.status(200).send({ data: "Successful upload" });
-    });￼
+    });
 });
 
 app.listen(port, hostname, () => {
