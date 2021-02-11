@@ -1,5 +1,9 @@
-.App {
-  text-align: center;
+.prof-page {
+  margin: 30px;
+}
+
+.prof-button {
+  float: right;
 }
 .App-header {
   background-color: #282c34;
