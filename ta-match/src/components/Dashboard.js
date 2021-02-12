@@ -27,7 +27,7 @@ export default function Dashboard() {
     >
         Logout
     </Button>
-    <h1>Welcome, </h1>
+    <h1>Welcome!</h1>
     </div>
     )
   }

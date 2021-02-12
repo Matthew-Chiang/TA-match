@@ -10,6 +10,7 @@ import LoginPage from "./pages/LoginPage";
 import SignUp from "./components/SignUp";
 import SignIn from "./components/SignIn";
 import { AuthProvider } from "./contexts/AuthContext"
+import { AppBar, Toolbar } from "@material-ui/core";
 
 
 function App() {
@@ -23,7 +24,7 @@ function App() {
         {/* <Button>
             <Link to="/chair">Home</Link>
         </Button> */}
-    
+        <AppBar>UWO TA Match
         <Button
             component={Link}
             to={{
@@ -32,6 +33,8 @@ function App() {
         >
             Login
         </Button>
+        </AppBar>
+        
 
         {/* <Button
             component={Link}
