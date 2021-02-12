@@ -81,13 +81,13 @@ class ProfessorQuestionsExport extends React.Component {
                 />
 
                 <ul>
-                    {allQuestions.map((item) => (
-                        <li key={item.course}>
+                    {allQuestions.map((item, index) => (
+                        <li key={item.course + index}>
                             <p>
                                 <b>{item.course + ": "}</b>
                             </p>
-                            {item.questions.map((question) => {
-                                return <p>{question}</p>;
+                            {item.questions.map((question, index) => {
+                                return <p key={index}>{question}</p>;
                             })}
                         </li>
                     ))}
