@@ -1,79 +1,99 @@
-import TextField from '@material-ui/core/TextField';
-import './App.css';
-import React from 'react';
-import {ExportCSV} from './ExportCSV';
+import logo from "./logo.svg";
+import "./App.css";
+import React from "react";
+import Button from "@material-ui/core/Button";
+import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import ChairPage from "./pages/ChairPage";
+import ProfPage from "./pages/ProfPage";
+import AdminPage from "./pages/AdminPage";
+import LoginPage from "./pages/LoginPage";
+import SignUp from "./components/SignUp";
+import SignIn from "./components/SignIn";
+import { AuthProvider } from "./contexts/AuthContext"
+import { AppBar, Toolbar } from "@material-ui/core";
 
-  class Questions extends React.Component {
-    constructor(props) {
-      super(props);
-      this.state = {
-        input: '',
-        error: null,
-        isLoaded: false,
-        items: []
-      }
-      this.handleChange = this.handleChange.bind(this);
-    }
 
-    handleExport = () => {
-      console.log(this.state.input);
-      fetch(`http://localhost:4200/api/questions/${this.state.input}`)
-      .then(res => res.json())
-      .then(
-        (result) => {
-          this.setState({
-            isLoaded: true,
-            items: result
-          })
-          console.log(this.state.items);
-        },
-        (error) => {
-          this.setState({
-            isLoaded: true,
-            error
-          })
-        }
-      )
-    }
+function App() {
+    const context = React.createContext({ user: { type: "prof" } });
 
-    handleChange(event) {
-      this.setState({input: event.target.value});
-    }
 
-    render() {
-      const {error, isLoaded, items} = this.state;
-        const fileName = "Questions";
-        return (
-          <div>
-            <h1>Export Questions</h1>
-            <TextField
-              variant="outlined"
-              margin="normal"
-              required
-              fullWidth
-              id="semester"
-              label="Semester"
-              name="semester"
-              value={this.state.input}
-              onChange={this.handleChange}
-            />
-            <button onClick={this.handleExport} noValidate>Download Questions for Export</button>
 
-            <ExportCSV csvData={this.state.items} fileName={fileName} />
+    return (
 
-            <ul>
-              {items.map(item => (
-                <li key={item.course}>
-                  <p><b>{item.course + ": "}</b></p>
-                  <p>{item.question1}</p>
-                  <p>{item.question2}</p>
-                  <p>{item.question3}</p>
-                </li>
-              ))}
-            </ul>
-            
-          </div>
-        )      
-    }
-  }
-export default Questions;
+        <Router>
+        {/* <Button>
+            <Link to="/chair">Home</Link>
+        </Button> */}
+        <AppBar>UWO TA Match
+        <Button
+            component={Link}
+            to={{
+                pathname: `/login`,
+            }}
+        >
+            Login
+        </Button>
+        </AppBar>
+        
+
+        {/* <Button
+            component={Link}
+            to={{
+                pathname: `/signup`,
+            }}
+        >
+            Register
+        </Button> */}
+
+        {/* <Button
+            component={Link}
+            to={{
+                pathname: `/chair`,
+            }}
+        >
+            Chair Page
+        </Button>
+
+        <Button
+            component={Link}
+            to={{
+                pathname: `/administrator`,
+            }}
+        >
+            Admin Page
+        </Button>
+
+        <Button
+            component={Link}
+            to={{
+                pathname: `/professor`,
+            }}
+        >
+            Prof Page
+        </Button> */}
+        <AuthProvider>
+            <Switch>
+                <Route path="/chair">
+                    <ChairPage />
+                </Route>
+                <Route path="/professor">
+                    <ProfPage />
+                </Route>
+                <Route path="/administrator">
+                    <AdminPage />
+                </Route>
+                <Route path="/login">
+                    <LoginPage />
+                </Route>
+                <Route path="/signup">
+                    <SignUp />
+                </Route>
+            </Switch>
+        </AuthProvider>
+    </Router>
+
+    
+        
+    );
+}
+export default App;

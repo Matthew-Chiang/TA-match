@@ -1,18 +1,10 @@
-.App {
-  text-align: center;
+.prof-page {
+  margin: 30px;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.prof-button {
+  float: right;
 }
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
 .App-header {
   background-color: #282c34;
   min-height: 100vh;
