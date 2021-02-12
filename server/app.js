@@ -102,16 +102,14 @@ app.get("/api/signin/:email", async (req, res) => {
 
 app.get("/api/getApplicantData/:email", async (req, res) => {
     const email = req.params.email;
-   
+
     try {
-        let profs = await buildProfsObj("summer", 2021)
-        res.send(profs[email])
-        
+        let profs = await buildProfsObj("summer", 2021);
+        res.send(profs[email]);
     } catch (err) {
         console.log(err);
     }
 });
-
 
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "../ta-match/build/index.html"));
@@ -142,6 +140,38 @@ app.post("/api/addQuestionsForTA", async (req, res) => {
             .update({ questions: questions });
         console.log(type);
         res.send("return");
+    } catch (err) {
+        console.log(err);
+    }
+});
+
+//export professor questions into excel file
+app.get("/api/questions/:semester", async (req, res) => {
+    const semester = req.params.semester;
+    let response = [];
+    const viewers = [
+        { course: 1, question1: "1", question2: "2" },
+        { course: 2, question1: "1", question2: "2", question3: "3" },
+    ];
+    try {
+        const questionsCollection = await db
+            .collection("courses")
+            .doc(semester)
+            .collection("courses")
+            .get();
+        let fields = [];
+        questionsCollection.forEach((doc) => {
+            fields = Object.keys(doc.data());
+            let questions = doc.data();
+
+            questionsWithCourseID = {
+                course: doc.id,
+                questions: questions.questions,
+            };
+
+            response.push(questionsWithCourseID);
+        });
+        res.json(response);
     } catch (err) {
         console.log(err);
     }
