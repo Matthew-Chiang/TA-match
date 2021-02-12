@@ -128,6 +128,25 @@ app.post("/api/uploadInstructorsFile", function (req, res) {
     });
 });
 
+app.post("/api/addQuestionsForTA", async (req, res) => {
+    const semester = req.body.semester;
+    const courseName = req.body.courseName;
+    const questions = req.body.questions;
+
+    try {
+        const type = await db
+            .collection("courses")
+            .doc(semester)
+            .collection("courses")
+            .doc(courseName)
+            .update({ questions: questions });
+        console.log(type);
+        res.send("return");
+    } catch (err) {
+        console.log(err);
+    }
+});
+
 app.listen(port, hostname, () => {
     console.log("Listening on: " + port);
 });
