@@ -77,7 +77,10 @@ export default function SignUp() {
         else if(roleRef.current.value=="chair"){
           history.push("/chair")
         }
-      }, err=>{console.log(err)
+        else{
+          history.push("/signup")
+        }
+      }, err=>{setError("Failed to create an account")
       })
     } catch {
       setError("Failed to create an account")

@@ -55,10 +55,9 @@ export default function SignIn() {
       setError("")
       setLoading(true)
       await login(emailRef.current.value, passwordRef.current.value)
-      .then(response=>{console.log(response)
-      }, err=> {console.log(err)}
-      )
-      checkUser(emailRef.current.value)
+      .then(response=>{
+        console.log(response)
+        checkUser(emailRef.current.value)
       .then(response => {
         console.log(response);
         if(response=="professor"){
@@ -70,12 +69,16 @@ export default function SignIn() {
         else if(response=="chair"){
           history.push("/chair")
         }
-      }, err=>{console.log(err)
+        else{
+          history.push("/login")
+        }
+      }, err=>{setError("Failed to log in")
       })
+      }, err=> {setError("Failed to log in")}
+      )
     } catch {
       setError("Failed to log in")
     }
-
     setLoading(false)
   }
 

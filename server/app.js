@@ -85,7 +85,7 @@ app.post("/api/signup", async (req, res) => {
         });
         res.send("success");
     } catch (err) {
-        console.log(err);
+        res.send(err);
     }
 });
 
@@ -96,7 +96,7 @@ app.get("/api/signin/:email", async (req, res) => {
         const type = await db.collection("users").doc(email).get();
         res.send(type.data().type);
     } catch (err) {
-        console.log(err);
+        res.send(err);
     }
 });
 
