@@ -39,7 +39,7 @@ export default function CourseInfo () {
     useEffect(() => {
         async function fetchApplicationData(){
             // need to make dynamic with email
-            console.log(currentUser.email)
+            // console.log(currentUser.email)
             getApplicantData("john@uwo.ca")
             .then(response=>{
                 const data = response
@@ -61,9 +61,9 @@ export default function CourseInfo () {
                 <div> 
                 <Grid container spacing={3}>
                 {applicantData["courseList"].map((course, index)=>{
-                    return <Grid item xs={12} sm={6} md={4}>
+                    return <Grid key={index} item xs={12} sm={6} md={4}>
 
-                    <Card className={classes.root} variant="outlined">
+                    <Card key={index + "Card"} className={classes.root} variant="outlined">
                         <CardContent>
                             <Typography className={classes.title} color="textSecondary" gutterBottom>
                             University of Western Ontario
@@ -79,7 +79,7 @@ export default function CourseInfo () {
                                 <AccordionDetails>
                                     <div>
                                         {course["applicant_list"].map((applicant,index)=>{
-                                            return <div>
+                                            return <div key={index}>
                                                 {/* need to be dynamic */}
                                                 <p>Name: {applicant.name}</p>
                                                 <p>Email: {applicant.email}</p>
@@ -89,7 +89,7 @@ export default function CourseInfo () {
                                                 <InputLabel id="label">Rank</InputLabel>
                                                 <NativeSelect id="select">
                                                 {course["applicant_list"].map((applicant, index) => {
-                                                    return <option>{index + 1}</option>;
+                                                    return <option key={index}>{index + 1}</option>;
                                                 })}
                                                 </NativeSelect>
                                             </div>
@@ -99,8 +99,6 @@ export default function CourseInfo () {
                         </Accordion>
                         </CardContent>
                     </Card>
-
-
                         
                     </Grid> 
                 })}

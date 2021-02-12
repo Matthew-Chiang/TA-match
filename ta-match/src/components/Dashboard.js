@@ -20,14 +20,6 @@ export default function Dashboard() {
     }
   
     return (
-        <div>
-        <Button
-        component={Link}
-        onClick={handleLogout}
-    >
-        Logout
-    </Button>
-    <h1>Welcome!</h1>
-    </div>
+        <Button color="secondary" onClick={handleLogout} style={{float: "right", marginLeft: "20px"}}>Logout</Button>
     )
   }
