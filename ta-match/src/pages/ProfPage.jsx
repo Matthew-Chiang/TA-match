@@ -1,12 +1,9 @@
-import CourseCard from "../components/CourseCard";
 import Dashboard from "../components/Dashboard";
 import "../App.css";
-import { useAuth } from "../contexts/AuthContext";
 import Modal from "@material-ui/core/Modal";
 import React, { useState } from "react";
 import CourseInfo from "../components/CourseInfo";
 
-import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 
@@ -52,7 +49,6 @@ const ProfPage = () => {
             >
                 New TA Application
             </Button>
-
             <h1>Welcome, Professor!</h1>
             <h3>Your Courses:</h3>
             <CourseInfo></CourseInfo>
