@@ -40,7 +40,7 @@ export default function CourseInfo () {
         async function fetchApplicationData(){
             // need to make dynamic with email
             // console.log(currentUser.email)
-            getApplicantData("john@uwo.ca")
+            getApplicantData(currentUser.email)
             .then(response=>{
                 const data = response
                 setApplicationData(data)
@@ -53,59 +53,71 @@ export default function CourseInfo () {
         fetchApplicationData()
     }, []);
 
-        const classes = useStyles();
-        if (isLoading) {
-        return <div className="App">Loading...</div>;
-        }
-            return (
-                <div> 
-                <Grid container spacing={3}>
-                {applicantData["courseList"].map((course, index)=>{
-                    return <Grid key={index} item xs={12} sm={6} md={4}>
-
-                    <Card key={index + "Card"} className={classes.root} variant="outlined">
-                        <CardContent>
-                            <Typography className={classes.title} color="textSecondary" gutterBottom>
-                            University of Western Ontario
-                            </Typography>
-                            <p> {course["course_code"]} </p>
-                            <Typography className={classes.pos} color="textSecondary">
-                            Winter 2021
-                            </Typography>
-                            <Accordion>
-                            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                            <div>Applicants:</div>
-                            </AccordionSummary>
-                                <AccordionDetails>
-                                    <div>
-                                        {course["applicant_list"].map((applicant,index)=>{
-                                            return <div key={index}>
-                                                {/* need to be dynamic */}
-                                                <p>Name: {applicant.name}</p>
-                                                <p>Email: {applicant.email}</p>
-                                                <p>Fundable: {applicant.fundable}</p>
-                                                <p>Answer 1: {applicant.answer1}</p>
-                                                <p>Answer 2: {applicant.answer2}</p>
-                                                <InputLabel id="label">Rank</InputLabel>
-                                                <NativeSelect id="select">
-                                                {course["applicant_list"].map((applicant, index) => {
-                                                    return <option key={index}>{index + 1}</option>;
-                                                })}
-                                                </NativeSelect>
-                                            </div>
-                                        })}
-                                    </div>
-                                </AccordionDetails>
-                        </Accordion>
-                        </CardContent>
-                    </Card>
-                        
-                    </Grid> 
-                })}
+    const classes = useStyles();
+    if (isLoading) {
+    return <div className="App">Loading...</div>;
+    }
+    
+    if(applicantData["courseList"]){
+        console.log(applicantData)
+        return (
+            <div> 
+            <Grid container spacing={3}>
+            {applicantData["courseList"].map((course, index)=>{
+                return <Grid key={index} item xs={12} sm={6} md={4}>
+    
+                <Card key={index + "Card"} className={classes.root} variant="outlined">
+                    <CardContent>
+                        <Typography className={classes.title} color="textSecondary" gutterBottom>
+                        University of Western Ontario
+                        </Typography>
+                        <p> {course["course_code"]} </p>
+                        <Typography className={classes.pos} color="textSecondary">
+                        Winter 2021
+                        </Typography>
+                        <Accordion>
+                        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                        <div>Applicants:</div>
+                        </AccordionSummary>
+                            <AccordionDetails>
+                                <div>
+                                    {course["applicant_list"].map((applicant,index)=>{
+                                        return <div key={index}>
+                                            {/* need to be dynamic */}
+                                            <p>Name: {applicant.name}</p>
+                                            <p>Email: {applicant.email}</p>
+                                            <p>Fundable: {applicant.fundable}</p>
+                                            <p>Answer 1: {applicant.answer1}</p>
+                                            <p>Answer 2: {applicant.answer2}</p>
+                                            <InputLabel id="label">Rank</InputLabel>
+                                            <NativeSelect id="select">
+                                            {course["applicant_list"].map((applicant, index) => {
+                                                return <option key={index}>{index + 1}</option>;
+                                            })}
+                                            </NativeSelect>
+                                        </div>
+                                    })}
+                                </div>
+                            </AccordionDetails>
+                    </Accordion>
+                    </CardContent>
+                </Card>
+                    
                 </Grid> 
-                </div>
-            
-            );
+            })}
+            </Grid> 
+            </div>
+        
+        );
+    }
+    else{
+        return(
+            <Typography className={classes.title} color="textSecondary">
+                No Classes
+            </Typography>
+        ); 
+    }
+    
 }
 
 

@@ -105,7 +105,13 @@ app.get("/api/getApplicantData/:email", async (req, res) => {
 
     try {
         let profs = await buildProfsObj("summer", 2021);
-        res.send(profs[email]);
+        if (profs[email]){
+            res.send(profs[email]);
+        }
+        else{
+            res.send({});
+        }
+        
     } catch (err) {
         console.log(err);
     }
