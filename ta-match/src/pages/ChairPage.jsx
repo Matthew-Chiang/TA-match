@@ -1,5 +1,6 @@
 import Dashboard from "../components/Dashboard";
 import AdminFilesUpload from "../components/AdminFilesUpload";
+import HoursCalculation from "../components/HoursCalculation";
 
 const ChairPage = () => {
     return (
@@ -8,6 +9,7 @@ const ChairPage = () => {
             <Dashboard />
             <br></br>
             <AdminFilesUpload />
+            <HoursCalculation />
         </div>
     );
 };
