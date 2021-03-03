@@ -31,6 +31,7 @@ export default function HoursCalculation() {
     });
   };
 
+
   return (
     <div>
       <h1>Calculate TA Hours</h1>
@@ -41,7 +42,20 @@ export default function HoursCalculation() {
           readExcel(file);
         }}
       />
-    {console.log(items)}
+    {items.length > 0 ? (
+      items.filter(e => {
+        if (e["Course"] == undefined) {
+          return false;
+        }
+        return true;
+      }).map((e) => {
+        let hoursCalc = Math.ceil((e["Hrs 2020"]/e["Enrol 2020"])*e["Enrol 2021"]);
+        return <div>
+          {"Course: "+e["Course"]}
+          {" / Estimated Hours: "+ (isNaN(hoursCalc) ? "N/A" : hoursCalc)}
+          </div>
+      })
+    ) : null}
     </div>
   )
 }
