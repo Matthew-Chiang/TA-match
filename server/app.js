@@ -100,12 +100,28 @@ app.get("/api/signin/:email", async (req, res) => {
     }
 });
 
+app.get("/api/getAllApplicantData", async (req, res) => {
+    try {
+        let profs = await buildProfsObj("summer", 2021);
+        // sends information back about what term we're looking at
+        // changing the above line should also change the line below
+        console.log(profs);
+        const responseObj = { profs, semester: "Summer 2021" };
+        res.send(responseObj);
+    } catch (err) {
+        console.log(err);
+    }
+});
+
 app.get("/api/getApplicantData/:email", async (req, res) => {
     const email = req.params.email;
 
     try {
         let profs = await buildProfsObj("summer", 2021);
-        res.send(profs[email]);
+        // sends information back about what term we're looking at
+        // changing the above line should also change the line below
+        const responseObj = { ...profs[email], semester: "Summer 2021" };
+        res.send(responseObj);
     } catch (err) {
         console.log(err);
     }

@@ -51,7 +51,7 @@ const ProfPage = () => {
             </Button>
             <h1>Welcome, Professor!</h1>
             <h3>Your Courses:</h3>
-            <CourseInfo></CourseInfo>
+            <CourseInfo email="john@uwo.ca"></CourseInfo>
 
             <Modal
                 open={openTaApp}

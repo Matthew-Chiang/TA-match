@@ -28,13 +28,12 @@ const useStyles = makeStyles({
     },
 });
 
-export default function CourseInfo({ email }) {
+export default function AllCourseInfo({ email }) {
     const [isLoading, setIsLoading] = useState(true);
     const [courseData, setCourseData] = useState([]);
-    const { currentUser } = useAuth();
 
     useEffect(() => {
-        fetch(`http://localhost:5000/api/getApplicantData/${email}`)
+        fetch(`http://localhost:5000/api/getAllApplicantData`)
             .then((response) => {
                 response
                     .json()
@@ -58,14 +57,31 @@ export default function CourseInfo({ email }) {
     return (
         <div>
             <Grid container spacing={3}>
-                {courseData["courseList"].map((course, index) => {
+                {console.log(courseData)}
+
+                {Object.keys(courseData["profs"]).map((prof, index) => {
                     return (
-                        <Grid key={index} item xs={12} sm={6} md={4}>
-                            <CourseInfoCard
-                                course={course}
-                                semester={courseData.semester}
-                            ></CourseInfoCard>
-                        </Grid>
+                        // <div>
+                        //     <Typography>{prof}</Typography>
+                        courseData.profs[prof].courseList.map(
+                            (course, index) => {
+                                return (
+                                    <Grid
+                                        key={index}
+                                        item
+                                        xs={12}
+                                        sm={6}
+                                        md={4}
+                                    >
+                                        <CourseInfoCard
+                                            course={course}
+                                            semester={courseData.semester}
+                                        ></CourseInfoCard>
+                                    </Grid>
+                                );
+                            }
+                        )
+                        // </div>
                     );
                 })}
             </Grid>

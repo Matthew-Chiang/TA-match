@@ -167,6 +167,7 @@ async function buildProfsObj(semester, year) {
     profsRef.forEach((prof) => {
         tempProfsObj[prof.id] = prof.data();
     });
+    // couse per term
     coursesRef.forEach(async (course) => {
         tempCoursesObj[course.id] = course.data();
     });
@@ -188,6 +189,20 @@ async function buildProfsObj(semester, year) {
             applicantsList.push(newApplicant);
         });
         tempCoursesObj[courseId].applicant_list = applicantsList;
+
+        allocationsList = [];
+        const allocationsCol = await db
+            .collection(
+                `courses/${semester + year}/courses/${courseId}/allocation`
+            )
+            .get();
+
+        allocationsCol.forEach((allocation) => {
+            newAllocation = allocation.data();
+            newAllocation["email"] = allocation.id;
+            allocationsList.push(newAllocation);
+        });
+        tempCoursesObj[courseId].allocation_list = allocationsList;
     }
 
     // Build final profs obj
