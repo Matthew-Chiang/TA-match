@@ -114,14 +114,9 @@ function getCalcHours() {
   };
 
   const handleOverride = () => {
-    //this is to automatically display the changed hours after overriding
-    getCalcHours();
     if(newHours != "") {
-      updateHours();
-      
-      console.log(newHours) // update firestore
+      updateHours()
     }
-    getCalcHours();
     handleClose();
     
   }
@@ -130,6 +125,7 @@ function getCalcHours() {
     updateCalcHours("summer2021",course,newHours)
     .then(response=>{
         console.log(response)
+        getCalcHours()
     })
     .catch(err =>{
         console.log(err)
