@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from 'axios';
 import * as XLSX from "xlsx";
 
@@ -15,6 +15,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import TextField from '@material-ui/core/TextField';
+import { postCalcHours, updateCalcHours, getHours } from '../services/ChairService';
 
 const apiURL = 'http://localhost:5000/api';
 
@@ -43,6 +44,8 @@ export default function HoursCalculation() {
 
   // parse Excel
   const [items, setItems] = useState([]);
+  const [hoursData, setCalcHours] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const readExcel = (file) => {
     const promise = new Promise((resolve, reject) => {
@@ -65,9 +68,32 @@ export default function HoursCalculation() {
 
     promise.then((d) => {
       setItems(d); 
-      // probably write to firestore here
+      postCalcHours("summer2021",d)
+      .then(response=>{
+        console.log(response)
+        //this is to populate the hours after uploading a spreadsheet
+        //getCalcHours();
+      })
+      .catch(err =>{
+          console.log(err)
+      })
     });
   };
+
+//this is to populate the hours if clicked
+function getCalcHours() {
+  getHours("summer2021")
+  .then(response=>{
+      console.log(response)
+            
+      setCalcHours(response)
+      setIsLoading(false)
+  })
+  .catch(err =>{
+      console.log(err)
+  })
+}
+
 
   // Modal 
   const [open, setOpen] = React.useState(false);
@@ -87,12 +113,27 @@ export default function HoursCalculation() {
   };
 
   const handleOverride = () => {
+    //this is to automatically display the changed hours after overriding
+    //getCalcHours();
     if(newHours != "") {
+      updateHours();
       console.log(newHours) // update firestore
     }
     handleClose();
+    //getCalcHours();
   }
 
+  function updateHours(){
+    updateCalcHours("summer2021",course,newHours)
+    .then(response=>{
+        console.log(response)
+    })
+    .catch(err =>{
+        console.log(err)
+    })
+  }
+
+  
   return (
     <div>
       <h1>Calculate TA Hours</h1>
@@ -104,8 +145,15 @@ export default function HoursCalculation() {
           readExcel(file);
         }}
       />
-    {items.length > 0 ? (
-      <TableContainer className={classes.container}>
+      <hr></hr>
+      <Button className="submitButton"
+            color="primary"
+            variant="contained"
+            onClick={() => getCalcHours()}
+             >
+            See Calculated TA Hours 
+          </Button>
+        <TableContainer className={classes.container}>
         <Table className={classes.table}>
           <TableHead>
             <TableRow>
@@ -115,30 +163,25 @@ export default function HoursCalculation() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {items.filter(e => {
-              if (e["Course"] == undefined) {
-                return false;
-              }
-              return true;
-            }).map((row) => {
-              let hoursCalc = Math.ceil((row["Hrs 2020"]/row["Enrol 2020"])*row["Enrol 2021"]);
+          {hoursData.map((course)=>{
+
               return (
-                <TableRow key={row["Course"]}>
-                  <TableCell component="th" scope="row">{row["Course"]}</TableCell>
-                  <TableCell>{(isNaN(hoursCalc) ? "N/A" : hoursCalc)}</TableCell>
+                <TableRow key={course["course"]}>
+                  <TableCell component="th" scope="row">{course["course"]}</TableCell>
+                  <TableCell>{course["ta_hours"]}</TableCell>
                   <TableCell align="right">
-                  <Button variant="contained" color="default" onClick={() => handleClickOpen(row["Course"],hoursCalc)}>
+                  <Button variant="contained" color="default" onClick={() => handleClickOpen(course["course"],course["ta_hours"])}>
                     Edit
                   </Button>
                   </TableCell>
               </TableRow>
               )
             })}
+            
           </TableBody>
         </Table>
       </TableContainer>
 
-    ) : null}
       <Dialog
           open={open}
           fullWidth={true}
