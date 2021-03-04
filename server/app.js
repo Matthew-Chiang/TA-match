@@ -116,7 +116,6 @@ app.post("/api/calcHours", async (req, res) =>{
     const sem = req.body.sem;
     const calcHours = req.body.hours;
     let calculation = [];
-    console.log(calcHours)
 
     try{
         calcHours.map((e) => {
