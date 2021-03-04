@@ -111,6 +111,73 @@ app.get("/api/getApplicantData/:email", async (req, res) => {
     }
 });
 
+//calculate and populate the recommended TA hours into the db
+app.post("/api/calcHours", async (req, res) =>{
+    const sem = req.body.sem;
+    const calcHours = req.body.hours;
+    let calculation = [];
+
+    try{
+        calcHours.map((e) => {
+            if(e["Course"]){
+                e["Course"] = e["Course"].replace(/\s/g,'')
+                if(!e["Hrs 2020"]){
+                    e["Hrs 2020"] = 0;
+                }
+                let num = Math.ceil((e["Hrs 2020"]/e["Enrol 2020"])*e["Enrol 2021"])
+                if(isNaN(num)){
+                    num = 0;
+                }
+                calculation.push({
+                    "course":e["Course"],
+                    "ta_hours":num
+                })
+            }
+        })
+        calculation.forEach((a)=>{
+            const hours = db.collection("testCourse").doc(sem).collection("courses").doc(a["course"])
+            hours.set({ta_hours : a["ta_hours"]})
+        })
+        res.send('success')
+    } catch(err){
+        res.send(err)
+    }
+})
+
+//retrieve all TA hours
+app.get("/api/getHours/:sem",async (req,res)=>{
+    const sem = req.params.sem;
+    let hours = [];
+
+    try{
+        const find = await db.collection("testCourse").doc(sem).collection("courses").get()
+        find.forEach((e)=>{
+            hours.push({
+                "course":e.id,
+                "ta_hours":e.data().ta_hours
+            })
+        })
+        res.send(hours)
+    } catch(err){
+        console.log(err)
+    }
+})
+
+//update the ta hours for a specific course based on chair override
+app.put("/api/updateHours", async (req,res)=>{
+    const course = req.body.course;
+    const hours = req.body.hours;
+    const sem = req.body.sem;
+
+    try{
+        await db.collection("testCourse").doc(sem).collection("courses").doc(course)
+        .update({ta_hours:hours})
+        res.send("success")
+    } catch(err){
+        console.log(err)
+    }
+})
+
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "../ta-match/build/index.html"));
 });

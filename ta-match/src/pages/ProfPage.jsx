@@ -37,7 +37,7 @@ const ProfPage = () => {
     };
 
     return (
-        <div className="prof-page">
+        <div className="container">
             <Dashboard />
             <Button
                 variant="contained"
