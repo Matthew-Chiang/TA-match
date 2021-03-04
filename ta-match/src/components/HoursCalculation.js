@@ -68,11 +68,12 @@ export default function HoursCalculation() {
 
     promise.then((d) => {
       setItems(d); 
+      console.log('post')
       postCalcHours("summer2021",d)
       .then(response=>{
         console.log(response)
         //this is to populate the hours after uploading a spreadsheet
-        //getCalcHours();
+        getCalcHours();
       })
       .catch(err =>{
           console.log(err)
@@ -114,13 +115,15 @@ function getCalcHours() {
 
   const handleOverride = () => {
     //this is to automatically display the changed hours after overriding
-    //getCalcHours();
+    getCalcHours();
     if(newHours != "") {
       updateHours();
+      
       console.log(newHours) // update firestore
     }
+    getCalcHours();
     handleClose();
-    //getCalcHours();
+    
   }
 
   function updateHours(){

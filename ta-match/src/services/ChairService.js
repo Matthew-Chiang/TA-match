@@ -24,8 +24,8 @@ export async function updateCalcHours(sem, course, hours) {
 }
 
 export async function getHours(sem) {
-    // const response = await fetch(`http://localhost:5000/api/getHours/${sem}`);
-    // const data = await response.json()
-    const data = 5;
+    const response = await fetch(`http://localhost:5000/api/getHours/${sem}`);
+    const data = await response.json()
+    //const data = 5;
     return data;
 }
