@@ -124,7 +124,7 @@ app.post("/api/rank", async (req,res)=>{
     const applicantEmail = req.body.email;
     let rank;
     if(req.body.rank==0){
-        rank = "unranked"
+        rank = "Unranked"
     }
     else{rank = req.body.rank}
     const semester = req.body.sem
@@ -136,7 +136,7 @@ app.post("/api/rank", async (req,res)=>{
             .doc(course).collection("applicants").get()
         check.forEach(a=>{
             console.log(a.data())
-            if(a.id != applicantEmail && a.data().profRank != "unranked" && a.data().profRank == rank){
+            if(a.id != applicantEmail && a.data().profRank != "Unranked" && a.data().profRank == rank){
                 count++;
                 res.status(404).send("Cannot assign same rank to multiple applicants")
             }
