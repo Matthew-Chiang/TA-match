@@ -36,7 +36,6 @@ admin.initializeApp({
 });
 
 const parseSpreadsheets = require("./parse-spreadsheets.js");
-const { exit } = require("process");
 const parseProfData = parseSpreadsheets.parseProfData;
 const parseApplicantsData = parseSpreadsheets.parseApplicantsData;
 const buildProfsObj = parseSpreadsheets.buildProfsObj;

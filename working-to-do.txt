@@ -1,0 +1,12 @@
+1. Should there be a flag to say that a course didn't receive the # of TA hours they were asking for?
+2. Should there be some sort of imtelligent way of choosing TAs other than ranking (i.e. get as many courses to full TA hours as possible)
+
+test the file upload with new column
+check if prof excel has been updated
+
+output:
+
+{
+    add or delete names 
+    display the allocation on the prof page
+}
