@@ -37,6 +37,7 @@ admin.initializeApp({
 
 const parseSpreadsheets = require("./parse-spreadsheets.js");
 const { exit } = require("process");
+const { SSL_OP_SSLEAY_080_CLIENT_DH_BUG } = require("constants");
 const parseProfData = parseSpreadsheets.parseProfData;
 const parseApplicantsData = parseSpreadsheets.parseApplicantsData;
 const buildProfsObj = parseSpreadsheets.buildProfsObj;
@@ -116,6 +117,63 @@ app.get("/api/getApplicantData/:email", async (req, res) => {
         console.log(err);
     }
 });
+
+//populate professorr TA rankings into the db
+app.post("/api/rank", async (req,res)=>{
+    const course = req.body.course;
+    const applicantEmail = req.body.email;
+    let rank;
+    if(req.body.rank==0){
+        rank = "unranked"
+    }
+    else{rank = req.body.rank}
+    const semester = req.body.sem
+    let count = 0;
+
+    try{
+        const check = await db.collection("courses")
+            .doc(semester).collection("courses")
+            .doc(course).collection("applicants").get()
+        check.forEach(a=>{
+            console.log(a.data())
+            if(a.id != applicantEmail && a.data().profRank != "unranked" && a.data().profRank == rank){
+                count++;
+                res.status(404).send("Cannot assign same rank to multiple applicants")
+            }
+        })
+        if(count ==0){
+            const update = db
+            .collection("courses")
+            .doc(semester)
+            .collection("courses")
+            .doc(course)
+            .collection("applicants")
+            .doc(applicantEmail)
+            .update({profRank: rank});
+        console.log(update)
+        res.send("success")
+        }else{res.status(404).send("Cannot assign same rank to multiple applicants")}
+        
+    } catch(err){
+        res.send(err)
+    }
+})
+
+app.get("/api/test/:course/:sem", async (req,res)=>{
+    const course = req.params.course
+    const sem = req.params.sem
+    try{
+        const x = await db.collection("courses")
+        .doc(sem).collection("courses")
+        .doc(course).collection("applicants").get()
+    x.forEach(a=>{
+        console.log(a.id)
+    })
+    res.send('e')
+    } catch(err){
+        console.log(err)
+    }
+})
 
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "../ta-match/build/index.html"));
