@@ -37,6 +37,7 @@ admin.initializeApp({
 
 const parseSpreadsheets = require("./parse-spreadsheets.js");
 const allocateTAsFile = require("./allocate-tas.js");
+const { SSL_OP_SSLEAY_080_CLIENT_DH_BUG } = require("constants");
 const parseProfData = parseSpreadsheets.parseProfData;
 const parseApplicantsData = parseSpreadsheets.parseApplicantsData;
 const buildProfsObj = parseSpreadsheets.buildProfsObj;
@@ -106,7 +107,13 @@ app.get("/api/getApplicantData/:email", async (req, res) => {
 
     try {
         let profs = await buildProfsObj("summer", 2021);
-        res.send(profs[email]);
+        if (profs[email]){
+            res.send(profs[email]);
+        }
+        else{
+            res.send({});
+        }
+        
     } catch (err) {
         console.log(err);
     }
@@ -123,6 +130,130 @@ app.get("/api/allocateTAs/", async (req, res) => {
         res.status(404).send({err:err});
     }
 });
+
+//populate professorr TA rankings into the db
+app.post("/api/rank", async (req,res)=>{
+    const course = req.body.course;
+    const applicantEmail = req.body.email;
+    let rank;
+    if(req.body.rank==0){
+        rank = "Unranked"
+    }
+    else{rank = req.body.rank}
+    const semester = req.body.sem
+    let count = 0;
+
+    try{
+        const check = await db.collection("courses")
+            .doc(semester).collection("courses")
+            .doc(course).collection("applicants").get()
+        check.forEach(a=>{
+            console.log(a.data())
+            if(a.id != applicantEmail && a.data().profRank != "Unranked" && a.data().profRank == rank){
+                count++;
+                res.status(404).send("Cannot assign same rank to multiple applicants")
+            }
+        })
+        if(count ==0){
+            const update = db
+            .collection("courses")
+            .doc(semester)
+            .collection("courses")
+            .doc(course)
+            .collection("applicants")
+            .doc(applicantEmail)
+            .update({profRank: rank});
+        console.log(update)
+        res.send("success")
+        }else{res.status(404).send("Cannot assign same rank to multiple applicants")}
+    } catch(err){
+        res.send(err)
+    }
+})
+
+//calculate and populate the recommended TA hours into the db
+app.post("/api/calcHours", async (req, res) =>{
+    const sem = req.body.sem;
+    const calcHours = req.body.hours;
+    let calculation = [];
+
+    try{
+        calcHours.map((e) => {
+            if(e["Course"]){
+                e["Course"] = e["Course"].replace(/\s/g,'')
+                if(!e["Hrs 2020"]){
+                    e["Hrs 2020"] = 0;
+                }
+                let num = Math.ceil((e["Hrs 2020"]/e["Enrol 2020"])*e["Enrol 2021"])
+                if(isNaN(num)){
+                    num = 0;
+                }
+                calculation.push({
+                    "course":e["Course"],
+                    "ta_hours":num
+                })
+            }
+        })
+        calculation.forEach((a)=>{
+            const hours = db.collection("testCourse").doc(sem).collection("courses").doc(a["course"])
+            hours.set({ta_hours : a["ta_hours"]})
+        })
+        res.send('success')
+    }catch(err){
+        res.send(err)
+    }
+})
+      
+
+app.get("/api/test/:course/:sem", async (req,res)=>{
+    const course = req.params.course
+    const sem = req.params.sem
+    try{
+        const x = await db.collection("courses")
+        .doc(sem).collection("courses")
+        .doc(course).collection("applicants").get()
+    x.forEach(a=>{
+        console.log(a.id)
+    })
+    res.send('e')
+ } catch(err){
+        console.log(err)
+    }
+})
+
+//retrieve all TA hours
+app.get("/api/getHours/:sem",async (req,res)=>{
+    const sem = req.params.sem;
+    let hours = [];
+
+    try{
+        const find = await db.collection("testCourse").doc(sem).collection("courses").get()
+        find.forEach((e)=>{
+            hours.push({
+                "course":e.id,
+                "ta_hours":e.data().ta_hours
+            })
+        })
+        res.send(hours)
+    } catch(err){
+        console.log(err)
+    }
+})
+
+//update the ta hours for a specific course based on chair override
+app.put("/api/updateHours", async (req,res)=>{
+    const course = req.body.course;
+    const hours = req.body.hours;
+    const sem = req.body.sem;
+
+    try{
+        await db.collection("testCourse").doc(sem).collection("courses").doc(course)
+        .update({ta_hours:hours})
+        res.send("success")
+    } catch(err){
+        console.log(err)
+    }
+})
 
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "../ta-match/build/index.html"));
