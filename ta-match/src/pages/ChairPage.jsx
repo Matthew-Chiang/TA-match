@@ -1,5 +1,6 @@
 import Dashboard from "../components/Dashboard";
 import AdminFilesUpload from "../components/AdminFilesUpload";
+import TogglePriority from "../components/TogglePriority";
 
 const ChairPage = () => {
     return (
@@ -8,6 +9,8 @@ const ChairPage = () => {
             <Dashboard />
             <br></br>
             <AdminFilesUpload />
+            <br/><br/>
+            <TogglePriority/>
         </div>
     );
 };
