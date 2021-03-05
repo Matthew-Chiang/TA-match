@@ -105,7 +105,6 @@ app.get("/api/getAllApplicantData", async (req, res) => {
         let profs = await buildProfsObj("summer", 2021);
         // sends information back about what term we're looking at
         // changing the above line should also change the line below
-        console.log(profs);
         const responseObj = { profs, semester: "Summer 2021" };
         res.send(responseObj);
     } catch (err) {
@@ -154,7 +153,6 @@ app.post("/api/addQuestionsForTA", async (req, res) => {
             .collection("courses")
             .doc(courseName)
             .update({ questions: questions });
-        console.log(type);
         res.send("return");
     } catch (err) {
         console.log(err);
@@ -208,7 +206,6 @@ app.post("/api/allocation/changeStatus/:email", async (req, res) => {
             .collection("allocation")
             .doc(email)
             .update({ status: newStatus });
-        console.log(allocation);
         res.send("return");
     } catch (err) {
         console.log(err);
