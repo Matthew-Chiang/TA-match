@@ -326,82 +326,91 @@ export default function CourseInfoCard({
                         </AccordionDetails>
                     </Accordion>
                 )}
-                <Accordion>
-                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                        <div>TA Allocations:</div>
-                    </AccordionSummary>
-                    <AccordionDetails>
-                        <div>
-                            {courseState["allocation_list"].map(
-                                (allocation, index) => {
-                                    return (
-                                        <div key={index}>
-                                            <p>Email: {allocation.email}</p>
-                                            <p>Status: {allocation.status}</p>
-                                            <div
-                                                className={
-                                                    classes.sideBySideDisplay
-                                                }
-                                            >
-                                                <Button
-                                                    onClick={() =>
-                                                        changeTAStatus(
-                                                            allocation.email,
-                                                            "confirmed"
-                                                        )
+                {"allocation_list" in courseState &&
+                courseState.allocation_list.length > 0 ? (
+                    <Accordion>
+                        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                            <div>TA Allocations:</div>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                            <div>
+                                {courseState["allocation_list"].map(
+                                    (allocation, index) => {
+                                        return (
+                                            <div key={index}>
+                                                <p>Email: {allocation.email}</p>
+                                                <p>
+                                                    Status: {allocation.status}
+                                                </p>
+                                                <div
+                                                    className={
+                                                        classes.sideBySideDisplay
                                                     }
                                                 >
-                                                    Accept into Course
-                                                </Button>
-                                                <Button
-                                                    onClick={() =>
-                                                        changeTAStatus(
-                                                            allocation.email,
-                                                            "rejected"
-                                                        )
-                                                    }
-                                                >
-                                                    Reject from Course
-                                                </Button>
+                                                    <Button
+                                                        onClick={() =>
+                                                            changeTAStatus(
+                                                                allocation.email,
+                                                                "confirmed"
+                                                            )
+                                                        }
+                                                    >
+                                                        Accept into Course
+                                                    </Button>
+                                                    <Button
+                                                        onClick={() =>
+                                                            changeTAStatus(
+                                                                allocation.email,
+                                                                "rejected"
+                                                            )
+                                                        }
+                                                    >
+                                                        Reject from Course
+                                                    </Button>
+                                                </div>
+                                                {editPrivilege && (
+                                                    <Button
+                                                        onClick={() => {
+                                                            deleteTaAllocation(
+                                                                allocation.email
+                                                            );
+                                                        }}
+                                                    >
+                                                        Delete TA Allocation
+                                                    </Button>
+                                                )}
+                                                <br></br>
                                             </div>
-                                            {editPrivilege && (
-                                                <Button
-                                                    onClick={() => {
-                                                        deleteTaAllocation(
-                                                            allocation.email
-                                                        );
-                                                    }}
-                                                >
-                                                    Delete TA Allocation
-                                                </Button>
-                                            )}
-                                            <br></br>
-                                        </div>
-                                    );
-                                }
-                            )}
+                                        );
+                                    }
+                                )}
 
-                            {editPrivilege && (
-                                <div>
-                                    <TextField
-                                        value={addTaEmail}
-                                        onChange={(event) => {
-                                            setAddTaEmail(event.target.value);
-                                        }}
-                                    />
-                                    <Button
-                                        onClick={() => {
-                                            addTaAllocation();
-                                        }}
-                                        disabled={addTaEmail.length === 0}
-                                    >
-                                        Add TA Allocation
-                                    </Button>
-                                </div>
-                            )}
-                        </div>
-                    </AccordionDetails>
-                </Accordion>
+                                {editPrivilege && (
+                                    <div>
+                                        <TextField
+                                            value={addTaEmail}
+                                            onChange={(event) => {
+                                                setAddTaEmail(
+                                                    event.target.value
+                                                );
+                                            }}
+                                        />
+                                        <Button
+                                            onClick={() => {
+                                                addTaAllocation();
+                                            }}
+                                            disabled={addTaEmail.length === 0}
+                                        >
+                                            Add TA Allocation
+                                        </Button>
+                                    </div>
+                                )}
+                            </div>
+                        </AccordionDetails>
+                    </Accordion>
+                ) : (
+                    <Typography>No TAs have been allocated yet.</Typography>
+                )}
             </CardContent>
         </Card>
     );
