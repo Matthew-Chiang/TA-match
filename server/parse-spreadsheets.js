@@ -61,6 +61,7 @@ async function parseApplicantsData(semester, year) {
             const answerKeys = [];
             var courseCodeKey = "";
             var rankKey = "";
+            var hoursKey = "";
             var nameKey = "";
             var emailKey = "";
             var fundableKey = "";
@@ -82,6 +83,11 @@ async function parseApplicantsData(semester, year) {
                 } else if (key.toLowerCase().includes("status")) {
                     // Get header for applicant funability
                     fundableKey = key;
+                }  else if (key.toLowerCase().includes("hrs") ||
+                            key.toLowerCase().includes("hours"))
+                {
+                    // Get header for hours availability
+                    hoursKey = key;
                 } else if (
                     (key.toLowerCase().includes("q") && key.length < 4) ||
                     key.toLowerCase().includes("question")
@@ -132,6 +138,7 @@ async function parseApplicantsData(semester, year) {
                 newApplicant["name"] = applicant[nameKey];
                 newApplicant["fundable"] = applicant[fundableKey];
                 newApplicant["rank"] = applicant[rankKey];
+                newApplicant["availability"] = applicant[hoursKey];
 
                 const applicantCol = db.collection(
                     `courses/${semester + year}/courses/${

@@ -2,6 +2,7 @@ import React from 'react';
 import Button from '@material-ui/core/Button';
 import axios from 'axios';
 
+
 const apiURL = 'http://localhost:5000/api';
 
 class AdminFilesUpload extends React.Component {
@@ -16,14 +17,13 @@ class AdminFilesUpload extends React.Component {
 
       this.onChangeHandler.bind(this);
       this.sendFile.bind(this);
+      
     }
-  
     onChangeHandler(event, filename){
       this.setState({
         [filename]: event.target.files[0]
       });
     }
-  
     sendFile(filename){
       console.log(filename);
       console.log(this.state['ApplicantsFile'])
@@ -37,7 +37,6 @@ class AdminFilesUpload extends React.Component {
        console.log(res.statusText);
      });
     }
-  
     render() {
       return (
         <div className="uploadButtons">
@@ -49,6 +48,7 @@ class AdminFilesUpload extends React.Component {
               onChange={(e)=>this.onChangeHandler(e, 'ApplicantsFile')}
             />
           <Button className="submitButton"
+            color="primary"
             variant="contained"
             onClick={()=>this.sendFile('ApplicantsFile')}
             >
@@ -63,12 +63,14 @@ class AdminFilesUpload extends React.Component {
               onChange={(e)=>this.onChangeHandler(e, 'InstructorsFile')}
             />
           <Button className="submitButton"
+            color="primary"
             variant="contained"
             onClick={()=>this.sendFile('InstructorsFile')}
             >
             Submit 
           </Button>
         </div>
+        
       );
     }
 }

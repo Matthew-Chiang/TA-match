@@ -1,4 +1,4 @@
-import React, { Component, useState, useEffect } from "react";
+import React, { Component, useState, useRef, useEffect } from "react";
 import Accordion from "@material-ui/core/Accordion";
 import { AccordionDetails, AccordionSummary } from "@material-ui/core";
 import { Select, MenuItem, InputLabel, NativeSelect } from "@material-ui/core";
@@ -9,11 +9,14 @@ import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import { useAuth } from "../contexts/AuthContext";
+import Button from "@material-ui/core/Button";
+import { Alert } from "@material-ui/lab";
 import CourseInfoCard from "./CourseInfoCard";
 
 const useStyles = makeStyles({
     root: {
-        minWidth: 275,
+        //minWidth: 275
+        width: 800,
     },
     bullet: {
         display: "inline-block",
@@ -26,12 +29,31 @@ const useStyles = makeStyles({
     pos: {
         marginTop: 6,
     },
+    container: {
+        marginTop: 20,
+    },
+    table: {
+        minWidth: 1000,
+    },
+    dialogText: {
+        fontSize: 18,
+    },
+    txtField: {
+        marginLeft: 10,
+    },
+    overrideBtn: {
+        marginRight: 20,
+        marginBottom: 10,
+    },
 });
 
 export default function CourseInfo({ email }) {
     const [isLoading, setIsLoading] = useState(true);
     const [courseData, setCourseData] = useState([]);
     const { currentUser } = useAuth();
+
+    const [error, setError] = useState("");
+    let ranking = 0;
 
     useEffect(() => {
         fetch(`http://localhost:5000/api/getApplicantData/${email}`)
@@ -55,23 +77,34 @@ export default function CourseInfo({ email }) {
     if (isLoading) {
         return <div className="App">Loading...</div>;
     }
-    return (
-        <div>
-            <Grid container spacing={3}>
-                {courseData["courseList"].map((course, index) => {
-                    return (
-                        <Grid key={index} item xs={12} sm={6} md={4}>
-                            <CourseInfoCard
-                                course={course}
-                                semester={courseData.semester}
-                                viewApplicant
-                            ></CourseInfoCard>
-                        </Grid>
-                    );
-                })}
-            </Grid>
-        </div>
-    );
+
+    if (courseData["courseList"]) {
+        return (
+            <div>
+                {error && <Alert severity="error">{error}</Alert>}
+                <Grid container spacing={3}>
+                    {courseData["courseList"].map((course, index) => {
+                        return (
+                            <Grid key={index} item xs={12}>
+                                <CourseInfoCard
+                                    course={course}
+                                    semester={courseData.semester}
+                                    setError={setError}
+                                    viewApplicant
+                                />
+                            </Grid>
+                        );
+                    })}
+                </Grid>
+            </div>
+        );
+    } else {
+        return (
+            <Typography className={classes.title} color="textSecondary">
+                No Classes
+            </Typography>
+        );
+    }
 }
 
 // export default withStyles(styles)(CourseInfo)

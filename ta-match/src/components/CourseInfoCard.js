@@ -13,9 +13,17 @@ import { useAuth } from "../contexts/AuthContext";
 import TextField from "@material-ui/core/TextField";
 import Modal from "@material-ui/core/Modal";
 
+import Table from "@material-ui/core/Table";
+import TableBody from "@material-ui/core/TableBody";
+import TableCell from "@material-ui/core/TableCell";
+import TableContainer from "@material-ui/core/TableContainer";
+import TableHead from "@material-ui/core/TableHead";
+import TableRow from "@material-ui/core/TableRow";
+
 const useStyles = makeStyles({
     root: {
-        minWidth: 275,
+        //minWidth: 275
+        width: 800,
     },
     bullet: {
         display: "inline-block",
@@ -28,8 +36,21 @@ const useStyles = makeStyles({
     pos: {
         marginTop: 6,
     },
-    sideBySideDisplay: {
-        display: "flex",
+    container: {
+        marginTop: 20,
+    },
+    table: {
+        minWidth: 1000,
+    },
+    dialogText: {
+        fontSize: 18,
+    },
+    txtField: {
+        marginLeft: 10,
+    },
+    overrideBtn: {
+        marginRight: 20,
+        marginBottom: 10,
     },
 });
 
@@ -38,10 +59,46 @@ export default function CourseInfoCard({
     semester,
     viewApplicant,
     editPrivilege,
+    setError,
 }) {
     const classes = useStyles();
     const [courseState, setCourseState] = useState(course);
     const [addTaEmail, setAddTaEmail] = useState("");
+    const [tempRanking, setTempRanking] = useState({});
+
+    function setRank(email, rank) {
+        // for profs
+        setTempRanking({ ...tempRanking, [email]: rank - 1 });
+    }
+
+    function updateRank(course, email, sem) {
+        fetch(`http://localhost:5000/api/rank`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                course: course,
+                email: email,
+                rank: tempRanking[email],
+                sem: sem,
+            }),
+        })
+            .then((response) => {
+                if (response.status == "404") {
+                    setError("Cannot assign same rank to multiple applicants");
+                } else {
+                    const newState = { ...courseState };
+                    newState["applicant_list"].filter(
+                        (applicant) => applicant.email === email
+                    )[0].profRank = tempRanking[email];
+                    setCourseState(newState);
+                    console.log(response);
+                    //window.location.reload()
+                }
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    }
 
     const changeTAStatus = (email, status) => {
         fetch(`http://localhost:5000/api/allocation/changeStatus/${email}`, {
@@ -111,7 +168,8 @@ export default function CourseInfoCard({
     };
 
     return (
-        <Card className={classes.root} variant="outlined">
+        <Card className={classes.container} variant="outlined">
+            {console.log(courseState)}
             <CardContent>
                 <Typography
                     className={classes.title}
@@ -120,7 +178,7 @@ export default function CourseInfoCard({
                 >
                     University of Western Ontario
                 </Typography>
-                <p> {course["course_code"]} </p>
+                <p> {courseState["course_code"]} </p>
                 <Typography className={classes.pos} color="textSecondary">
                     {semester}
                 </Typography>
@@ -132,47 +190,138 @@ export default function CourseInfoCard({
                         </AccordionSummary>
                         <AccordionDetails>
                             <div>
-                                {courseState["applicant_list"].map(
-                                    (applicant, index) => {
-                                        return (
-                                            <div key={index}>
-                                                {/* need to be dynamic */}
-                                                <p>Name: {applicant.name}</p>
-                                                <p>Email: {applicant.email}</p>
-                                                <p>
-                                                    Fundable:{" "}
-                                                    {applicant.fundable}
-                                                </p>
-                                                <p>
-                                                    Answer 1:{" "}
-                                                    {applicant.answer1}
-                                                </p>
-                                                <p>
-                                                    Answer 2:{" "}
-                                                    {applicant.answer2}
-                                                </p>
-                                                <InputLabel id="label">
-                                                    Rank
-                                                </InputLabel>
-                                                <NativeSelect id="select">
-                                                    {course[
-                                                        "applicant_list"
-                                                    ].map(
-                                                        (applicant, index) => {
-                                                            return (
-                                                                <option
-                                                                    key={index}
+                                <TableContainer className={classes.container}>
+                                    <Table className={classes.table}>
+                                        <TableHead>
+                                            <TableRow>
+                                                <TableCell>
+                                                    <h3>Name</h3>
+                                                </TableCell>
+                                                <TableCell>
+                                                    <h3>Email</h3>
+                                                </TableCell>
+                                                <TableCell>
+                                                    <h3>Fundable</h3>
+                                                </TableCell>
+                                                <TableCell>
+                                                    <h3>Answer 1</h3>
+                                                </TableCell>
+                                                <TableCell>
+                                                    <h3>Answer 2</h3>
+                                                </TableCell>
+                                                <TableCell>
+                                                    <h3>Current Rank</h3>
+                                                </TableCell>
+                                                <TableCell>
+                                                    <h3>Update Rank</h3>
+                                                </TableCell>
+                                            </TableRow>
+                                        </TableHead>
+                                        <TableBody>
+                                            {courseState["applicant_list"].map(
+                                                (applicant, index) => {
+                                                    if (!applicant.profRank) {
+                                                        applicant.profRank =
+                                                            "Unranked";
+                                                    }
+                                                    return (
+                                                        <TableRow
+                                                            key={
+                                                                courseState[
+                                                                    "course"
+                                                                ]
+                                                            }
+                                                        >
+                                                            <TableCell>
+                                                                {applicant.name}
+                                                            </TableCell>
+                                                            <TableCell>
+                                                                {
+                                                                    applicant.email
+                                                                }
+                                                            </TableCell>
+                                                            <TableCell>
+                                                                {
+                                                                    applicant.fundable
+                                                                }
+                                                            </TableCell>
+                                                            <TableCell>
+                                                                {
+                                                                    applicant.answer1
+                                                                }
+                                                            </TableCell>
+                                                            <TableCell>
+                                                                {
+                                                                    applicant.answer2
+                                                                }
+                                                            </TableCell>
+                                                            <TableCell>
+                                                                {
+                                                                    applicant.profRank
+                                                                }
+                                                            </TableCell>
+                                                            <TableCell>
+                                                                <NativeSelect
+                                                                    id="select"
+                                                                    onChange={(
+                                                                        e
+                                                                    ) => {
+                                                                        setRank(
+                                                                            applicant.email,
+                                                                            e
+                                                                                .target
+                                                                                .selectedIndex +
+                                                                                1
+                                                                        );
+                                                                    }}
                                                                 >
-                                                                    {index + 1}
-                                                                </option>
-                                                            );
-                                                        }
-                                                    )}
-                                                </NativeSelect>
-                                            </div>
-                                        );
-                                    }
-                                )}
+                                                                    <option value="">
+                                                                        {" "}
+                                                                        Select
+                                                                        rank
+                                                                    </option>
+                                                                    {courseState[
+                                                                        "applicant_list"
+                                                                    ].map(
+                                                                        (
+                                                                            applicant,
+                                                                            index
+                                                                        ) => {
+                                                                            return (
+                                                                                <option
+                                                                                    key={
+                                                                                        index
+                                                                                    }
+                                                                                >
+                                                                                    {index +
+                                                                                        1}
+                                                                                </option>
+                                                                            );
+                                                                        }
+                                                                    )}
+                                                                </NativeSelect>
+                                                                <Button
+                                                                    color="primary"
+                                                                    onClick={() => {
+                                                                        updateRank(
+                                                                            courseState[
+                                                                                "course_code"
+                                                                            ],
+                                                                            applicant.email,
+                                                                            "summer2021"
+                                                                        );
+                                                                    }}
+                                                                >
+                                                                    Submit
+                                                                </Button>
+                                                            </TableCell>
+                                                        </TableRow>
+                                                    );
+                                                }
+                                            )}
+                                        </TableBody>
+                                    </Table>
+                                </TableContainer>
                             </div>
                         </AccordionDetails>
                     </Accordion>
