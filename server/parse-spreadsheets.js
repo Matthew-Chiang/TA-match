@@ -216,7 +216,12 @@ async function buildProfsObj(semester, year) {
     profsObj = tempProfsObj;
     Object.keys(tempProfsObj).forEach((prof) => {
         for (i = 0; i < tempProfsObj[prof].courseList.length; i++) {
+            // console.log(profsObj);
+            // console.log(tempProfsObj);
             courseCode = tempProfsObj[prof].courseList[i];
+            if (!Object.keys(tempCoursesObj).includes(courseCode)) continue;
+            // console.log(courseCode);
+            // console.log(tempCoursesObj);
 
             profsObj[prof].courseList[i] = tempCoursesObj[courseCode];
             profsObj[prof].courseList[i]["course_code"] = courseCode;

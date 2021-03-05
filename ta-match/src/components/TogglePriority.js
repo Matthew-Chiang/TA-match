@@ -44,7 +44,7 @@ function SimpleDialog(props) {
         else {
             priorityCode = 0;
         }
-        axios.get(apiURL + '/allocatTAs/', {
+        axios.get(apiURL + '/allocateTAs/', {
             params: {
                 preference: priorityCode
             }
