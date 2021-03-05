@@ -48,6 +48,7 @@ class AdminFilesUpload extends React.Component {
               onChange={(e)=>this.onChangeHandler(e, 'ApplicantsFile')}
             />
           <Button className="submitButton"
+            color="primary"
             variant="contained"
             onClick={()=>this.sendFile('ApplicantsFile')}
             >
@@ -62,6 +63,7 @@ class AdminFilesUpload extends React.Component {
               onChange={(e)=>this.onChangeHandler(e, 'InstructorsFile')}
             />
           <Button className="submitButton"
+            color="primary"
             variant="contained"
             onClick={()=>this.sendFile('InstructorsFile')}
             >

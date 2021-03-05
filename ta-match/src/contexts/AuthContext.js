@@ -12,14 +12,17 @@ export function AuthProvider({ children }) {
     const [loading, setLoading] = useState(false);
 
     function signup(email, password) {
+        localStorage.setItem('email', email);
         return auth.createUserWithEmailAndPassword(email, password);
     }
 
     function login(email, password) {
+        localStorage.setItem('email', email);
         return auth.signInWithEmailAndPassword(email, password);
     }
 
     function logout() {
+        localStorage.clear();
         return auth.signOut();
     }
 
