@@ -28,7 +28,7 @@ const useStyles = makeStyles({
     },
 });
 
-export default function AllCourseInfo({ email }) {
+export default function AllCourseInfo({ email, editPrivilege }) {
     const [isLoading, setIsLoading] = useState(true);
     const [courseData, setCourseData] = useState([]);
 
@@ -76,6 +76,7 @@ export default function AllCourseInfo({ email }) {
                                         <CourseInfoCard
                                             course={course}
                                             semester={courseData.semester}
+                                            editPrivilege
                                         ></CourseInfoCard>
                                     </Grid>
                                 );

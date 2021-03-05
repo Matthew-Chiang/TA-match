@@ -193,6 +193,68 @@ app.get("/api/questions/:semester", async (req, res) => {
     }
 });
 
+app.post("/api/allocation/changeStatus/:email", async (req, res) => {
+    const email = req.params.email;
+    const semester = req.body.semester;
+    const courseName = req.body.courseName;
+    const newStatus = req.body.newStatus;
+
+    try {
+        const allocation = await db
+            .collection("courses")
+            .doc(semester)
+            .collection("courses")
+            .doc(courseName)
+            .collection("allocation")
+            .doc(email)
+            .update({ status: newStatus });
+        console.log(allocation);
+        res.send("return");
+    } catch (err) {
+        console.log(err);
+    }
+});
+
+app.post("/api/allocation/add", async (req, res) => {
+    const semester = req.body.semester;
+    const courseName = req.body.courseName;
+    const email = req.body.email;
+
+    try {
+        const allocation = await db
+            .collection("courses")
+            .doc(semester)
+            .collection("courses")
+            .doc(courseName)
+            .collection("allocation")
+            .doc(email)
+            .set({ status: "pending" });
+        res.send("return");
+    } catch (err) {
+        console.log(err);
+    }
+});
+
+app.delete("/api/allocation/delete", async (req, res) => {
+    const semester = req.body.semester;
+    const courseName = req.body.courseName;
+    const email = req.body.email;
+
+    try {
+        const allocation = await db
+            .collection("courses")
+            .doc(semester)
+            .collection("courses")
+            .doc(courseName)
+            .collection("allocation")
+            .doc(email)
+            .delete();
+        res.send("return");
+    } catch (err) {
+        console.log(err);
+    }
+});
+
 app.listen(port, hostname, () => {
     console.log("Listening on: " + port);
 });

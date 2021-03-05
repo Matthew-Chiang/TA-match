@@ -9,7 +9,7 @@ const AdminPage = () => {
             <h1>Admin Page</h1>
             <ProfessorQuestionsExport />
 
-            <AllCourseInfo />
+            <AllCourseInfo editPrivilege />
         </div>
     );
 };

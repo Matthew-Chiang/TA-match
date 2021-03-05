@@ -10,7 +10,7 @@ const ChairPage = () => {
             <br></br>
             <AdminFilesUpload />
             <br></br>
-            <AllCourseInfo></AllCourseInfo>
+            <AllCourseInfo editPrivilege />
         </div>
     );
 };

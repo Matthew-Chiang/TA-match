@@ -64,6 +64,7 @@ export default function CourseInfo({ email }) {
                             <CourseInfoCard
                                 course={course}
                                 semester={courseData.semester}
+                                viewApplicant
                             ></CourseInfoCard>
                         </Grid>
                     );
