@@ -36,11 +36,12 @@ admin.initializeApp({
 });
 
 const parseSpreadsheets = require("./parse-spreadsheets.js");
-const { exit } = require("process");
+const allocateTAsFile = require("./allocate-tas.js");
 const { SSL_OP_SSLEAY_080_CLIENT_DH_BUG } = require("constants");
 const parseProfData = parseSpreadsheets.parseProfData;
 const parseApplicantsData = parseSpreadsheets.parseApplicantsData;
 const buildProfsObj = parseSpreadsheets.buildProfsObj;
+const allocateTAs = allocateTAsFile.allocateTAs;
 
 // buildProfsObj("summer", 2021);
 
@@ -118,6 +119,17 @@ app.get("/api/getApplicantData/:email", async (req, res) => {
     }
 });
 
+app.get("/api/allocateTAs/", async (req, res) => {
+    const semester = req.query.semester ? req.params.semester : 'summer2021';
+    const preference = req.query.preference;
+
+    try {
+        let profs = await allocateTAs(semester, preference);
+        res.status(200).send('success');
+    } catch (err) {
+        res.status(404).send({err:err});
+    }
+});
 
 //populate professorr TA rankings into the db
 app.post("/api/rank", async (req,res)=>{
