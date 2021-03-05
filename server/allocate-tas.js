@@ -1,13 +1,9 @@
 const admin = require("firebase-admin");
-const serviceAccount = require("./ta-match-gcp-service-key.json");
 
-admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
-});
 const db = admin.firestore();
 
 
-async function allocateTAs(semester, preferenceWeighting=1){
+async function allocateTAs(semester='summer2021', preferenceWeighting=1){
 
     let hoursPerCourse = {};
     let coursesCol = await db.collection(`/courses/${semester}/courses/`).get();
@@ -46,13 +42,12 @@ async function allocateTAs(semester, preferenceWeighting=1){
 
         }
     }
-    
 
-    for (courseCode of allocationObj){
+    for (courseCode of Object.keys(allocationObj)){
         let allocationCol = db.collection(`/courses/${semester}/courses/${courseCode}/allocation`);
 
         for (ta of allocationObj[courseCode]){
-            allocationCol.doc(email).set({
+            await allocationCol.doc(ta).set({
                 status: 'pending'
             })
         }
@@ -118,5 +113,5 @@ async function buildCoursesObj(semester, preferenceWeighting){
     return coursesObj;
 }
 
-allocateTAs('summer2021', 0);
+exports.allocateTAs = allocateTAs;
 
