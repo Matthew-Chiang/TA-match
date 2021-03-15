@@ -427,6 +427,26 @@ app.delete("/api/allocation/delete", async (req, res) => {
     }
 });
 
+app.get("/api/semester/:semester", async (req, res) => {
+    const semester = req.params.semester;
+    let response = [];
+    const coursesCollection = await db.collection('courses').doc(semester).collection('courses').get();
+        coursesCollection.forEach(doc => {
+            console.log(doc.id, '=>', doc.data())
+
+            let courseDetails = {
+                course: doc.id,
+                details: doc.data(),
+            };
+            response.push(courseDetails);
+        })
+    if(response.length != 0) {
+        res.send(response);
+    }else {
+        res.send("Semester does not exist!");
+    }
+}); 
+
 app.listen(port, hostname, () => {
     console.log("Listening on: " + port);
 });
