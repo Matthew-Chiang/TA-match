@@ -96,7 +96,6 @@ export default function CourseInfoCard({
                         (applicant) => applicant.email === email
                     )[0].profRank = tempRanking[email];
                     setCourseState(newState);
-                    console.log(response);
                     //window.location.reload()
                 }
             })
@@ -174,7 +173,6 @@ export default function CourseInfoCard({
 
     return (
         <Card className={classes.container} variant="outlined">
-            {console.log(courseState)}
             <CardContent>
                 <Typography
                     className={classes.title}

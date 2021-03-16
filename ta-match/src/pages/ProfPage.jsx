@@ -6,11 +6,13 @@ import CourseInfo from "../components/CourseInfo";
 
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
+import { NativeSelect } from "@material-ui/core";
 
 const ProfPage = () => {
     const [openTaApp, setOpenTaApp] = useState(false);
     const [taQuestions, setTaQuestions] = useState([]);
     const [courseName, setCourseName] = useState("");
+    const [oldQuestions, setOldQuestions] = useState([]);
 
     const handleQuestionTextChange = (event, index) => {
         let newQuestions = [...taQuestions];
@@ -36,6 +38,27 @@ const ProfPage = () => {
             });
     };
 
+    const getOldQuestions = () => {
+        // hardcoded to john
+        fetch(`http://localhost:5000/api/pastQuestions/${"john@uwo.ca"}`, {
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
+        })
+            .then((res) => {
+                console.log(res);
+                res.json()
+                    .then((data) => {
+                        setOldQuestions(data);
+                    })
+                    .catch((e) => {
+                        console.log(e);
+                    });
+            })
+            .catch((e) => {
+                console.log(e);
+            });
+    };
+
     return (
         <div className="container">
             <Dashboard />
@@ -45,6 +68,7 @@ const ProfPage = () => {
                 className="prof-button"
                 onClick={() => {
                     setOpenTaApp(true);
+                    getOldQuestions();
                 }}
             >
                 New TA Application
@@ -78,6 +102,23 @@ const ProfPage = () => {
                                         handleQuestionTextChange(event, index);
                                     }}
                                 />
+                                <p>OR select a previous question</p>
+
+                                <NativeSelect
+                                    id="select"
+                                    onChange={(e) => {
+                                        handleQuestionTextChange(e, index);
+                                    }}
+                                >
+                                    <option value=""> Select question</option>
+                                    {oldQuestions.map((question, index) => {
+                                        return (
+                                            <option key={index}>
+                                                {question}
+                                            </option>
+                                        );
+                                    })}
+                                </NativeSelect>
                             </div>
                         );
                     })}
