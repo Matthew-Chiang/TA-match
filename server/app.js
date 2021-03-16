@@ -431,21 +431,42 @@ app.get("/api/semester/:semester", async (req, res) => {
     const semester = req.params.semester;
     let response = [];
     const coursesCollection = await db.collection('courses').doc(semester).collection('courses').get();
-        coursesCollection.forEach(doc => {
-            console.log(doc.id, '=>', doc.data())
+    coursesCollection.forEach(doc => {
+        console.log(doc.id, '=>', doc.data())
 
-            let courseDetails = {
-                course: doc.id,
-                details: doc.data(),
-            };
-            response.push(courseDetails);
-        })
+        let courseDetails = {
+            course: doc.id,
+            details: doc.data(),
+        };
+        response.push(courseDetails);
+    })
     if(response.length != 0) {
-        res.send(response);
+        res.json(response);
     }else {
         res.send("Semester does not exist!");
     }
-}); 
+});
+
+app.get("/api/applicants/:semester/:course", async (req, res) => {
+    const course = req.params.course;
+    const semester = req.params.semester;
+    let response = [];
+    const applicantsCollection = await db.collection('courses').doc(semester).collection('courses').doc(course).collection('applicants').get();
+    applicantsCollection.forEach(doc => {
+        console.log(doc.id, '=>', doc.data());
+
+        let applicantDetails = {
+            applicant: doc.id,
+            details: doc.data(),
+        }
+        response.push(applicantDetails);
+    })
+    if(response.length != 0) {
+        res.json(response);
+    }else {
+        res.send("No applicants for course");
+    }
+})
 
 app.listen(port, hostname, () => {
     console.log("Listening on: " + port);
