@@ -68,7 +68,6 @@ export default function HoursCalculation() {
 
     promise.then((d) => {
       setItems(d); 
-      console.log('post')
       postCalcHours("summer2021",d)
       .then(response=>{
         console.log(response)
