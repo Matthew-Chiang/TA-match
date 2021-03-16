@@ -384,32 +384,35 @@ export default function CourseInfoCard({
                                         );
                                     }
                                 )}
-
-                                {editPrivilege && (
-                                    <div>
-                                        <TextField
-                                            value={addTaEmail}
-                                            onChange={(event) => {
-                                                setAddTaEmail(
-                                                    event.target.value
-                                                );
-                                            }}
-                                        />
-                                        <Button
-                                            onClick={() => {
-                                                addTaAllocation();
-                                            }}
-                                            disabled={addTaEmail.length === 0}
-                                        >
-                                            Add TA Allocation
-                                        </Button>
-                                    </div>
-                                )}
                             </div>
                         </AccordionDetails>
                     </Accordion>
                 ) : (
                     <Typography>No TAs have been allocated yet.</Typography>
+                )}
+
+                {editPrivilege && (
+                    <div>
+                        <br />
+                        <Typography variant="h6">
+                            Manually Allocate TA's
+                        </Typography>
+                        <TextField
+                            label="email"
+                            value={addTaEmail}
+                            onChange={(event) => {
+                                setAddTaEmail(event.target.value);
+                            }}
+                        />
+                        <Button
+                            onClick={() => {
+                                addTaAllocation();
+                            }}
+                            disabled={addTaEmail.length === 0}
+                        >
+                            Add TA Allocation
+                        </Button>
+                    </div>
                 )}
             </CardContent>
         </Card>
