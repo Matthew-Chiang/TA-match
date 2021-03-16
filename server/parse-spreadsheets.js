@@ -86,9 +86,10 @@ async function parseApplicantsData(semester, year) {
                 } else if (key.toLowerCase().includes("status")) {
                     // Get header for applicant funability
                     fundableKey = key;
-                }  else if (key.toLowerCase().includes("hrs") ||
-                            key.toLowerCase().includes("hours"))
-                {
+                } else if (
+                    key.toLowerCase().includes("hrs") ||
+                    key.toLowerCase().includes("hours")
+                ) {
                     // Get header for hours availability
                     hoursKey = key;
                 } else if (
@@ -122,22 +123,25 @@ async function parseApplicantsData(semester, year) {
                 applicantsList = [];
                 newApplicant = {};
 
-                const questions = [];
-                const answers = [];
+                // these question answer pairs are decoupled from the questions on the course
+                // the questions on the course represent what the professor input on his page
+                // these pairs are what we get back from the spreadsheet
+                // so theoretically they are the same but could be different if Western's system messes up
+                const questionAnswerPairs = [];
 
                 for (j = 0; j < questionKeys.length; j++) {
-                    key = questionKeys[j];
+                    questionKey = questionKeys[j];
+                    answerKey = answerKeys[j];
 
-                    if (applicant[key] == "") continue;
+                    if (applicant[questionKey] == "") continue;
 
-                    // data[`question${j+1}`] = applicant[key];
-                    questions.push(applicant[key]);
-                    key = answerKeys[j];
-                    // answers.push(applicant[key])
-                    newApplicant[`answer${j + 1}`] = applicant[key];
+                    questionAnswerPairs.push({
+                        question: applicant[questionKey],
+                        answer: applicant[answerKey],
+                    });
                 }
 
-                // data["questions"] = questions;
+                newApplicant["questionAnswerPairs"] = questionAnswerPairs;
                 newApplicant["name"] = applicant[nameKey];
                 newApplicant["fundable"] = applicant[fundableKey];
                 newApplicant["rank"] = applicant[rankKey];
@@ -180,7 +184,7 @@ async function buildProfsObj(semester, year) {
     });
 
     // Add list of applicant objects to temp object
-    for (i = 0; i < coursesList.length; i++){
+    for (i = 0; i < coursesList.length; i++) {
         course = coursesList[i];
 
         prof = course.instructor;
@@ -212,13 +216,14 @@ async function buildProfsObj(semester, year) {
             newAllocation["email"] = allocation.id;
             allocationsList.push(newAllocation);
         });
-        course.allocation_list = allocationsList;    
+        course.allocation_list = allocationsList;
     }
 
     // Build final profs obj
     profsList.forEach((prof) => {
-
-        profCourses = coursesList.filter(course => course.instructor === prof);
+        profCourses = coursesList.filter(
+            (course) => course.instructor === prof
+        );
 
         profsObj[prof] = {};
         profsObj[prof].courseList = profCourses;
