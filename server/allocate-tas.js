@@ -29,12 +29,14 @@ async function allocateTAs(semester='summer2021', preferenceWeighting=1){
         for (applicant of coursesObj[courseCode]){
             if (hoursRequired < 5) break; 
             if (allocatedList.includes(applicant.email)) continue;
+
+            allocatedHours = Math.min(applicant.availability, hoursRequired);
             
             if (!allocationObj[courseCode]){
-                allocationObj[courseCode] = [applicant.email];
+                allocationObj[courseCode] = [{email: applicant.email, hours: allocatedHours}];
             }
             else{
-                allocationObj[courseCode].push(applicant.email);
+                allocationObj[courseCode].push({email: applicant.email, hours: allocatedHours});
             }
 
             hoursRequired -= applicant.availability;
@@ -47,9 +49,10 @@ async function allocateTAs(semester='summer2021', preferenceWeighting=1){
         let allocationCol = db.collection(`/courses/${semester}/courses/${courseCode}/allocation`);
 
         for (ta of allocationObj[courseCode]){
-            await allocationCol.doc(ta).set({
-                status: 'pending'
-            })
+            await allocationCol.doc(ta.email).set({
+                status: 'pending',
+                hours_allocated: ta.hours
+            });
         }
 
     }
