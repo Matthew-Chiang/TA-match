@@ -4,6 +4,8 @@ const admin = require("firebase-admin");
 
 const db = admin.firestore();
 
+// Removing dedicated intructors spreadsheet
+/*
 // Read in profs data from temp folder and write to DB
 function parseProfData() {
     const sheet = [];
@@ -44,6 +46,7 @@ function parseProfData() {
             });
         });
 }
+*/
 
 // Read in applicants data from temp folder and write to DB
 async function parseApplicantsData(semester, year) {
@@ -161,41 +164,41 @@ async function parseApplicantsData(semester, year) {
 
 // Resolve to Obejct with all profs and their courses & TA applicants
 async function buildProfsObj(semester, year) {
-    tempProfsObj = {};
+    profsList = [];
+    coursesList = [];
     profsObj = {};
-    tempCoursesObj = {};
 
-    const profsRef = await db.collection("profs").get();
     const coursesRef = await db
         .collection(`courses/${semester + year}/courses`)
         .get();
 
-    // Build temporary courses and prof objects
-    profsRef.forEach((prof) => {
-        tempProfsObj[prof.id] = prof.data();
-    });
-    // couse per term
+    // course per term
     coursesRef.forEach(async (course) => {
-        tempCoursesObj[course.id] = course.data();
+        tempCourse = course.data();
+        tempCourse.course_code = course.id;
+        coursesList.push(tempCourse);
     });
 
     // Add list of applicant objects to temp object
-    courseIds = Object.keys(tempCoursesObj);
-    for (i = 0; i < courseIds.length; i++) {
-        courseId = courseIds[i];
+    for (i = 0; i < coursesList.length; i++){
+        course = coursesList[i];
+
+        prof = course.instructor;
+        prof in profsList ? {} : profsList.push(prof);
+
+        courseId = course.course_code;
         applicantsList = [];
         const applicantsCol = await db
             .collection(
                 `courses/${semester + year}/courses/${courseId}/applicants`
             )
             .get();
-
         applicantsCol.forEach((applicant) => {
             newApplicant = applicant.data();
             newApplicant["email"] = applicant.id;
             applicantsList.push(newApplicant);
         });
-        tempCoursesObj[courseId].applicant_list = applicantsList;
+        course.applicant_list = applicantsList;
 
         allocationsList = [];
         const allocationsCol = await db
@@ -209,28 +212,20 @@ async function buildProfsObj(semester, year) {
             newAllocation["email"] = allocation.id;
             allocationsList.push(newAllocation);
         });
-        tempCoursesObj[courseId].allocation_list = allocationsList;
+        course.allocation_list = allocationsList;    
     }
 
     // Build final profs obj
-    profsObj = tempProfsObj;
-    Object.keys(tempProfsObj).forEach((prof) => {
-        for (i = 0; i < tempProfsObj[prof].courseList.length; i++) {
-            // console.log(profsObj);
-            // console.log(tempProfsObj);
-            courseCode = tempProfsObj[prof].courseList[i];
-            if (!Object.keys(tempCoursesObj).includes(courseCode)) continue;
-            // console.log(courseCode);
-            // console.log(tempCoursesObj);
+    profsList.forEach((prof) => {
 
-            profsObj[prof].courseList[i] = tempCoursesObj[courseCode];
-            profsObj[prof].courseList[i]["course_code"] = courseCode;
-        }
+        profCourses = coursesList.filter(course => course.instructor === prof);
+
+        profsObj[prof] = {};
+        profsObj[prof].courseList = profCourses;
     });
-    console.log(JSON.stringify(profsObj));
     return profsObj;
 }
 
-exports.parseProfData = parseProfData;
+// exports.parseProfData = parseProfData;
 exports.parseApplicantsData = parseApplicantsData;
 exports.buildProfsObj = buildProfsObj;

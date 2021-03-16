@@ -64,7 +64,7 @@ app.post("/api/uploadApplicantsFile", function (req, res) {
     let upload = multer({ storage: storage }).single("ApplicantsFile");
 
     upload(req, res, function (err) {
-        console.log(req.file);
+        // console.log(req.file);
         parseApplicantsData(req.body.semester, req.body.year);
         res.status(200).send({ data: "Successful upload" });
     });
@@ -105,6 +105,7 @@ app.get("/api/signin/:email", async (req, res) => {
 app.get("/api/getAllApplicantData", async (req, res) => {
     try {
         let profs = await buildProfsObj("summer", 2021);
+
         // sends information back about what term we're looking at
         // changing the above line should also change the line below
         const responseObj = { profs, semester: "Summer 2021" };
@@ -119,6 +120,7 @@ app.get("/api/getApplicantData/:email", async (req, res) => {
 
     try {
         let profs = await buildProfsObj("summer", 2021);
+        console.log(profs);
         // sends information back about what term we're looking at
         // changing the above line should also change the line below
         if (profs[email]) {
@@ -166,7 +168,7 @@ app.post("/api/rank", async (req, res) => {
             .collection("applicants")
             .get();
         check.forEach((a) => {
-            console.log(a.data());
+            // console.log(a.data());
             if (
                 a.id != applicantEmail &&
                 a.data().profRank != "Unranked" &&
@@ -187,7 +189,7 @@ app.post("/api/rank", async (req, res) => {
                 .collection("applicants")
                 .doc(applicantEmail)
                 .update({ profRank: rank });
-            console.log(update);
+            // console.log(update);
             res.send("success");
         } else {
             res.status(404).send(
@@ -204,10 +206,12 @@ app.post("/api/rank", async (req, res) => {
 app.post("/api/calcHours", async (req, res) => {
     const sem = req.body.sem;
     const calcHours = req.body.hours;
+
     let calculation = [];
 
     try {
         calcHours.map((e) => {
+
             if (e["Course"]) {
                 e["Course"] = e["Course"].replace(/\s/g, "");
                 if (!e["Hrs 2020"]) {
@@ -222,16 +226,20 @@ app.post("/api/calcHours", async (req, res) => {
                 calculation.push({
                     course: e["Course"],
                     ta_hours: num,
+                    instructor: e["Instructor"],
                 });
             }
         });
         calculation.forEach((a) => {
             const hours = db
-                .collection("testCourse")
+                .collection("courses")
                 .doc(sem)
                 .collection("courses")
                 .doc(a["course"]);
-            hours.set({ ta_hours: a["ta_hours"] });
+
+            hours.set({ ta_hours: a["ta_hours"], 
+                        instructor: a["instructor"]
+                    });
         });
         res.send("success");
     } catch (err) {
@@ -266,7 +274,7 @@ app.get("/api/getHours/:sem", async (req, res) => {
 
     try {
         const find = await db
-            .collection("testCourse")
+            .collection("courses")
             .doc(sem)
             .collection("courses")
             .get();
@@ -290,7 +298,7 @@ app.put("/api/updateHours", async (req, res) => {
 
     try {
         await db
-            .collection("testCourse")
+            .collection("courses")
             .doc(sem)
             .collection("courses")
             .doc(course)

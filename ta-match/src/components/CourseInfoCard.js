@@ -327,7 +327,8 @@ export default function CourseInfoCard({
                     </Accordion>
                 )}
                 {"allocation_list" in courseState &&
-                courseState.allocation_list.length > 0 ? (
+                courseState.allocation_list.length > 0 ? 
+                (
                     <Accordion>
                         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                             <div>TA Allocations:</div>
