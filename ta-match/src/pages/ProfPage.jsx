@@ -13,6 +13,7 @@ const ProfPage = () => {
     const [taQuestions, setTaQuestions] = useState([]);
     const [courseName, setCourseName] = useState("");
     const [oldQuestions, setOldQuestions] = useState([]);
+    const [currentCourseList, setCurrentCourseList] = useState([]);
 
     const handleQuestionTextChange = (event, index) => {
         let newQuestions = [...taQuestions];
@@ -59,6 +60,30 @@ const ProfPage = () => {
             });
     };
 
+    const getAllSemesters = () => {
+        // we prob do this call elsewhere in the flow
+        // in the future, we should refactor this behaviour so that this data is only called once
+        // hardcoded to john
+        fetch(`http://localhost:5000/api/getApplicantData/${"john@uwo.ca"}`, {
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
+        })
+            .then((res) => {
+                console.log(res);
+                res.json()
+                    .then((data) => {
+                        setCurrentCourseList(data.courseList);
+                        console.log(data.courseList);
+                    })
+                    .catch((e) => {
+                        console.log(e);
+                    });
+            })
+            .catch((e) => {
+                console.log(e);
+            });
+    };
+
     return (
         <div className="container">
             <Dashboard />
@@ -69,6 +94,7 @@ const ProfPage = () => {
                 onClick={() => {
                     setOpenTaApp(true);
                     getOldQuestions();
+                    getAllSemesters();
                 }}
             >
                 New TA Application
@@ -86,12 +112,22 @@ const ProfPage = () => {
                 <div style={{ backgroundColor: "white" }}>
                     <h1>Create TA Application</h1>
                     <p>Course Name: </p>
-                    <TextField
-                        value={courseName}
-                        onChange={(event) => {
-                            setCourseName(event.target.value);
+
+                    <NativeSelect
+                        id="select"
+                        onChange={(e) => {
+                            setCourseName(e.target.value);
                         }}
-                    />
+                    >
+                        <option value=""> Select course</option>
+                        {currentCourseList.map((currentCourse, index) => {
+                            return (
+                                <option key={index}>
+                                    {currentCourse.course_code}
+                                </option>
+                            );
+                        })}
+                    </NativeSelect>
                     {taQuestions.map((question, index) => {
                         return (
                             <div key={index}>
