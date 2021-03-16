@@ -350,15 +350,18 @@ app.get("/api/questions/:semester", async (req, res) => {
             .get();
         let fields = [];
         questionsCollection.forEach((doc) => {
+            console.log(doc);
             fields = Object.keys(doc.data());
             let questions = doc.data();
 
-            questionsWithCourseID = {
-                course: doc.id,
-                questions: questions.questions,
-            };
+            if (questions.questions) {
+                questionsWithCourseID = {
+                    course: doc.id,
+                    questions: questions.questions,
+                };
 
-            response.push(questionsWithCourseID);
+                response.push(questionsWithCourseID);
+            }
         });
         res.json(response);
     } catch (err) {
