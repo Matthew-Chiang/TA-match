@@ -342,10 +342,7 @@ app.post("/api/addQuestionsForTA", async (req, res) => {
 app.get("/api/questions/:semester", async (req, res) => {
     const semester = req.params.semester;
     let response = [];
-    const viewers = [
-        { course: 1, question1: "1", question2: "2" },
-        { course: 2, question1: "1", question2: "2", question3: "3" },
-    ];
+
     try {
         const questionsCollection = await db
             .collection("courses")
@@ -366,6 +363,30 @@ app.get("/api/questions/:semester", async (req, res) => {
                 response.push(questionsWithCourseID);
             }
         });
+        res.json(response);
+    } catch (err) {
+        console.log(err);
+    }
+});
+
+//get all past professor questions
+app.get("/api/pastQuestions/:professor", async (req, res) => {
+    const email = req.params.professor;
+    let response = [];
+
+    try {
+        const questionSnapshot = await db
+            .collectionGroup("courses")
+            .where("instructor", "==", email)
+            .get();
+
+        questionSnapshot.forEach((doc) => {
+            const documentQuestions = doc.data().questions;
+            if (documentQuestions) {
+                response.push(...documentQuestions);
+            }
+        });
+
         res.json(response);
     } catch (err) {
         console.log(err);
