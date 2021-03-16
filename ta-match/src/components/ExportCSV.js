@@ -17,6 +17,12 @@ export const ExportCSV = ({ csvData, fileName }) => {
         FileSaver.saveAs(data, fileName + fileExtension);
     };
     return (
-        <button onClick={(e) => exportToCSV(csvData, fileName)}>Export</button>
+        <div>
+            {csvData.length > 0 && (
+                <button onClick={(e) => exportToCSV(csvData, fileName)}>
+                    Export
+                </button>
+            )}
+        </div>
     );
 };

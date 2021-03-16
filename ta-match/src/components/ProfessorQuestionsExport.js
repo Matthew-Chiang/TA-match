@@ -72,13 +72,8 @@ class ProfessorQuestionsExport extends React.Component {
                     onChange={this.handleChange}
                 />
                 <button onClick={this.handleExport} noValidate>
-                    Download Questions for Export
+                    View Questions for Export
                 </button>
-
-                <ExportCSV
-                    csvData={this.parseQuestionData()}
-                    fileName={fileName}
-                />
 
                 <ul>
                     {allQuestions.map((item, index) => (
@@ -92,6 +87,11 @@ class ProfessorQuestionsExport extends React.Component {
                         </li>
                     ))}
                 </ul>
+
+                <ExportCSV
+                    csvData={this.parseQuestionData()}
+                    fileName={fileName}
+                />
             </div>
         );
     }
