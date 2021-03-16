@@ -108,7 +108,7 @@ const ProfPage = () => {
                 onClose={() => {
                     setOpenTaApp(false);
                 }}
-            >
+               >
                 <div style={{ backgroundColor: "white" }}>
                     <h1>Create TA Application</h1>
                     <p>Course Name: </p>

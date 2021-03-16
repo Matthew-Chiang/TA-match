@@ -191,10 +191,10 @@ function getCalcHours() {
               <b>Course:</b> {course}
               <br />
               <br />
-              <b>Allocated hours (current):</b> {hours}
+              <b>Calculated hours (current):</b> {hours}
               <br />
               <br />
-              <b>Allocated hours (new):</b>
+              <b>Calculated hours (new):</b>
               <TextField 
               className={classes.txtField} 
               id="standard-basic" 

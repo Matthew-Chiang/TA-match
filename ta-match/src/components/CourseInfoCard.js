@@ -76,7 +76,7 @@ export default function CourseInfoCard({
         setTempRanking({ ...tempRanking, [email]: rank - 1 });
     }
 
-    function updateRank(course, email, sem) {
+    function updateRank(course, email) {
         fetch(`http://localhost:5000/api/rank`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -84,7 +84,6 @@ export default function CourseInfoCard({
                 course: course,
                 email: email,
                 rank: tempRanking[email],
-                sem: sem,
             }),
         })
             .then((response) => {
@@ -182,6 +181,7 @@ export default function CourseInfoCard({
                     University of Western Ontario
                 </Typography>
                 <p> {courseState["course_code"]} </p>
+                {console.log(courseState)}
                 <Typography className={classes.pos} color="textSecondary">
                     {semester}
                 </Typography>
@@ -288,8 +288,7 @@ export default function CourseInfoCard({
                                                                         courseState[
                                                                             "course_code"
                                                                         ],
-                                                                        applicant.email,
-                                                                        "summer2021"
+                                                                        applicant.email
                                                                     );
                                                                 }}
                                                             >

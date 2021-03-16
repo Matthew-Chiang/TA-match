@@ -12,6 +12,21 @@ app.use(bodyParser.json());
 var urlParser = bodyParser.urlencoded({ extended: false });
 app.use(bodyParser.urlencoded({ extended: false }));
 
+//----checking for the summer semester----
+var today = new Date();
+var year = today.getFullYear()
+var month = today.getMonth()+1;
+if(month >= 1 && month <= 4){
+    month = "winter";
+}
+else if(month >= 5 && month <= 8){
+    month = "summer";
+}
+else{
+    month = "fall";
+}
+//-----------------------------------------
+
 app.use((req, res, next) => {
     // for all routes
     console.log(`${req.method} request for ${req.url}`);
@@ -149,13 +164,15 @@ app.get("/api/allocateTAs/", async (req, res) => {
 app.post("/api/rank", async (req, res) => {
     const course = req.body.course;
     const applicantEmail = req.body.email;
+    const semester = month+year;
     let rank;
+    
     if (req.body.rank == 0) {
         rank = "Unranked";
     } else {
         rank = req.body.rank;
     }
-    const semester = req.body.sem;
+    
     let count = 0;
 
     try {
@@ -243,6 +260,7 @@ app.post("/api/calcHours", async (req, res) => {
     }
 });
 
+//test function to delete later i think
 app.get("/api/test/:course/:sem", async (req, res) => {
     const course = req.params.course;
     const sem = req.params.sem;
