@@ -120,7 +120,6 @@ app.get("/api/getApplicantData/:email", async (req, res) => {
 
     try {
         let profs = await buildProfsObj("summer", 2021);
-        console.log(profs);
         // sends information back about what term we're looking at
         // changing the above line should also change the line below
         if (profs[email]) {
@@ -211,7 +210,6 @@ app.post("/api/calcHours", async (req, res) => {
 
     try {
         calcHours.map((e) => {
-
             if (e["Course"]) {
                 e["Course"] = e["Course"].replace(/\s/g, "");
                 if (!e["Hrs 2020"]) {
@@ -237,9 +235,7 @@ app.post("/api/calcHours", async (req, res) => {
                 .collection("courses")
                 .doc(a["course"]);
 
-            hours.set({ ta_hours: a["ta_hours"], 
-                        instructor: a["instructor"]
-                    });
+            hours.set({ ta_hours: a["ta_hours"], instructor: a["instructor"] });
         });
         res.send("success");
     } catch (err) {
@@ -358,7 +354,6 @@ app.get("/api/questions/:semester", async (req, res) => {
             .get();
         let fields = [];
         questionsCollection.forEach((doc) => {
-            console.log(doc);
             fields = Object.keys(doc.data());
             let questions = doc.data();
 

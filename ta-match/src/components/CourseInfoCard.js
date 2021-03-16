@@ -19,6 +19,7 @@ import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
+import QuestionAnswerModal from "./QuestionAnswerModal";
 
 const useStyles = makeStyles({
     root: {
@@ -37,7 +38,11 @@ const useStyles = makeStyles({
         marginTop: 6,
     },
     container: {
-        marginTop: 20,
+        marginTop: 10,
+    },
+    tableContainer: {
+        marginTop: 10,
+        overflowX: "auto",
     },
     table: {
         minWidth: 1000,
@@ -188,204 +193,183 @@ export default function CourseInfoCard({
                         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                             <div>Applicants:</div>
                         </AccordionSummary>
-                        <AccordionDetails>
-                            <div>
-                                <TableContainer className={classes.container}>
-                                    <Table className={classes.table}>
-                                        <TableHead>
-                                            <TableRow>
-                                                <TableCell>
-                                                    <h3>Name</h3>
-                                                </TableCell>
-                                                <TableCell>
-                                                    <h3>Email</h3>
-                                                </TableCell>
-                                                <TableCell>
-                                                    <h3>Fundable</h3>
-                                                </TableCell>
-                                                <TableCell>
-                                                    <h3>Answer 1</h3>
-                                                </TableCell>
-                                                <TableCell>
-                                                    <h3>Answer 2</h3>
-                                                </TableCell>
-                                                <TableCell>
-                                                    <h3>Current Rank</h3>
-                                                </TableCell>
-                                                <TableCell>
-                                                    <h3>Update Rank</h3>
-                                                </TableCell>
-                                            </TableRow>
-                                        </TableHead>
-                                        <TableBody>
-                                            {courseState["applicant_list"].map(
-                                                (applicant, index) => {
-                                                    if (!applicant.profRank) {
-                                                        applicant.profRank =
-                                                            "Unranked";
-                                                    }
-                                                    return (
-                                                        <TableRow
-                                                            key={
-                                                                courseState[
-                                                                    "course"
-                                                                ]
-                                                            }
-                                                        >
-                                                            <TableCell>
-                                                                {applicant.name}
-                                                            </TableCell>
-                                                            <TableCell>
-                                                                {
-                                                                    applicant.email
-                                                                }
-                                                            </TableCell>
-                                                            <TableCell>
-                                                                {
-                                                                    applicant.fundable
-                                                                }
-                                                            </TableCell>
-                                                            <TableCell>
-                                                                {
-                                                                    applicant.answer1
-                                                                }
-                                                            </TableCell>
-                                                            <TableCell>
-                                                                {
-                                                                    applicant.answer2
-                                                                }
-                                                            </TableCell>
-                                                            <TableCell>
-                                                                {
-                                                                    applicant.profRank
-                                                                }
-                                                            </TableCell>
-                                                            <TableCell>
-                                                                <NativeSelect
-                                                                    id="select"
-                                                                    onChange={(
-                                                                        e
-                                                                    ) => {
-                                                                        setRank(
-                                                                            applicant.email,
-                                                                            e
-                                                                                .target
-                                                                                .selectedIndex +
-                                                                                1
-                                                                        );
-                                                                    }}
-                                                                >
-                                                                    <option value="">
-                                                                        {" "}
-                                                                        Select
-                                                                        rank
-                                                                    </option>
-                                                                    {courseState[
-                                                                        "applicant_list"
-                                                                    ].map(
-                                                                        (
-                                                                            applicant,
-                                                                            index
-                                                                        ) => {
-                                                                            return (
-                                                                                <option
-                                                                                    key={
-                                                                                        index
-                                                                                    }
-                                                                                >
-                                                                                    {index +
-                                                                                        1}
-                                                                                </option>
-                                                                            );
-                                                                        }
-                                                                    )}
-                                                                </NativeSelect>
-                                                                <Button
-                                                                    color="primary"
-                                                                    onClick={() => {
-                                                                        updateRank(
-                                                                            courseState[
-                                                                                "course_code"
-                                                                            ],
-                                                                            applicant.email,
-                                                                            "summer2021"
-                                                                        );
-                                                                    }}
-                                                                >
-                                                                    Submit
-                                                                </Button>
-                                                            </TableCell>
-                                                        </TableRow>
-                                                    );
+                        <AccordionDetails className={classes.tableContainer}>
+                            <TableContainer>
+                                <Table className={classes.table}>
+                                    <TableHead>
+                                        <TableRow>
+                                            <TableCell>
+                                                <h3>Name</h3>
+                                            </TableCell>
+                                            <TableCell>
+                                                <h3>Email</h3>
+                                            </TableCell>
+                                            <TableCell>
+                                                <h3>Fundable</h3>
+                                            </TableCell>
+                                            <TableCell>
+                                                <h3>Current Rank</h3>
+                                            </TableCell>
+                                            <TableCell>
+                                                <h3>Update Rank</h3>
+                                            </TableCell>
+                                            <TableCell>
+                                                <h3>See More</h3>
+                                            </TableCell>
+                                        </TableRow>
+                                    </TableHead>
+                                    <TableBody>
+                                        {courseState["applicant_list"].map(
+                                            (applicant, index) => {
+                                                if (!applicant.profRank) {
+                                                    applicant.profRank =
+                                                        "Unranked";
                                                 }
-                                            )}
-                                        </TableBody>
-                                    </Table>
-                                </TableContainer>
-                            </div>
+                                                return (
+                                                    <TableRow
+                                                        key={
+                                                            courseState[
+                                                                "course"
+                                                            ]
+                                                        }
+                                                    >
+                                                        <TableCell>
+                                                            {applicant.name}
+                                                        </TableCell>
+                                                        <TableCell>
+                                                            {applicant.email}
+                                                        </TableCell>
+                                                        <TableCell>
+                                                            {applicant.fundable}
+                                                        </TableCell>
+                                                        <TableCell>
+                                                            {applicant.profRank}
+                                                        </TableCell>
+                                                        <TableCell>
+                                                            <NativeSelect
+                                                                id="select"
+                                                                onChange={(
+                                                                    e
+                                                                ) => {
+                                                                    setRank(
+                                                                        applicant.email,
+                                                                        e.target
+                                                                            .selectedIndex +
+                                                                            1
+                                                                    );
+                                                                }}
+                                                            >
+                                                                <option value="">
+                                                                    {" "}
+                                                                    Select rank
+                                                                </option>
+                                                                {courseState[
+                                                                    "applicant_list"
+                                                                ].map(
+                                                                    (
+                                                                        applicant,
+                                                                        index
+                                                                    ) => {
+                                                                        return (
+                                                                            <option
+                                                                                key={
+                                                                                    index
+                                                                                }
+                                                                            >
+                                                                                {index +
+                                                                                    1}
+                                                                            </option>
+                                                                        );
+                                                                    }
+                                                                )}
+                                                            </NativeSelect>
+                                                            <Button
+                                                                color="primary"
+                                                                onClick={() => {
+                                                                    updateRank(
+                                                                        courseState[
+                                                                            "course_code"
+                                                                        ],
+                                                                        applicant.email,
+                                                                        "summer2021"
+                                                                    );
+                                                                }}
+                                                            >
+                                                                Submit
+                                                            </Button>
+                                                        </TableCell>
+                                                        <TableCell>
+                                                            <QuestionAnswerModal
+                                                                questionAnswers={
+                                                                    applicant.questionAnswerPairs
+                                                                }
+                                                            />
+                                                        </TableCell>
+                                                    </TableRow>
+                                                );
+                                            }
+                                        )}
+                                    </TableBody>
+                                </Table>
+                            </TableContainer>
                         </AccordionDetails>
                     </Accordion>
                 )}
                 {"allocation_list" in courseState &&
-                courseState.allocation_list.length > 0 ? 
-                (
+                courseState.allocation_list.length > 0 ? (
                     <Accordion>
                         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                             <div>TA Allocations:</div>
                         </AccordionSummary>
                         <AccordionDetails>
-                            <div>
-                                {courseState["allocation_list"].map(
-                                    (allocation, index) => {
-                                        return (
-                                            <div key={index}>
-                                                <p>Email: {allocation.email}</p>
-                                                <p>
-                                                    Status: {allocation.status}
-                                                </p>
-                                                <div
-                                                    className={
-                                                        classes.sideBySideDisplay
+                            {courseState["allocation_list"].map(
+                                (allocation, index) => {
+                                    return (
+                                        <div key={index}>
+                                            <p>Email: {allocation.email}</p>
+                                            <p>Status: {allocation.status}</p>
+                                            <div
+                                                className={
+                                                    classes.sideBySideDisplay
+                                                }
+                                            >
+                                                <Button
+                                                    onClick={() =>
+                                                        changeTAStatus(
+                                                            allocation.email,
+                                                            "confirmed"
+                                                        )
                                                     }
                                                 >
-                                                    <Button
-                                                        onClick={() =>
-                                                            changeTAStatus(
-                                                                allocation.email,
-                                                                "confirmed"
-                                                            )
-                                                        }
-                                                    >
-                                                        Accept into Course
-                                                    </Button>
-                                                    <Button
-                                                        onClick={() =>
-                                                            changeTAStatus(
-                                                                allocation.email,
-                                                                "rejected"
-                                                            )
-                                                        }
-                                                    >
-                                                        Reject from Course
-                                                    </Button>
-                                                </div>
-                                                {editPrivilege && (
-                                                    <Button
-                                                        onClick={() => {
-                                                            deleteTaAllocation(
-                                                                allocation.email
-                                                            );
-                                                        }}
-                                                    >
-                                                        Delete TA Allocation
-                                                    </Button>
-                                                )}
-                                                <br></br>
+                                                    Accept into Course
+                                                </Button>
+                                                <Button
+                                                    onClick={() =>
+                                                        changeTAStatus(
+                                                            allocation.email,
+                                                            "rejected"
+                                                        )
+                                                    }
+                                                >
+                                                    Reject from Course
+                                                </Button>
                                             </div>
-                                        );
-                                    }
-                                )}
-                            </div>
+                                            {editPrivilege && (
+                                                <Button
+                                                    onClick={() => {
+                                                        deleteTaAllocation(
+                                                            allocation.email
+                                                        );
+                                                    }}
+                                                >
+                                                    Delete TA Allocation
+                                                </Button>
+                                            )}
+                                            <br></br>
+                                        </div>
+                                    );
+                                }
+                            )}
                         </AccordionDetails>
                     </Accordion>
                 ) : (
