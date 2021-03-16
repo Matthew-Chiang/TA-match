@@ -216,8 +216,8 @@ app.post("/api/calcHours", async (req, res) => {
                     e["Hrs 2020"] = 0;
                 }
                 let num = Math.ceil(
-                    (e["Hrs 2020"] / e["Enrol 2020"]) * e["Enrol 2021"]
-                );
+                    ((e["Hrs 2020"] / e["Enrol 2020"]) * e["Enrol 2021"])/5
+                )*5;
                 if (isNaN(num)) {
                     num = 0;
                 }
