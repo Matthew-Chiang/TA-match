@@ -35,6 +35,9 @@ const useStyles = makeStyles({
   overrideBtn: {
     marginRight: 20,
     marginBottom: 10
+  },
+  hoursBtn: {
+    float: "right",
   }
 });
 
@@ -43,7 +46,6 @@ export default function HoursCalculation() {
   const classes = useStyles();
 
   // parse Excel
-  const [items, setItems] = useState([]);
   const [hoursData, setCalcHours] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -67,15 +69,18 @@ export default function HoursCalculation() {
     });
 
     promise.then((d) => {
-      setItems(d); 
       postCalcHours("summer2021",d)
       .then(response=>{
-        console.log(response)
-        //this is to populate the hours after uploading a spreadsheet
-        getCalcHours();
+        if (response.status == 400) {
+          alert("Spreadsheet Invalid. Please upload one with the following columns: Instructor, Course, Enrol 2020, Enrol 2021, Hrs 2021")
+        }
+        else {
+          console.log(response)
+          getCalcHours();
+        }
       })
       .catch(err =>{
-          console.log(err)
+          alert(err);
       })
     });
   };
@@ -85,7 +90,6 @@ function getCalcHours() {
   getHours("summer2021")
   .then(response=>{
       console.log(response)
-            
       setCalcHours(response)
       setIsLoading(false)
   })
@@ -143,15 +147,14 @@ function getCalcHours() {
           readExcel(file);
         }}
       />
-      <hr></hr>
-      <Button className="submitButton"
+      <Button className={classes.hoursBtn}
             color="primary"
             variant="contained"
             onClick={() => getCalcHours()}
              >
             See Calculated TA Hours 
           </Button>
-        <TableContainer className={classes.container}>
+        {!isLoading ? <TableContainer className={classes.container}>
         <Table className={classes.table}>
           <TableHead>
             <TableRow>
@@ -162,7 +165,6 @@ function getCalcHours() {
           </TableHead>
           <TableBody>
           {hoursData.map((course)=>{
-
               return (
                 <TableRow key={course["course"]}>
                   <TableCell component="th" scope="row">{course["course"]}</TableCell>
@@ -175,11 +177,10 @@ function getCalcHours() {
               </TableRow>
               )
             })}
-            
           </TableBody>
         </Table>
       </TableContainer>
-
+      : <div></div>}
       <Dialog
           open={open}
           fullWidth={true}
