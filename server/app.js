@@ -448,7 +448,7 @@ app.post("/api/allocation/add", async (req, res) => {
     const semester = req.body.semester;
     const courseName = req.body.courseName;
     const email = req.body.email;
-    const hours = req.body.hours
+    const hours = parseInt(req.body.hours);
     try {
         const allocation = await db
             .collection("courses")
