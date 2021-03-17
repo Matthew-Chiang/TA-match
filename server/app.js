@@ -207,37 +207,49 @@ app.post("/api/calcHours", async (req, res) => {
     const calcHours = req.body.hours;
 
     let calculation = [];
+    let valid = 0;
 
     try {
         calcHours.map((e) => {
-            if (e["Course"]) {
-                e["Course"] = e["Course"].replace(/\s/g, "");
-                if (!e["Hrs 2020"]) {
-                    e["Hrs 2020"] = 0;
-                }
-                let num = Math.ceil(
-                    ((e["Hrs 2020"] / e["Enrol 2020"]) * e["Enrol 2021"])/5
-                )*5;
-                if (isNaN(num)) {
-                    num = 0;
-                }
-                calculation.push({
-                    course: e["Course"],
-                    ta_hours: num,
-                    instructor: e["Instructor"],
-                });
+            if (typeof e["Instructor"] !== "undefined" && typeof e["Course"] !== "undefined" && typeof e["Enrol 2020"] !== "undefined" && typeof e["Enrol 2021"] !== "undefined" && typeof e["Hrs 2021"] !== "undefined") {
+                valid++;
             }
-        });
-        calculation.forEach((a) => {
-            const hours = db
-                .collection("courses")
-                .doc(sem)
-                .collection("courses")
-                .doc(a["course"]);
-
-            hours.set({ ta_hours: a["ta_hours"], instructor: a["instructor"] });
-        });
-        res.send("success");
+        })
+        console.log(valid)
+        if (valid > 0) {
+            calcHours.map((e) => {
+                if (e["Course"] && !((e["Course"]).includes("/"))) {
+                    e["Course"] = e["Course"].replace(/\s/g, "");
+                    if (!e["Hrs 2020"]) {
+                        e["Hrs 2020"] = 0;
+                    }
+                    let num = Math.ceil(
+                        ((e["Hrs 2020"] / e["Enrol 2020"]) * e["Enrol 2021"])/5
+                    )*5;
+                    if (isNaN(num)) {
+                        num = 0;
+                    }
+                    calculation.push({
+                        course: e["Course"],
+                        ta_hours: num,
+                        instructor: e["Instructor"],
+                    });
+                }
+            });
+            calculation.forEach((a) => {
+                const hours = db
+                    .collection("courses")
+                    .doc(sem)
+                    .collection("courses")
+                    .doc(a["course"]);
+    
+                hours.set({ ta_hours: a["ta_hours"], instructor: a["instructor"] });
+            });
+            res.send("success");
+        }
+        else {
+            res.status(400).send("error");
+        }
     } catch (err) {
         res.send(err);
     }
