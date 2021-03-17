@@ -448,7 +448,7 @@ app.post("/api/allocation/add", async (req, res) => {
     const semester = req.body.semester;
     const courseName = req.body.courseName;
     const email = req.body.email;
-
+    const hours = req.body.hours
     try {
         const allocation = await db
             .collection("courses")
@@ -457,7 +457,7 @@ app.post("/api/allocation/add", async (req, res) => {
             .doc(courseName)
             .collection("allocation")
             .doc(email)
-            .set({ status: "pending" });
+            .set({ status: "pending", hours_allocated: hours});
         res.send("return");
     } catch (err) {
         console.log(err);
