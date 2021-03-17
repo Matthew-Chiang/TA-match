@@ -3,7 +3,23 @@ const admin = require("firebase-admin");
 const db = admin.firestore();
 
 
-async function allocateTAs(semester='summer2021', preferenceWeighting=1){
+//----checking for the summer semester----
+var today = new Date();
+var year = today.getFullYear()
+var month = today.getMonth()+1;
+if(month >= 1 && month <= 4){
+    month = "winter";
+}
+else if(month >= 5 && month <= 8){
+    month = "summer";
+}
+else{
+    month = "fall";
+}
+//-----------------------------------------
+
+//@leslie: check
+async function allocateTAs(semester=month+year, preferenceWeighting=1){
 
     let hoursPerCourse = {};
     let coursesCol = await db.collection(`/courses/${semester}/courses/`).get();

@@ -68,7 +68,7 @@ export default function HoursCalculation() {
 
     promise.then((d) => {
       setItems(d); 
-      postCalcHours("summer2021",d)
+      postCalcHours(d)
       .then(response=>{
         console.log(response)
         //this is to populate the hours after uploading a spreadsheet
@@ -82,7 +82,7 @@ export default function HoursCalculation() {
 
 //this is to populate the hours if clicked
 function getCalcHours() {
-  getHours("summer2021")
+  getHours()
   .then(response=>{
       console.log(response)
             
@@ -121,7 +121,7 @@ function getCalcHours() {
   }
 
   function updateHours(){
-    updateCalcHours("summer2021",course,newHours)
+    updateCalcHours(course,newHours)
     .then(response=>{
         console.log(response)
         getCalcHours()

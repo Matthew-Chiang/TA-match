@@ -26,7 +26,6 @@ const ProfPage = () => {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-                semester: "summer2021",
                 courseName: courseName,
                 questions: taQuestions,
             }),

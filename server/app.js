@@ -80,7 +80,8 @@ app.post("/api/uploadApplicantsFile", function (req, res) {
 
     upload(req, res, function (err) {
         // console.log(req.file);
-        parseApplicantsData(req.body.semester, req.body.year);
+        //@leslie: check
+        parseApplicantsData(month+year);
         res.status(200).send({ data: "Successful upload" });
     });
 });
@@ -149,7 +150,8 @@ app.get("/api/getApplicantData/:email", async (req, res) => {
 });
 
 app.get("/api/allocateTAs/", async (req, res) => {
-    const semester = req.query.semester ? req.params.semester : "summer2021";
+    //@leslie: check
+    const semester = req.query.semester ? req.params.semester : month+year;
     const preference = req.query.preference;
 
     try {
@@ -164,6 +166,7 @@ app.get("/api/allocateTAs/", async (req, res) => {
 app.post("/api/rank", async (req, res) => {
     const course = req.body.course;
     const applicantEmail = req.body.email;
+    //@leslie: check
     const semester = month+year;
     let rank;
     
@@ -220,7 +223,8 @@ app.post("/api/rank", async (req, res) => {
 
 //calculate and populate the recommended TA hours into the db
 app.post("/api/calcHours", async (req, res) => {
-    const sem = req.body.sem;
+    //@leslie: check
+    const sem = month+year;
     const calcHours = req.body.hours;
 
     let calculation = [];
@@ -282,8 +286,9 @@ app.get("/api/test/:course/:sem", async (req, res) => {
 });
 
 //retrieve all TA hours
-app.get("/api/getHours/:sem", async (req, res) => {
-    const sem = req.params.sem;
+app.get("/api/getHours", async (req, res) => {
+    //@leslie: check
+    const sem = month+year;
     let hours = [];
 
     try {
@@ -308,7 +313,8 @@ app.get("/api/getHours/:sem", async (req, res) => {
 app.put("/api/updateHours", async (req, res) => {
     const course = req.body.course;
     const hours = req.body.hours;
-    const sem = req.body.sem;
+    //@leslie: check
+    const sem = month+year;
 
     try {
         await db
@@ -339,7 +345,8 @@ app.post("/api/uploadInstructorsFile", function (req, res) {
 });
 
 app.post("/api/addQuestionsForTA", async (req, res) => {
-    const semester = req.body.semester;
+    //@leslie: check
+    const semester = month+year;
     const courseName = req.body.courseName;
     const questions = req.body.questions;
 
