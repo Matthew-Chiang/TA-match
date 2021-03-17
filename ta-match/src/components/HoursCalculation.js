@@ -15,7 +15,6 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import TextField from '@material-ui/core/TextField';
-import { getHours } from '../services/ChairService';
 
 const apiURL = 'http://localhost:5000/api';
 
@@ -82,7 +81,7 @@ export default function HoursCalculation() {
         }
         else {
           console.log(response)
-          getCalcHours();
+          //getCalcHours();
         }
       })
       .catch(err =>{
@@ -90,20 +89,6 @@ export default function HoursCalculation() {
       })
     });
   };
-
-//this is to populate the hours if clicked
-function getCalcHours() {
-  getHours()
-  .then(response=>{
-      console.log(response)
-      setCalcHours(response)
-      setIsLoading(false)
-  })
-  .catch(err =>{
-      console.log(err)
-  })
-}
-
 
   // Modal 
   const [open, setOpen] = React.useState(false);
@@ -141,12 +126,30 @@ function getCalcHours() {
     })
     .then(response=>{
         console.log(response)
-        getCalcHours()
+        //getCalcHours()
     })
     .catch(err =>{
         console.log(err)
     })
   }
+
+  //get all calculated hours
+  useEffect(() => {
+    fetch(`http://localhost:5000/api/getHours`)
+      .then((response)=>{
+        response.json()
+          .then((data)=>{
+            setCalcHours(data);
+            setIsLoading(false);
+          })
+          .catch((err)=>{
+            console.log(err);
+          })
+      })
+      .catch((err)=>{
+        console.log(err)
+      })
+  }, [newHours]);
 
   
   return (
@@ -163,7 +166,7 @@ function getCalcHours() {
       <Button className={classes.hoursBtn}
             color="primary"
             variant="contained"
-            onClick={() => getCalcHours()}
+            // onClick={() => getCalcHours()}
              >
             See Calculated TA Hours 
           </Button>
