@@ -1,5 +1,5 @@
 .container {
-  margin: 30px;
+  margin: 30px 50px;
 }
 
 .prof-button {
@@ -18,6 +18,14 @@
 
 .App-link {
   color: #61dafb;
+}
+
+h6 {
+  font-size: 1em;
+  color: grey;
+  margin: 0;
+  margin-bottom: 50px;
+  font-weight: 600
 }
 
 @keyframes App-logo-spin {

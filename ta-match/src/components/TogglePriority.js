@@ -13,12 +13,10 @@ import axios from 'axios';
 import PersonIcon from '@material-ui/icons/Person';
 import PropTypes from 'prop-types';
 import ListItemText from '@material-ui/core/ListItemText';
-import { NativeSelect } from "@material-ui/core";
 
 const apiURL = 'http://localhost:5000/api';
 
 const priorities = ['Professor', 'TA'];
-const season = ['Fall','Winter','Summer'];
 
 const useStyles = makeStyles({
   avatar: {
@@ -61,22 +59,6 @@ function SimpleDialog(props) {
         <div>
         <Dialog onClose={handleClose} fullWidth={true} aria-labelledby="simple-dialog-title" open={open}>
              <DialogTitle id="simple-dialog-title">Match TA and Courses</DialogTitle>
-             <NativeSelect
-                        id="select"
-                        onChange={(e) => {
-                            setSelectedSem(e.target.value);
-                        }}
-                    >
-                        <option value=""> Select semester</option>
-                        {season.map((s, index) => {
-                            return (
-                                <option key={index}>
-                                    {s}
-                                </option>
-                            );
-                        })}
-                    
-                    </NativeSelect>
              <List>
                  {priorities.map((priority) => (
                     <ListItem button onClick={() => handleListItemClick(priority)} key={priority}>
@@ -97,14 +79,12 @@ function SimpleDialog(props) {
 export default function SimpleDialogDemo() {
     const [open, setOpen] = React.useState(false);
     const [selectedValue, setSelectedValue] = React.useState(priorities[0]);
-    const [selectedSem, setSelectedSem] = React.useState(season[0]); //use this for the semester selection
     const handleClickOpen = () => {
         setOpen(true);
       };
     const handleClose = (value, sem) => {
         setOpen(false);
         setSelectedValue(value);
-        setSelectedSem(sem);
       };
 
     return (

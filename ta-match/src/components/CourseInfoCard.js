@@ -178,12 +178,11 @@ export default function CourseInfoCard({
                     color="textSecondary"
                     gutterBottom
                 >
-                    University of Western Ontario
-                </Typography>
-                <p> {courseState["course_code"]} </p>
-                {console.log(courseState)}
-                <Typography className={classes.pos} color="textSecondary">
                     {semester}
+                </Typography>
+                {console.log(courseState)}
+                <Typography className={classes.pos} variant="h5" component="h2" gutterBottom>
+                    {courseState["course_code"]}
                 </Typography>
                 {/*TODO this accordion should prob be put in its own component - there are 2 of them for applicants and allocations*/}
                 {viewApplicant && (

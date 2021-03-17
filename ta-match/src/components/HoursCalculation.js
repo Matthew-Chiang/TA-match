@@ -73,7 +73,7 @@ export default function HoursCalculation() {
       postCalcHours(d)
       .then(response=>{
         if (response.status == 400) {
-          alert("Spreadsheet Invalid. Please upload one with the following columns: Instructor, Course, Enrol 2020, Enrol 2021, Hrs 2021")
+          alert("Spreadsheet Invalid. Please upload one with the following columns: Instructor, Course, Hrs 2020,Enrol 2020, Enrol 2021.")
         }
         else {
           console.log(response)
@@ -139,7 +139,9 @@ function getCalcHours() {
   
   return (
     <div>
-      <h1>Calculate TA Hours</h1>
+      <h3>Calculate TA Hours</h3>
+      <p>Please upload a file in the form of a spreadsheet (XLS, XLSX, CSV) and that includes the following columns: Instructor (email), Course, Hrs 2020, Enrol 2020, Enrol 2021.</p>
+      <br></br>
       Upload spreadsheet: <input
         type="file"
         accept=".xlsx, .xls, .csv"
