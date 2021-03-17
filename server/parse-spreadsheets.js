@@ -169,7 +169,7 @@ async function parseApplicantsData(semester) {
 }
 
 // Resolve to Obejct with all profs and their courses & TA applicants
-async function buildProfsObj(semester, year) {
+async function buildProfsObj(semester) {
     profsList = [];
     coursesList = [];
     profsObj = {};

@@ -120,11 +120,13 @@ app.get("/api/signin/:email", async (req, res) => {
 
 app.get("/api/getAllApplicantData", async (req, res) => {
     try {
-        let profs = await buildProfsObj("summer", 2021);
+        //@leslie: check
+        let profs = await buildProfsObj(month+year);
 
         // sends information back about what term we're looking at
         // changing the above line should also change the line below
-        const responseObj = { profs, semester: "Summer 2021" };
+        //@leslie: check
+        const responseObj = { profs, semester: `${month} ${year}` };
         res.send(responseObj);
     } catch (err) {
         console.log(err);
@@ -135,11 +137,13 @@ app.get("/api/getApplicantData/:email", async (req, res) => {
     const email = req.params.email;
 
     try {
-        let profs = await buildProfsObj("summer", 2021);
+        //@leslie: check
+        let profs = await buildProfsObj(month+year);
         // sends information back about what term we're looking at
         // changing the above line should also change the line below
         if (profs[email]) {
-            const responseObj = { ...profs[email], semester: "Summer 2021" };
+            //@leslie: check
+            const responseObj = { ...profs[email], semester: `${month} ${year}` };
             res.send(responseObj);
         } else {
             res.send({});
@@ -228,49 +232,37 @@ app.post("/api/calcHours", async (req, res) => {
     const calcHours = req.body.hours;
 
     let calculation = [];
-    let valid = 0;
 
     try {
         calcHours.map((e) => {
-            if (typeof e["Instructor"] !== "undefined" && typeof e["Course"] !== "undefined" && typeof e["Enrol 2020"] !== "undefined" && typeof e["Enrol 2021"] !== "undefined" && typeof e["Hrs 2021"] !== "undefined") {
-                valid++;
-            }
-        })
-        console.log(valid)
-        if (valid > 0) {
-            calcHours.map((e) => {
-                if (e["Course"] && !((e["Course"]).includes("/"))) {
-                    e["Course"] = e["Course"].replace(/\s/g, "");
-                    if (!e["Hrs 2020"]) {
-                        e["Hrs 2020"] = 0;
-                    }
-                    let num = Math.ceil(
-                        ((e["Hrs 2020"] / e["Enrol 2020"]) * e["Enrol 2021"])/5
-                    )*5;
-                    if (isNaN(num)) {
-                        num = 0;
-                    }
-                    calculation.push({
-                        course: e["Course"],
-                        ta_hours: num,
-                        instructor: e["Instructor"],
-                    });
+            if (e["Course"]) {
+                e["Course"] = e["Course"].replace(/\s/g, "");
+                if (!e["Hrs 2020"]) {
+                    e["Hrs 2020"] = 0;
                 }
-            });
-            calculation.forEach((a) => {
-                const hours = db
-                    .collection("courses")
-                    .doc(sem)
-                    .collection("courses")
-                    .doc(a["course"]);
-    
-                hours.set({ ta_hours: a["ta_hours"], instructor: a["instructor"] });
-            });
-            res.send("success");
-        }
-        else {
-            res.status(400).send("error");
-        }
+                let num = Math.ceil(
+                    ((e["Hrs 2020"] / e["Enrol 2020"]) * e["Enrol 2021"])/5
+                )*5;
+                if (isNaN(num)) {
+                    num = 0;
+                }
+                calculation.push({
+                    course: e["Course"],
+                    ta_hours: num,
+                    instructor: e["Instructor"],
+                });
+            }
+        });
+        calculation.forEach((a) => {
+            const hours = db
+                .collection("courses")
+                .doc(sem)
+                .collection("courses")
+                .doc(a["course"]);
+
+            hours.set({ ta_hours: a["ta_hours"], instructor: a["instructor"] });
+        });
+        res.send("success");
     } catch (err) {
         res.send(err);
     }
