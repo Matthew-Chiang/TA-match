@@ -235,14 +235,14 @@ app.post("/api/calcHours", async (req, res) => {
     let valid = 0;
 
     try {
-        calcHours.map((e) => {
+        await calcHours.map((e) => {
             if (typeof e["Instructor"] !== "undefined" && typeof e["Course"] !== "undefined" && typeof e["Enrol 2020"] !== "undefined" && typeof e["Enrol 2021"] !== "undefined" && typeof e["Hrs 2021"] !== "undefined") {
                 valid++;
             }
         })
         console.log(valid)
         if (valid > 0) {
-            calcHours.map((e) => {
+            await calcHours.map((e) => {
                 if (e["Course"] && !((e["Course"]).includes("/"))) {
                     e["Course"] = e["Course"].replace(/\s/g, "");
                     if (!e["Hrs 2020"]) {
@@ -261,7 +261,7 @@ app.post("/api/calcHours", async (req, res) => {
                     });
                 }
             });
-            calculation.forEach((a) => {
+            await calculation.forEach((a) => {
                 const hours = db
                     .collection("courses")
                     .doc(sem)

@@ -47,6 +47,13 @@ export default function HoursCalculation() {
   // parse Excel
   const [hoursData, setCalcHours] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [updating, setUpdating] = useState(0);
+  const [test, setTest] = useState(0);
+    // Modal 
+  const [open, setOpen] = React.useState(false);
+  const [course,setCourse] = useState("");
+  const [hours,setHours] = useState("N/A");
+  const [newHours, setNewHours] = useState("");
 
   const readExcel = (file) => {
     const promise = new Promise((resolve, reject) => {
@@ -60,6 +67,7 @@ export default function HoursCalculation() {
         const ws = wb.Sheets[wsname];
         const data = XLSX.utils.sheet_to_json(ws);
         resolve(data);
+
       };
 
       fileReader.onerror = (error) => {
@@ -81,7 +89,7 @@ export default function HoursCalculation() {
         }
         else {
           console.log(response)
-          //getCalcHours();
+          setTest(test+1);
         }
       })
       .catch(err =>{
@@ -89,12 +97,6 @@ export default function HoursCalculation() {
       })
     });
   };
-
-  // Modal 
-  const [open, setOpen] = React.useState(false);
-  const [course,setCourse] = useState("");
-  const [hours,setHours] = useState("N/A");
-  const [newHours, setNewHours] = useState("");
 
   const handleClickOpen = (course,hours) => {
     setNewHours("")
@@ -125,8 +127,7 @@ export default function HoursCalculation() {
         }),
     })
     .then(response=>{
-        console.log(response)
-        //getCalcHours()
+        setUpdating(updating+1);
     })
     .catch(err =>{
         console.log(err)
@@ -141,6 +142,7 @@ export default function HoursCalculation() {
           .then((data)=>{
             setCalcHours(data);
             setIsLoading(false);
+            console.log(data)
           })
           .catch((err)=>{
             console.log(err);
@@ -149,7 +151,7 @@ export default function HoursCalculation() {
       .catch((err)=>{
         console.log(err)
       })
-  }, [newHours]);
+  }, [updating,test]);
 
   
   return (
