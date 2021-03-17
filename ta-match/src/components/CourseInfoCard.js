@@ -141,7 +141,7 @@ export default function CourseInfoCard({
                 let newState = { ...courseState };
                 newState["allocation_list"] = [
                     ...newState["allocation_list"],
-                    { status: "pending", email: addTaEmail, hours: addTaHours},
+                    { status: "pending", email: addTaEmail, hours_allocated: addTaHours},
                 ];
                 setCourseState(newState);
             })
@@ -364,6 +364,7 @@ export default function CourseInfoCard({
                                                 >
                                                     Delete TA Allocation
                                                 </Button>
+                                                
                                             )}
                                             <br></br>
                                         </div>
