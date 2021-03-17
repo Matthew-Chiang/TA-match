@@ -57,24 +57,29 @@ export default function SignIn() {
       await login(emailRef.current.value, passwordRef.current.value)
       .then(response=>{
         console.log(response)
-        checkUser(emailRef.current.value)
-      .then(response => {
-        console.log(response);
-        if(response=="professor"){
-          history.push("/professor")
-        }
-        else if(response=="administrator"){
-          history.push("/administrator")
-        }
-        else if(response=="chair"){
-          history.push("/chair")
-        }
-        else{
-          history.push("/login")
-        }
-      }, err=>{setError("Failed to log in")
-      })
-      }, err=> {setError("Failed to log in")}
+        fetch(`http://localhost:5000/api/signin/${emailRef.current.value}`)
+
+
+
+
+        //checkUser(emailRef.current.value)
+        .then(response => {
+          console.log(response)
+          if(response=="professor"){
+            history.push("/professor")
+          }
+          else if(response=="administrator"){
+            history.push("/administrator")
+          }
+          else if(response=="chair"){
+            history.push("/chair")
+          }
+          else{
+            history.push("/login")
+          }
+        }, err=>{setError("Failed to log in")
+        })
+        }, err=> {setError("Failed to log in")}
       )
     } catch {
       setError("Failed to log in")

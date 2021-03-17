@@ -112,6 +112,7 @@ app.get("/api/signin/:email", async (req, res) => {
     const email = req.params.email;
     try {
         const type = await db.collection("users").doc(email).get();
+        //const send = type.data().type;
         res.send(type.data().type);
     } catch (err) {
         res.send(err);
