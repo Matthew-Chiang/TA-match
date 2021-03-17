@@ -41,6 +41,8 @@ class AdminFilesUpload extends React.Component {
       return (
         <div className="uploadButtons">
             <h3>Upload Applicant Data</h3>
+            <p>Please upload a file in the form of a spreadsheet (XLS, XLSX, CSV) and that includes the following columns: [FILL THIS PART IN].</p>
+            <br></br>
             Upload spreadsheet: <input
               type="file"
               id="applicantData"

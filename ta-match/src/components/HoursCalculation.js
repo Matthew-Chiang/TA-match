@@ -35,9 +35,6 @@ const useStyles = makeStyles({
   overrideBtn: {
     marginRight: 20,
     marginBottom: 10
-  },
-  hoursBtn: {
-    float: "right",
   }
 });
 
@@ -150,12 +147,12 @@ function getCalcHours() {
           readExcel(file);
         }}
       />
-      <Button className={classes.hoursBtn}
+      <Button 
             color="primary"
             variant="contained"
             onClick={() => getCalcHours()}
              >
-            See Calculated TA Hours 
+            Calculate TA Hours 
           </Button>
         {!isLoading ? <TableContainer className={classes.container}>
         <Table className={classes.table}>

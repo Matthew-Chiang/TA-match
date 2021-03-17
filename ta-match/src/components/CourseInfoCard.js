@@ -61,7 +61,7 @@ const useStyles = makeStyles({
 
 export default function CourseInfoCard({
     course,
-    semester,
+    // semester,
     viewApplicant,
     editPrivilege,
     setError,
@@ -109,7 +109,7 @@ export default function CourseInfoCard({
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 newStatus: status,
-                semester: semester.toLowerCase().replace(/ /g, ""),
+                // semester: semester.toLowerCase().replace(/ /g, ""),
                 courseName: course.course_code,
             }),
         })
@@ -130,7 +130,7 @@ export default function CourseInfoCard({
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-                semester: semester.toLowerCase().replace(/ /g, ""),
+                // semester: semester.toLowerCase().replace(/ /g, ""),
                 courseName: course.course_code,
                 email: addTaEmail,
             }),
@@ -152,7 +152,7 @@ export default function CourseInfoCard({
             method: "DELETE",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-                semester: semester.toLowerCase().replace(/ /g, ""),
+                // semester: semester.toLowerCase().replace(/ /g, ""),
                 courseName: course.course_code,
                 email,
             }),
@@ -178,7 +178,7 @@ export default function CourseInfoCard({
                     color="textSecondary"
                     gutterBottom
                 >
-                    {semester}
+                    {/* {semester} */}
                 </Typography>
                 {console.log(courseState)}
                 <Typography className={classes.pos} variant="h5" component="h2" gutterBottom>

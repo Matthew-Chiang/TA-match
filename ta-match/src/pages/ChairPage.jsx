@@ -90,8 +90,8 @@ const ChairPage = () => {
                     <AdminFilesUpload />
                 </TabPanel>
                 <TabPanel value={value} index={2} className={classes.tabPanel}>
-                    <AllCourseInfo editPrivilege />
                     <TogglePriority />
+                    <AllCourseInfo editPrivilege />
                 </TabPanel>
                 </div>
         </div>

@@ -22,7 +22,7 @@ const useStyles = makeStyles({
   avatar: {
     backgroundColor: blue[100],
     color: blue[600],
-  },
+  }
 });
 SimpleDialog.propTypes = {
     onClose: PropTypes.func.isRequired,
@@ -89,7 +89,8 @@ export default function SimpleDialogDemo() {
 
     return (
         <div>
-            <Button variant="contained" onClick={handleClickOpen}> Match TA and Courses</Button>
+            <Button style={{float: "right"}} color="primary" variant="contained" onClick={handleClickOpen}> Match TA and Courses</Button>
+            <h3>Course List</h3>
             <SimpleDialog selectedValue={selectedValue} open={open} onClose={handleClose}/>
         </div>
     )
