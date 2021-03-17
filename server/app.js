@@ -496,6 +496,58 @@ app.delete("/api/allocation/delete", async (req, res) => {
     }
 });
 
+app.get("/api/semester/:semester", async (req, res) => {
+    const semester = req.params.semester;
+    let response = [];
+    let courseIDs = [];
+    let courseData = [];
+
+    const coursesCollection = await db.collection('courses').doc(semester).collection('courses').get();
+    coursesCollection.forEach(doc => {
+        courseIDs.push(doc.id);
+        courseData.push(doc.data());
+    })
+    for(let i=0; i<courseIDs.length; i++) {
+        let courseTAs = [];
+        const allocationsCollection = await db.collection('courses').doc(semester).collection('courses').doc(courseIDs[i]).collection('allocation').get();
+        allocationsCollection.forEach(ta => {
+            courseTAs.push(ta.id);
+        })
+        let courseDetails = {
+            course: courseIDs[i],
+            details: courseData[i],
+            allocation: courseTAs,
+        }
+        response.push(courseDetails);
+    }
+    if(response.length != 0) {
+        res.json(response);
+    }else {
+        res.send("Semester does not exist!");
+    }
+});
+
+app.get("/api/applicants/:semester/:course", async (req, res) => {
+    const course = req.params.course;
+    const semester = req.params.semester;
+    let response = [];
+    const applicantsCollection = await db.collection('courses').doc(semester).collection('courses').doc(course).collection('applicants').get();
+    applicantsCollection.forEach(doc => {
+        console.log(doc.id, '=>', doc.data());
+
+        let applicantDetails = {
+            applicant: doc.id,
+            details: doc.data(),
+        }
+        response.push(applicantDetails);
+    })
+    if(response.length != 0) {
+        res.json(response);
+    }else {
+        res.send("No applicants for course");
+    }
+})
+
 app.listen(port, hostname, () => {
     console.log("Listening on: " + port);
 });
