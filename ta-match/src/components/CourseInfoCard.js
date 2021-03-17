@@ -327,7 +327,7 @@ export default function CourseInfoCard({
                                         <div key={index}>
                                             <p>Email: {allocation.email}</p>
                                             <p>Status: {allocation.status}</p>
-                                            {console.log(allocation)}
+                                            <p>Hours: {allocation.hours_allocated}</p>
                                             <div
                                                 className={
                                                     classes.sideBySideDisplay
