@@ -12,8 +12,6 @@ import Container from '@material-ui/core/Container';
 import { useAuth } from "../contexts/AuthContext";
 import { useHistory } from "react-router-dom";
 import { Alert } from '@material-ui/lab';
-import { checkUser } from '../services/UserService';
-
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -58,26 +56,22 @@ export default function SignIn() {
       .then(response=>{
         console.log(response)
         fetch(`http://localhost:5000/api/signin/${emailRef.current.value}`)
-
-
-
-
-        //checkUser(emailRef.current.value)
-        .then(response => {
-          console.log(response)
-          if(response=="professor"){
-            history.push("/professor")
-          }
-          else if(response=="administrator"){
-            history.push("/administrator")
-          }
-          else if(response=="chair"){
-            history.push("/chair")
-          }
-          else{
-            history.push("/login")
-          }
-        }, err=>{setError("Failed to log in")
+        .then(response => response.text())
+          .then(response => {
+            console.log(response)
+            if(response=="professor"){
+              history.push("/professor")
+            }
+            else if(response=="administrator"){
+              history.push("/administrator")
+            }
+            else if(response=="chair"){
+              history.push("/chair")
+            }
+            else{
+              history.push("/login")
+            }
+          }, err=>{setError("Failed to log in")
         })
         }, err=> {setError("Failed to log in")}
       )

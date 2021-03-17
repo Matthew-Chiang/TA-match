@@ -15,7 +15,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import TextField from '@material-ui/core/TextField';
-import { postCalcHours, updateCalcHours, getHours } from '../services/ChairService';
+import { getHours } from '../services/ChairService';
 
 const apiURL = 'http://localhost:5000/api';
 
@@ -69,8 +69,13 @@ export default function HoursCalculation() {
     });
 
     promise.then((d) => {
-      //setItems(d); 
-      postCalcHours(d)
+      fetch(`http://localhost:5000/api/calcHours`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            hours: d
+        }),
+      })
       .then(response=>{
         if (response.status == 400) {
           alert("Spreadsheet Invalid. Please upload one with the following columns: Instructor, Course, Enrol 2020, Enrol 2021, Hrs 2021")
@@ -126,7 +131,14 @@ function getCalcHours() {
   }
 
   function updateHours(){
-    updateCalcHours(course,newHours)
+    fetch(`http://localhost:5000/api/updateHours`, {
+      method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            course: course,
+            hours: newHours
+        }),
+    })
     .then(response=>{
         console.log(response)
         getCalcHours()
