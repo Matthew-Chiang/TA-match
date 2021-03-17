@@ -69,6 +69,7 @@ export default function CourseInfoCard({
     const classes = useStyles();
     const [courseState, setCourseState] = useState(course);
     const [addTaEmail, setAddTaEmail] = useState("");
+    const [addTaHours, setAddTaHours] = useState("");
     const [tempRanking, setTempRanking] = useState({});
 
     function setRank(email, rank) {
@@ -133,13 +134,14 @@ export default function CourseInfoCard({
                 semester: semester.toLowerCase().replace(/ /g, ""),
                 courseName: course.course_code,
                 email: addTaEmail,
+                hours: addTaHours,
             }),
         })
             .then((res) => {
                 let newState = { ...courseState };
                 newState["allocation_list"] = [
                     ...newState["allocation_list"],
-                    { status: "pending", email: addTaEmail },
+                    { status: "pending", email: addTaEmail, hours: addTaHours},
                 ];
                 setCourseState(newState);
             })
@@ -325,6 +327,7 @@ export default function CourseInfoCard({
                                         <div key={index}>
                                             <p>Email: {allocation.email}</p>
                                             <p>Status: {allocation.status}</p>
+                                            {console.log(allocation)}
                                             <div
                                                 className={
                                                     classes.sideBySideDisplay
@@ -386,11 +389,18 @@ export default function CourseInfoCard({
                                 setAddTaEmail(event.target.value);
                             }}
                         />
+                        <TextField
+                            label="hours"
+                            value={addTaHours}
+                            onChange={(event) => {
+                                setAddTaHours(event.target.value);
+                            }}
+                        />
                         <Button
                             onClick={() => {
                                 addTaAllocation();
                             }}
-                            disabled={addTaEmail.length === 0}
+                            disabled={addTaEmail.length === 0 || addTaHours.length === 0}
                         >
                             Add TA Allocation
                         </Button>
