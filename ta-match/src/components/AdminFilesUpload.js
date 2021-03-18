@@ -1,6 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Button from '@material-ui/core/Button';
 import axios from 'axios';
+import Typography from '@material-ui/core/Typography';
+import Box from '@material-ui/core/Box';
+import DisplayApplicants from './DisplayApplicants.js';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableContainer from '@material-ui/core/TableContainer';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
 
 
 const apiURL = 'http://localhost:5000/api';
@@ -12,7 +21,9 @@ class AdminFilesUpload extends React.Component {
         ApplicantsFile: null,
         InstructorsFile: null,
         semester: 'summer',
-        year: 2021
+        year: 2021,
+        applicants: "",
+        isLoading: false,
       }
 
       this.onChangeHandler.bind(this);
@@ -35,13 +46,29 @@ class AdminFilesUpload extends React.Component {
   
       }).then(res => {
        console.log(res.statusText);
+       this.setState({
+         isLoading: true,
+       })
      });
     }
+
     render() {
+      const {applicants} = this.state;
+      console.log(applicants)
       return (
-        <div className="uploadButtons">
-            <h1>Please Upload Applicants and Inctructors Data</h1>
-            Choose Applicants File: <input
+        <div>
+    
+            <h3>Upload Applicant Data</h3>
+            <Typography component="div">
+              <Box fontStyle="italic" >
+              This function will load all the application information into the database in preparation for the TA matching process.
+              </Box>
+          </Typography>
+            <p>Please upload a file in the form of a spreadsheet (XLS, XLSX, CSV) and that includes the following columns: Course Code, Applicant Name, Applicant Email, Availability Hours, Rank of Course, Qn, An (where n is the number of questions).</p>
+            
+           
+            <br></br>
+            Upload spreadsheet: <input
               type="file"
               id="applicantData"
               accept=".xlsx, .xls, .csv"
@@ -54,21 +81,29 @@ class AdminFilesUpload extends React.Component {
             >
             Submit 
           </Button>
-          <br/>
-          <br/>
-          Choose Instructors File: <input
-              type="file"
-              id="instructorsData"
-              accept=".xlsx, .xls, .csv"
-              onChange={(e)=>this.onChangeHandler(e, 'InstructorsFile')}
-            />
-          <Button className="submitButton"
-            color="primary"
-            variant="contained"
-            onClick={()=>this.sendFile('InstructorsFile')}
-            >
-            Submit 
-          </Button>
+          <DisplayApplicants></DisplayApplicants>
+
+          {this.state.isLoading ? 
+          <DisplayApplicants></DisplayApplicants>
+
+          : <div></div>} 
+      
+
+          {/* // <br/>
+          // <br/>
+          // Choose Instructors File: <input
+          //     type="file"
+          //     id="instructorsData"
+          //     accept=".xlsx, .xls, .csv"
+          //     onChange={(e)=>this.onChangeHandler(e, 'InstructorsFile')}
+          //   />
+          // <Button className="submitButton"
+          //   color="primary"
+          //   variant="contained"
+          //   onClick={()=>this.sendFile('InstructorsFile')}
+          //   >
+          //   Submit 
+          // </Button> */}
         </div>
         
       );
@@ -76,3 +111,4 @@ class AdminFilesUpload extends React.Component {
 }
 export default AdminFilesUpload;
   
+

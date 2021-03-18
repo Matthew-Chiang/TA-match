@@ -49,7 +49,7 @@ function parseProfData() {
 */
 
 // Read in applicants data from temp folder and write to DB
-async function parseApplicantsData(semester, year) {
+async function parseApplicantsData(semester) {
     const sheet = [];
 
     // Build array of arrays for csv file
@@ -112,7 +112,8 @@ async function parseApplicantsData(semester, year) {
                 applicant = sheet[i];
 
                 const coursesCol = db.collection(
-                    `courses/${semester + year}/courses`
+                    //@leslie: check
+                    `courses/${semester}/courses`
                 );
 
                 var courseRef = await coursesCol
@@ -148,7 +149,8 @@ async function parseApplicantsData(semester, year) {
                 newApplicant["availability"] = applicant[hoursKey];
 
                 const applicantCol = db.collection(
-                    `courses/${semester + year}/courses/${
+                    //@leslie: check
+                    `courses/${semester}/courses/${
                         applicant[courseCodeKey]
                     }/applicants`
                 );
@@ -167,13 +169,14 @@ async function parseApplicantsData(semester, year) {
 }
 
 // Resolve to Obejct with all profs and their courses & TA applicants
-async function buildProfsObj(semester, year) {
+async function buildProfsObj(semester) {
     profsList = [];
     coursesList = [];
     profsObj = {};
 
     const coursesRef = await db
-        .collection(`courses/${semester + year}/courses`)
+    //@leslie: check
+        .collection(`courses/${semester}/courses`)
         .get();
 
     // course per term
@@ -194,7 +197,8 @@ async function buildProfsObj(semester, year) {
         applicantsList = [];
         const applicantsCol = await db
             .collection(
-                `courses/${semester + year}/courses/${courseId}/applicants`
+                //@leslie: check
+                `courses/${semester}/courses/${courseId}/applicants`
             )
             .get();
         applicantsCol.forEach((applicant) => {
@@ -207,7 +211,8 @@ async function buildProfsObj(semester, year) {
         allocationsList = [];
         const allocationsCol = await db
             .collection(
-                `courses/${semester + year}/courses/${courseId}/allocation`
+                //@leslie: check
+                `courses/${semester}/courses/${courseId}/allocation`
             )
             .get();
 

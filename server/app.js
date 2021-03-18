@@ -80,7 +80,8 @@ app.post("/api/uploadApplicantsFile", function (req, res) {
 
     upload(req, res, function (err) {
         // console.log(req.file);
-        parseApplicantsData(req.body.semester, req.body.year);
+        //@leslie: check
+        parseApplicantsData(month+year);
         res.status(200).send({ data: "Successful upload" });
     });
 });
@@ -111,6 +112,7 @@ app.get("/api/signin/:email", async (req, res) => {
     const email = req.params.email;
     try {
         const type = await db.collection("users").doc(email).get();
+        //const send = type.data().type;
         res.send(type.data().type);
     } catch (err) {
         res.send(err);
@@ -119,11 +121,13 @@ app.get("/api/signin/:email", async (req, res) => {
 
 app.get("/api/getAllApplicantData", async (req, res) => {
     try {
-        let profs = await buildProfsObj("summer", 2021);
+        //@leslie: check
+        let profs = await buildProfsObj(month+year);
 
         // sends information back about what term we're looking at
         // changing the above line should also change the line below
-        const responseObj = { profs, semester: "Summer 2021" };
+        //@leslie: check
+        const responseObj = { profs, semester: `${month} ${year}` };
         res.send(responseObj);
     } catch (err) {
         console.log(err);
@@ -134,11 +138,13 @@ app.get("/api/getApplicantData/:email", async (req, res) => {
     const email = req.params.email;
 
     try {
-        let profs = await buildProfsObj("summer", 2021);
+        //@leslie: check
+        let profs = await buildProfsObj(month+year);
         // sends information back about what term we're looking at
         // changing the above line should also change the line below
         if (profs[email]) {
-            const responseObj = { ...profs[email], semester: "Summer 2021" };
+            //@leslie: check
+            const responseObj = { ...profs[email], semester: `${month} ${year}` };
             res.send(responseObj);
         } else {
             res.send({});
@@ -149,7 +155,8 @@ app.get("/api/getApplicantData/:email", async (req, res) => {
 });
 
 app.get("/api/allocateTAs/", async (req, res) => {
-    const semester = req.query.semester ? req.params.semester : "summer2021";
+    //@leslie: check
+    const semester = req.query.semester ? req.params.semester : month+year;
     const preference = req.query.preference;
 
     try {
@@ -164,6 +171,7 @@ app.get("/api/allocateTAs/", async (req, res) => {
 app.post("/api/rank", async (req, res) => {
     const course = req.body.course;
     const applicantEmail = req.body.email;
+    //@leslie: check
     const semester = month+year;
     let rank;
     
@@ -220,21 +228,21 @@ app.post("/api/rank", async (req, res) => {
 
 //calculate and populate the recommended TA hours into the db
 app.post("/api/calcHours", async (req, res) => {
-    const sem = req.body.sem;
+    const sem = month+year;
     const calcHours = req.body.hours;
 
     let calculation = [];
     let valid = 0;
 
     try {
-        calcHours.map((e) => {
+        await calcHours.map((e) => {
             if (typeof e["Instructor"] !== "undefined" && typeof e["Course"] !== "undefined" && typeof e["Enrol 2020"] !== "undefined" && typeof e["Enrol 2021"] !== "undefined" && typeof e["Hrs 2021"] !== "undefined") {
                 valid++;
             }
         })
         console.log(valid)
         if (valid > 0) {
-            calcHours.map((e) => {
+            await calcHours.map((e) => {
                 if (e["Course"] && !((e["Course"]).includes("/"))) {
                     e["Course"] = e["Course"].replace(/\s/g, "");
                     if (!e["Hrs 2020"]) {
@@ -253,7 +261,8 @@ app.post("/api/calcHours", async (req, res) => {
                     });
                 }
             });
-            calculation.forEach((a) => {
+
+            await calculation.forEach((a) => {
                 const hours = db
                     .collection("courses")
                     .doc(sem)
@@ -271,6 +280,7 @@ app.post("/api/calcHours", async (req, res) => {
         res.send(err);
     }
 });
+
 
 //test function to delete later i think
 app.get("/api/test/:course/:sem", async (req, res) => {
@@ -294,8 +304,9 @@ app.get("/api/test/:course/:sem", async (req, res) => {
 });
 
 //retrieve all TA hours
-app.get("/api/getHours/:sem", async (req, res) => {
-    const sem = req.params.sem;
+app.get("/api/getHours", async (req, res) => {
+    //@leslie: check
+    const sem = month+year;
     let hours = [];
 
     try {
@@ -320,7 +331,8 @@ app.get("/api/getHours/:sem", async (req, res) => {
 app.put("/api/updateHours", async (req, res) => {
     const course = req.body.course;
     const hours = req.body.hours;
-    const sem = req.body.sem;
+    //@leslie: check
+    const sem = month+year;
 
     try {
         await db
@@ -351,7 +363,8 @@ app.post("/api/uploadInstructorsFile", function (req, res) {
 });
 
 app.post("/api/addQuestionsForTA", async (req, res) => {
-    const semester = req.body.semester;
+    //@leslie: check
+    const semester = month+year;
     const courseName = req.body.courseName;
     const questions = req.body.questions;
 
@@ -425,7 +438,7 @@ app.get("/api/pastQuestions/:professor", async (req, res) => {
 
 app.post("/api/allocation/changeStatus/:email", async (req, res) => {
     const email = req.params.email;
-    const semester = req.body.semester;
+    const semester = month+year;
     const courseName = req.body.courseName;
     const newStatus = req.body.newStatus;
 
@@ -444,11 +457,32 @@ app.post("/api/allocation/changeStatus/:email", async (req, res) => {
     }
 });
 
+app.post("/api/updateTaHours", async (req, res) => {
+    const hours = parseInt(req.body.hours);
+    const TaEmail = req.body.TaEmail;
+    const courseName = req.body.course;
+    const semester = month+year;
+    try {
+        const allocation = await db
+            .collection("courses")
+            .doc(semester)
+            .collection("courses")
+            .doc(courseName)
+            .collection("allocation")
+            .doc(TaEmail)
+            .update({ hours_allocated: hours });
+        res.send("return");
+        
+    } catch (err) {
+        console.log(err);
+    }
+});
+
 app.post("/api/allocation/add", async (req, res) => {
-    const semester = req.body.semester;
+    const semester = month+year;
     const courseName = req.body.courseName;
     const email = req.body.email;
-
+    const hours = parseInt(req.body.hours);
     try {
         const allocation = await db
             .collection("courses")
@@ -457,7 +491,7 @@ app.post("/api/allocation/add", async (req, res) => {
             .doc(courseName)
             .collection("allocation")
             .doc(email)
-            .set({ status: "pending" });
+            .set({ status: "pending", hours_allocated: hours});
         res.send("return");
     } catch (err) {
         console.log(err);
@@ -465,7 +499,7 @@ app.post("/api/allocation/add", async (req, res) => {
 });
 
 app.delete("/api/allocation/delete", async (req, res) => {
-    const semester = req.body.semester;
+    const semester = month+year;
     const courseName = req.body.courseName;
     const email = req.body.email;
 
@@ -481,6 +515,76 @@ app.delete("/api/allocation/delete", async (req, res) => {
         res.send("return");
     } catch (err) {
         console.log(err);
+    }
+});
+
+//get all applicant info
+app.get("/api/semester/:semester", async (req, res) => {
+    const semester = req.params.semester;
+    let response = [];
+    let courseIDs = [];
+    let courseData = [];
+
+    const coursesCollection = await db.collection('courses').doc(semester).collection('courses').get();
+    console.log(coursesCollection)
+    coursesCollection.forEach(doc => {
+        courseIDs.push(doc.id);
+        courseData.push(doc.data());
+    })
+    for(let i=0; i<courseIDs.length; i++) {
+        let courseTAs = [];
+        let hoursAlloc = [];
+        let courseApplicants = [];
+        let applicantNames = [];
+        let status = [];
+        let experience = [];
+        const allocationsCollection = await db.collection('courses').doc(semester).collection('courses').doc(courseIDs[i]).collection('allocation').get();
+        allocationsCollection.forEach(ta => {
+            courseTAs.push(ta.id);
+            hoursAlloc.push(ta.get("hours_allocated"))
+        })
+        
+        const applicantsCollection = await db.collection('courses').doc(semester).collection('courses').doc(courseIDs[i]).collection('applicants').get();
+        applicantsCollection.forEach(a => {
+            courseApplicants.push(a.id);
+            applicantNames.push(a.get("name"))
+            let check = a.get("fundable")
+            if(check==1){
+                check = "Fundable"
+            }
+            else if(check==2){
+                check = "Unfundable"
+            }
+            else if(check==3){
+                check = "External Hire"
+            }
+            status.push(check)
+            let check2 = a.get("availability")
+            if(check2 == 5){
+                check2 = "New"
+            }
+            else if(check2 == 10){
+                check2 = "Experienced"
+            }
+            experience.push(check2)
+        })
+
+        let courseDetails = {
+            course: courseIDs[i],
+            details: courseData[i],
+            allocation: courseTAs,
+            hours_allocated: hoursAlloc,
+            applicants: courseApplicants,
+            names: applicantNames,
+            status: status,
+            experience: experience,
+        }
+        response.push(courseDetails);
+    }
+    if(response.length != 0) {
+        res.json(response);
+    }else {
+        res.send("Semester does not exist!");
     }
 });
 

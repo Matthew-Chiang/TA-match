@@ -22,13 +22,14 @@ const useStyles = makeStyles({
   avatar: {
     backgroundColor: blue[100],
     color: blue[600],
-  },
+  }
 });
 SimpleDialog.propTypes = {
     onClose: PropTypes.func.isRequired,
     open: PropTypes.bool.isRequired,
     selectedValue: PropTypes.string.isRequired,
   };
+  
 function SimpleDialog(props) {
     const classes = useStyles();
     const { onClose, selectedValue, open } = props;
@@ -79,7 +80,6 @@ function SimpleDialog(props) {
 export default function SimpleDialogDemo() {
     const [open, setOpen] = React.useState(false);
     const [selectedValue, setSelectedValue] = React.useState(priorities[0]);
-
     const handleClickOpen = () => {
         setOpen(true);
       };
@@ -90,7 +90,8 @@ export default function SimpleDialogDemo() {
 
     return (
         <div>
-            <Button variant="contained" onClick={handleClickOpen}> Match TA and Courses</Button>
+            <Button style={{float: "right"}} color="primary" variant="contained" onClick={handleClickOpen}> Match TA and Courses</Button>
+            <h3>Course List</h3>
             <SimpleDialog selectedValue={selectedValue} open={open} onClose={handleClose}/>
         </div>
     )

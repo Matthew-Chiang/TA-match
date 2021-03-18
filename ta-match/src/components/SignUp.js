@@ -7,7 +7,6 @@ import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
 import { useAuth } from '../contexts/AuthContext';
 import { useHistory } from "react-router-dom";
-import { createUser } from '../services/UserService'
 
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
@@ -65,27 +64,37 @@ export default function SignUp() {
       setError("")
       setLoading(true)
       await signup(emailRef.current.value, passwordRef.current.value)
-      createUser(emailRef.current.value, fNameRef.current.value, lNameRef.current.value, roleRef.current.value)
-      .then(response => {
-        console.log(response);
-        if(roleRef.current.value=="professor"){
-          history.push("/professor")
-        }
-        else if(roleRef.current.value=="administrator"){
-          history.push("/administrator")
-        }
-        else if(roleRef.current.value=="chair"){
-          history.push("/chair")
-        }
-        else{
-          history.push("/signup")
-        }
-      }, err=>{setError("Failed to create an account")
+      fetch(`http://localhost:5000/api/signup`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            fname: fNameRef.current.value,
+            lname: lNameRef.current.value,
+            type: roleRef.current.value,
+            email: emailRef.current.value,
+        }),
       })
+      .then((res) => {
+          console.log(res);
+          if(roleRef.current.value=="professor"){
+            history.push("/professor")
+          }
+          else if(roleRef.current.value=="administrator"){
+            history.push("/administrator")
+          }
+          else if(roleRef.current.value=="chair"){
+            history.push("/chair")
+          }
+          else{
+            history.push("/signup")
+          }
+      })
+      .catch((e) => {
+          console.log(e);
+      });
     } catch {
       setError("Failed to create an account")
     }
-
     setLoading(false)
   }
 

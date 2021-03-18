@@ -15,7 +15,8 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import TextField from '@material-ui/core/TextField';
-import { postCalcHours, updateCalcHours, getHours } from '../services/ChairService';
+import Typography from '@material-ui/core/Typography';
+import Box from '@material-ui/core/Box';
 
 const apiURL = 'http://localhost:5000/api';
 
@@ -35,9 +36,6 @@ const useStyles = makeStyles({
   overrideBtn: {
     marginRight: 20,
     marginBottom: 10
-  },
-  hoursBtn: {
-    float: "right",
   }
 });
 
@@ -48,6 +46,13 @@ export default function HoursCalculation() {
   // parse Excel
   const [hoursData, setCalcHours] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [updating, setUpdating] = useState(0);
+  const [test, setTest] = useState(0);
+    // Modal 
+  const [open, setOpen] = React.useState(false);
+  const [course,setCourse] = useState("");
+  const [hours,setHours] = useState("N/A");
+  const [newHours, setNewHours] = useState("");
 
   const readExcel = (file) => {
     const promise = new Promise((resolve, reject) => {
@@ -61,6 +66,7 @@ export default function HoursCalculation() {
         const ws = wb.Sheets[wsname];
         const data = XLSX.utils.sheet_to_json(ws);
         resolve(data);
+
       };
 
       fileReader.onerror = (error) => {
@@ -69,14 +75,20 @@ export default function HoursCalculation() {
     });
 
     promise.then((d) => {
-      postCalcHours("summer2021",d)
+      fetch(`http://localhost:5000/api/calcHours`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            hours: d
+        }),
+      })
       .then(response=>{
         if (response.status == 400) {
-          alert("Spreadsheet Invalid. Please upload one with the following columns: Instructor, Course, Enrol 2020, Enrol 2021, Hrs 2021")
+          alert("Spreadsheet Invalid. Please upload one with the following columns: Instructor, Course, Hrs 2020,Enrol 2020, Enrol 2021.")
         }
         else {
           console.log(response)
-          getCalcHours();
+          //setTest(test+1);
         }
       })
       .catch(err =>{
@@ -84,26 +96,6 @@ export default function HoursCalculation() {
       })
     });
   };
-
-//this is to populate the hours if clicked
-function getCalcHours() {
-  getHours("summer2021")
-  .then(response=>{
-      console.log(response)
-      setCalcHours(response)
-      setIsLoading(false)
-  })
-  .catch(err =>{
-      console.log(err)
-  })
-}
-
-
-  // Modal 
-  const [open, setOpen] = React.useState(false);
-  const [course,setCourse] = useState("");
-  const [hours,setHours] = useState("N/A");
-  const [newHours, setNewHours] = useState("");
 
   const handleClickOpen = (course,hours) => {
     setNewHours("")
@@ -125,20 +117,57 @@ function getCalcHours() {
   }
 
   function updateHours(){
-    updateCalcHours("summer2021",course,newHours)
+    fetch(`http://localhost:5000/api/updateHours`, {
+      method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            course: course,
+            hours: newHours
+        }),
+    })
     .then(response=>{
-        console.log(response)
-        getCalcHours()
+        setUpdating(updating+1);
     })
     .catch(err =>{
         console.log(err)
     })
   }
 
+  //get all calculated hours
+  useEffect(() => {
+    fetch(`http://localhost:5000/api/getHours`)
+      .then((response)=>{
+        response.json()
+          .then((data)=>{
+            setCalcHours(data);
+            if(data.length == 0){
+              setIsLoading(true);
+            }else{
+              setIsLoading(false);
+            }
+            
+            console.log(data)
+          })
+          .catch((err)=>{
+            console.log(err);
+          })
+      })
+      .catch((err)=>{
+        console.log(err)
+      })
+  }, [updating,test]);
+
   
   return (
     <div>
-      <h1>Calculate TA Hours</h1>
+      <h3>Calculate TA Hours</h3>
+      <Typography component="div">
+              <Box fontStyle="italic" >
+              This function will load all the course enrolment information to calculate recommended TA hours for each course.
+              </Box>
+          </Typography>
+      <p>Please upload a file in the form of a spreadsheet (XLS, XLSX, CSV) and that includes the following columns: Instructor (email), Course, Hrs 2020, Enrol 2020, Enrol 2021.</p>
+      <br></br>
       Upload spreadsheet: <input
         type="file"
         accept=".xlsx, .xls, .csv"
@@ -147,15 +176,15 @@ function getCalcHours() {
           readExcel(file);
         }}
       />
-      <Button className={classes.hoursBtn}
+      <Button 
             color="primary"
             variant="contained"
-            onClick={() => getCalcHours()}
+            onClick={() => setTest(test+1)}
              >
-            See Calculated TA Hours 
+            Calculate TA Hours 
           </Button>
         {!isLoading ? <TableContainer className={classes.container}>
-        <Table className={classes.table}>
+        <Table className={classes.table} size="small">
           <TableHead>
             <TableRow>
               <TableCell>Course</TableCell>
