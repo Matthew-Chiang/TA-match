@@ -261,6 +261,7 @@ app.post("/api/calcHours", async (req, res) => {
                     });
                 }
             });
+
             await calculation.forEach((a) => {
                 const hours = db
                     .collection("courses")

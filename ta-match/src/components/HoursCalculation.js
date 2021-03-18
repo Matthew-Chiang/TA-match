@@ -34,9 +34,6 @@ const useStyles = makeStyles({
   overrideBtn: {
     marginRight: 20,
     marginBottom: 10
-  },
-  hoursBtn: {
-    float: "right",
   }
 });
 
@@ -85,7 +82,7 @@ export default function HoursCalculation() {
       })
       .then(response=>{
         if (response.status == 400) {
-          alert("Spreadsheet Invalid. Please upload one with the following columns: Instructor, Course, Enrol 2020, Enrol 2021, Hrs 2021")
+          alert("Spreadsheet Invalid. Please upload one with the following columns: Instructor, Course, Hrs 2020,Enrol 2020, Enrol 2021.")
         }
         else {
           console.log(response)
@@ -156,7 +153,9 @@ export default function HoursCalculation() {
   
   return (
     <div>
-      <h1>Calculate TA Hours</h1>
+      <h3>Calculate TA Hours</h3>
+      <p>Please upload a file in the form of a spreadsheet (XLS, XLSX, CSV) and that includes the following columns: Instructor (email), Course, Hrs 2020, Enrol 2020, Enrol 2021.</p>
+      <br></br>
       Upload spreadsheet: <input
         type="file"
         accept=".xlsx, .xls, .csv"
@@ -165,12 +164,12 @@ export default function HoursCalculation() {
           readExcel(file);
         }}
       />
-      <Button className={classes.hoursBtn}
+      <Button 
             color="primary"
             variant="contained"
             // onClick={() => getCalcHours()}
              >
-            See Calculated TA Hours 
+            Calculate TA Hours 
           </Button>
         {!isLoading ? <TableContainer className={classes.container}>
         <Table className={classes.table}>

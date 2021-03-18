@@ -61,7 +61,7 @@ const useStyles = makeStyles({
 
 export default function CourseInfoCard({
     course,
-    semester,
+    // semester,
     viewApplicant,
     editPrivilege,
     setError,
@@ -110,7 +110,7 @@ export default function CourseInfoCard({
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 newStatus: status,
-                semester: semester.toLowerCase().replace(/ /g, ""),
+                // semester: semester.toLowerCase().replace(/ /g, ""),
                 courseName: course.course_code,
             }),
         })
@@ -132,7 +132,7 @@ export default function CourseInfoCard({
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-                semester: semester.toLowerCase().replace(/ /g, ""),
+                // semester: semester.toLowerCase().replace(/ /g, ""),
                 courseName: course.course_code,
                 email: addTaEmail,
             }),
@@ -154,7 +154,7 @@ export default function CourseInfoCard({
             method: "DELETE",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-                semester: semester.toLowerCase().replace(/ /g, ""),
+                // semester: semester.toLowerCase().replace(/ /g, ""),
                 courseName: course.course_code,
                 email,
             }),
@@ -180,12 +180,11 @@ export default function CourseInfoCard({
                     color="textSecondary"
                     gutterBottom
                 >
-                    University of Western Ontario
+                    {/* {semester} */}
                 </Typography>
-                <p> {courseState["course_code"]} </p>
                 {console.log(courseState)}
-                <Typography className={classes.pos} color="textSecondary">
-                    {semester}
+                <Typography className={classes.pos} variant="h5" component="h2" gutterBottom>
+                    {courseState["course_code"]}
                 </Typography>
                 {/*TODO this accordion should prob be put in its own component - there are 2 of them for applicants and allocations*/}
                 {viewApplicant && (

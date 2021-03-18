@@ -40,8 +40,10 @@ class AdminFilesUpload extends React.Component {
     render() {
       return (
         <div className="uploadButtons">
-            <h1>Please Upload Applicants and Inctructors Data</h1>
-            Choose Applicants File: <input
+            <h3>Upload Applicant Data</h3>
+            <p>Please upload a file in the form of a spreadsheet (XLS, XLSX, CSV) and that includes the following columns: [FILL THIS PART IN].</p>
+            <br></br>
+            Upload spreadsheet: <input
               type="file"
               id="applicantData"
               accept=".xlsx, .xls, .csv"
@@ -54,7 +56,7 @@ class AdminFilesUpload extends React.Component {
             >
             Submit 
           </Button>
-          <br/>
+          {/* <br/>
           <br/>
           Choose Instructors File: <input
               type="file"
@@ -68,7 +70,7 @@ class AdminFilesUpload extends React.Component {
             onClick={()=>this.sendFile('InstructorsFile')}
             >
             Submit 
-          </Button>
+          </Button> */}
         </div>
         
       );
