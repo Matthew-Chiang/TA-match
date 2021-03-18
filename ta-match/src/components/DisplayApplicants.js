@@ -24,6 +24,9 @@ const useStyles = makeStyles({
     overrideBtn: {
       marginRight: 20,
       marginBottom: 10
+    },
+    row: {
+      backgroundColor: "#ECECEC"
     }
   });
 
@@ -85,7 +88,7 @@ const useStyles = makeStyles({
         {!isLoading ? <TableContainer className={classes.container}>
         <Table className={classes.table} size="small">
           <TableHead>
-            <TableRow>
+            <TableRow className={classes.row}>
                 <TableCell>Course</TableCell>
                 <TableCell>Name</TableCell>
                 <TableCell>Email</TableCell>

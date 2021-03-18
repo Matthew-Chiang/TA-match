@@ -36,6 +36,9 @@ const useStyles = makeStyles({
   overrideBtn: {
     marginRight: 20,
     marginBottom: 10
+  },
+  row: {
+    backgroundColor: "#ECECEC"
   }
 });
 
@@ -186,7 +189,7 @@ export default function HoursCalculation() {
         {!isLoading ? <TableContainer className={classes.container}>
         <Table className={classes.table} size="small">
           <TableHead>
-            <TableRow>
+            <TableRow className={classes.row}>
               <TableCell>Course</TableCell>
               <TableCell>Calculated Hours</TableCell>
               <TableCell></TableCell>
