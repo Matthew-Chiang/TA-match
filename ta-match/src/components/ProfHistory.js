@@ -16,6 +16,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 
+const apiURL = 'http://localhost:5000/api';
 
 const useStyles = makeStyles((theme) => ({
     formControl: {
@@ -30,6 +31,10 @@ const useStyles = makeStyles((theme) => ({
       },
       table: {
         minWidth: 650,
+      },
+      row: {
+          fontSize: 22,
+          fontStyle: "bold"
       },
       dialogText: {
         fontSize: 18,
@@ -57,9 +62,7 @@ export default function ProfHistory() {
     const [semester, setSemester] = useState('');
     const [year, setYear] = useState('');
     const [semesterInfo, setSemesterInfo] = useState([]);
-    const [applicants, setApplicants] = useState([]);
-    const [allocations, setAllocations] = useState([]);
-    const [open, setOpen] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
 
     const handleSemester = (event) => {
         const updatedSemester = event.target.value;
@@ -77,8 +80,18 @@ export default function ProfHistory() {
         console.log(semesterAndYear)
         axios.get(apiURL + `/semester/${semesterAndYear}`)
         .then(res => {
+            console.log(res)
             res.data.forEach(course => {
-                response.push(course);
+                //hardcoded for now
+                if(course.details.instructor=="john@uwo.ca"){
+                    response.push(course);
+                }
+                if(response.length==0){
+                    setIsLoading(true);
+                }
+                else{
+                    setIsLoading(false)
+                }
             })
             setSemesterInfo(response);
         })
@@ -115,10 +128,11 @@ export default function ProfHistory() {
             <IconButton className={classes.searchIcon} color="primary" onClick={getSemesterInfo}>
                 <SearchIcon />
             </IconButton>
+            {!isLoading ?
             <TableContainer className={classes.container}>
                 <Table className={classes.table}>
                     <TableHead>
-                        <TableRow>
+                        <TableRow className={classes.row}>
                             <TableCell>Course</TableCell>
                             <TableCell>TA Hours Required</TableCell>
                             <TableCell>Applicants</TableCell>
@@ -133,8 +147,17 @@ export default function ProfHistory() {
                                 return(
                                     <TableRow key={course.course}>
                                         <TableCell>{course.course}</TableCell>
-                                        <TableCell>{course.details.instructor}</TableCell>
-                                        <TableCell> {course.details.ta_hours}</TableCell>
+                                        <TableCell>{course.details.ta_hours}</TableCell>
+                                        <TableCell>{
+                                            course.applicants.map(a => {
+                                                return(
+                                                <div>
+                                                    <li style={{listStyleType: 'none'}}key={a}>{a}</li>
+
+                                                </div>
+                                                )
+                                            })
+                                        }</TableCell>
                                         <TableCell>{
                                             course.allocation.map(ta => {
                                                 return(
@@ -162,6 +185,7 @@ export default function ProfHistory() {
                     </TableBody>
                 </Table>
             </TableContainer>
+            : <div></div>}
         </div>
     )
 }
