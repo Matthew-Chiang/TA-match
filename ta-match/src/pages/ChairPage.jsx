@@ -70,7 +70,6 @@ const ChairPage = () => {
             <Dashboard role="chair"/>
             <br></br>
             <h1>Welcome, <span style={{fontWeight: "normal"}}>Undergraduate Chair!</span></h1>
-            <h6>Current Semester: Summer 2021</h6>
             <div className={classes.root}>
                 <Tabs
                     orientation="vertical"
