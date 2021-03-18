@@ -503,20 +503,35 @@ app.get("/api/semester/:semester", async (req, res) => {
     let courseData = [];
 
     const coursesCollection = await db.collection('courses').doc(semester).collection('courses').get();
+    console.log(coursesCollection)
     coursesCollection.forEach(doc => {
         courseIDs.push(doc.id);
         courseData.push(doc.data());
     })
     for(let i=0; i<courseIDs.length; i++) {
         let courseTAs = [];
+        let hoursAlloc = [];
+        let courseApplicants = [];
+        let applicantNames = [];
         const allocationsCollection = await db.collection('courses').doc(semester).collection('courses').doc(courseIDs[i]).collection('allocation').get();
         allocationsCollection.forEach(ta => {
             courseTAs.push(ta.id);
+            hoursAlloc.push(ta.get("hours_allocated"))
         })
+        
+        const applicantsCollection = await db.collection('courses').doc(semester).collection('courses').doc(courseIDs[i]).collection('applicants').get();
+        applicantsCollection.forEach(a => {
+            courseApplicants.push(a.id);
+            applicantNames.push(a.get("name"))
+        })
+
         let courseDetails = {
             course: courseIDs[i],
             details: courseData[i],
             allocation: courseTAs,
+            hours_allocated: hoursAlloc,
+            applicants: courseApplicants,
+            names: applicantNames
         }
         response.push(courseDetails);
     }

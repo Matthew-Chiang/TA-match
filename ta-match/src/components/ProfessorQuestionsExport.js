@@ -1,21 +1,37 @@
 import TextField from "@material-ui/core/TextField";
 import React from "react";
 import { ExportCSV } from "./ExportCSV";
+import FormControl from '@material-ui/core/FormControl';
+import InputLabel from '@material-ui/core/InputLabel';
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
+import { withStyles, makeStyles } from '@material-ui/core/styles';
 
 class ProfessorQuestionsExport extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             semesterInput: "",
+            year: "",
+            semester: "",
             error: null,
             isLoaded: false,
             allQuestions: [],
+            margin: "",
         };
         this.handleChange = this.handleChange.bind(this);
     }
 
+    handleSemester = (event) => {
+        this.setState({ semester: event.target.value });
+    }
+
+    handleYear = (event) => {
+        this.setState({ year: event.target.value });
+    }
+
     handleExport = () => {
-        fetch(`http://localhost:5000/api/questions/${this.state.semesterInput}`)
+        fetch(`http://localhost:5000/api/questions/${this.state.semester}${this.state.year}`)
             .then((res) => res.json())
             .then(
                 (result) => {
@@ -57,10 +73,34 @@ class ProfessorQuestionsExport extends React.Component {
     render() {
         const { error, isLoaded, allQuestions } = this.state;
         const fileName = "Questions";
+        const useStyles = makeStyles((theme) => ({
+              margin: theme.spacing(1),
+              minWidth: 120,
+          }))
+         
         return (
             <div>
                 <h1>Export Questions</h1>
-                <TextField
+                <FormControl className={useStyles} >
+                <InputLabel>Semester</InputLabel>
+                <Select value={this.state.semester} onChange={this.handleSemester}>
+                    <MenuItem value="summer">Summer</MenuItem>
+                    <MenuItem value="fall">Fall</MenuItem>
+                    <MenuItem value="winter">Winter</MenuItem>
+                </Select>
+                </FormControl>
+                <br></br>
+                <FormControl margin='normal' ml={5}>
+                <InputLabel>Year</InputLabel>
+                <Select margin='dense' value={this.state.year} onChange={this.handleYear}>
+                    <MenuItem value="2021">2021</MenuItem>
+                    <MenuItem value="2020">2020</MenuItem>
+                    <MenuItem value="2019">2019</MenuItem>
+                    <MenuItem value="2018">2018</MenuItem>
+                    <MenuItem value="2017">2017</MenuItem>
+                </Select>
+                </FormControl>
+                {/* <TextField
                     variant="outlined"
                     margin="normal"
                     required
@@ -70,7 +110,8 @@ class ProfessorQuestionsExport extends React.Component {
                     name="semester"
                     value={this.state.semesterInput}
                     onChange={this.handleChange}
-                />
+                /> */}
+                <br></br>
                 <button onClick={this.handleExport} noValidate>
                     View Questions for Export
                 </button>

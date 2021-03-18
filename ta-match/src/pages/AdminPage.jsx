@@ -1,6 +1,8 @@
 import Dashboard from "../components/Dashboard";
 import ProfessorQuestionsExport from "../components/ProfessorQuestionsExport";
 import AllCourseInfo from "../components/AllCourseInfo";
+import HistoricalData from "../components/HistoricalData";
+
 const AdminPage = () => {
     return (
         <div>
@@ -10,6 +12,9 @@ const AdminPage = () => {
             <ProfessorQuestionsExport />
 
             <AllCourseInfo editPrivilege />
+            <br />
+            <br />
+            <HistoricalData />
         </div>
     );
 };

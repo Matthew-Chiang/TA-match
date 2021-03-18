@@ -68,6 +68,7 @@ export default function HistoricalData() {
     const getSemesterInfo = () => {
         let response = [];
         let semesterAndYear = semester + year;
+        console.log(semesterAndYear)
         axios.get(apiURL + `/semester/${semesterAndYear}`)
         .then(res => {
             res.data.forEach(course => {
@@ -84,25 +85,25 @@ export default function HistoricalData() {
         });
     }
 
-    const getApplicants = (course) => {
-        let response = [];
-        let semesterAndYear = semester + year;
-        axios.get(apiURL + `/applicants/${semesterAndYear}/${course}`)
-        .then(res => {
-            res.data.forEach(applicant => {
-                response.push(applicant);
-            })
-            console.log(res.data);
-            setApplicants(response);
-        })
-        .catch(err => {
-            console.log(err);
-        })
-    }
+    // const getApplicants = (course) => {
+    //     let response = [];
+    //     let semesterAndYear = semester + year;
+    //     axios.get(apiURL + `/applicants/${semesterAndYear}/${course}`)
+    //     .then(res => {
+    //         res.data.forEach(applicant => {
+    //             response.push(applicant);
+    //         })
+    //         console.log(res.data);
+    //         setApplicants(response);
+    //     })
+    //     .catch(err => {
+    //         console.log(err);
+    //     })
+    // }
 
-    const handleOpen = () => {
-        setOpen(true);
-    }
+    // const handleOpen = () => {
+    //     setOpen(true);
+    // }
 
     const handleClose = () => {
         setApplicants([]);
@@ -141,12 +142,14 @@ export default function HistoricalData() {
                             {semesterInfo.length > 0 && <StyledTableCell>INSTRUCTOR</StyledTableCell>}
                             {semesterInfo.length > 0 && <StyledTableCell>TA HOURS</StyledTableCell>}
                             {semesterInfo.length > 0 && <StyledTableCell>TAs</StyledTableCell>}
+                            {semesterInfo.length > 0 && <StyledTableCell>HOURS ALLOCATED</StyledTableCell>}
                             {semesterInfo.length > 0 && <StyledTableCell>APPLICANTS</StyledTableCell>}
                         </TableRow>
                     </TableHead>
                     <TableBody>
                         {
                             semesterInfo.map(course => {
+                                console.log(course)
                                 return(
                                     <TableRow key={course.course}>
                                         <TableCell>{course.course}</TableCell>
@@ -155,11 +158,37 @@ export default function HistoricalData() {
                                         <TableCell>{
                                             course.allocation.map(ta => {
                                                 return(
+                                                <div>
                                                     <li style={{listStyleType: 'none'}}key={ta}>{ta}</li>
+
+                                                </div>
                                                 )
                                             })
                                         }</TableCell>
-                                        <TableCell><IconButton onClick={() => { getApplicants(course.course); handleOpen() }}><AccountCircleIcon /></IconButton></TableCell>
+                                        <TableCell>{
+                                            course.hours_allocated.map(h => {
+                                                return(
+                                                <div>
+                                                    <li style={{listStyleType: 'none'}}key={h}>{h}</li>
+
+                                                </div>
+                                                )
+                                            })
+                                        }</TableCell>
+                                        <TableCell>
+                                        {
+                                            course.applicants.map(a => {
+                                                return(
+                                                <div>
+                                                    <li style={{listStyleType: 'none'}}key={a}>{a}</li>
+
+                                                </div>
+                                                )
+                                            })
+                                        }
+   
+                                             </TableCell>
+                                        {/* <TableCell><IconButton onClick={() => { getApplicants(course.course); handleOpen() }}><AccountCircleIcon /></IconButton></TableCell> */}
                                     </TableRow>
                                 )
                             })
@@ -167,29 +196,29 @@ export default function HistoricalData() {
                     </TableBody>
                 </Table>
             </TableContainer>
-            <ApplicantsDialog open={open} close={handleClose} applicants={applicants}/>
+            {/* <ApplicantsDialog open={open} close={handleClose} applicants={applicants}/> */}
         </div>
     )
 }
-function ApplicantsDialog(props) {
-    const classes = useStyles();
-    const {open, close, applicants} = props;
-    const handleClose = () => {
-        close();
-    }
-    return (
-            <Dialog open={open} onClose={handleClose}> 
-                <DialogTitle>Applicants</DialogTitle>
-                <List>
-                {
-                    applicants.map((applicant) => (
-                        <ListItem key={applicant.applicant}>
-                            <PersonIcon color="primary"/><Box m={1} />
-                            <ListItemText primary={applicant.applicant} />
-                        </ListItem>
-                    ))
-                }
-                </List>
-            </Dialog>
-    )
-}
+// function ApplicantsDialog(props) {
+//     const classes = useStyles();
+//     const {open, close, applicants} = props;
+//     const handleClose = () => {
+//         close();
+//     }
+//     return (
+//             <Dialog open={open} onClose={handleClose}> 
+//                 <DialogTitle>Applicants</DialogTitle>
+//                 <List>
+//                 {
+//                     applicants.map((applicant) => (
+//                         <ListItem key={applicant.applicant}>
+//                             <PersonIcon color="primary"/><Box m={1} />
+//                             <ListItemText primary={applicant.applicant} />
+//                         </ListItem>
+//                     ))
+//                 }
+//                 </List>
+//             </Dialog>
+//     )
+// }
