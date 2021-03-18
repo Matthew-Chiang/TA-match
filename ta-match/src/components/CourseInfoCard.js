@@ -109,7 +109,6 @@ export default function CourseInfoCard({
                 hours: modifiedTaHours,
                 TaEmail: modifiedTa,
                 course: modifiedCourse,
-                semester: "summer2021"
             }),
         })
             .then((response) => {

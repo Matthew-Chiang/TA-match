@@ -438,7 +438,7 @@ app.get("/api/pastQuestions/:professor", async (req, res) => {
 
 app.post("/api/allocation/changeStatus/:email", async (req, res) => {
     const email = req.params.email;
-    const semester = req.body.semester;
+    const semester = month+year;
     const courseName = req.body.courseName;
     const newStatus = req.body.newStatus;
 
@@ -461,7 +461,7 @@ app.post("/api/updateTaHours", async (req, res) => {
     const hours = parseInt(req.body.hours);
     const TaEmail = req.body.TaEmail;
     const courseName = req.body.course;
-    const semester = req.body.semester;
+    const semester = month+year;
     try {
         const allocation = await db
             .collection("courses")
@@ -479,7 +479,7 @@ app.post("/api/updateTaHours", async (req, res) => {
 });
 
 app.post("/api/allocation/add", async (req, res) => {
-    const semester = req.body.semester;
+    const semester = month+year;
     const courseName = req.body.courseName;
     const email = req.body.email;
     const hours = parseInt(req.body.hours);
@@ -499,7 +499,7 @@ app.post("/api/allocation/add", async (req, res) => {
 });
 
 app.delete("/api/allocation/delete", async (req, res) => {
-    const semester = req.body.semester;
+    const semester = month+year;
     const courseName = req.body.courseName;
     const email = req.body.email;
 
