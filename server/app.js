@@ -112,6 +112,7 @@ app.get("/api/signin/:email", async (req, res) => {
     const email = req.params.email;
     try {
         const type = await db.collection("users").doc(email).get();
+        //const send = type.data().type;
         res.send(type.data().type);
     } catch (err) {
         res.send(err);
@@ -234,13 +235,14 @@ app.post("/api/calcHours", async (req, res) => {
     let valid = 0;
 
     try {
-        calcHours.map((e) => {
+        await calcHours.map((e) => {
             if (typeof e["Instructor"] !== "undefined" && typeof e["Course"] !== "undefined" && typeof e["Enrol 2020"] !== "undefined" && typeof e["Enrol 2021"] !== "undefined" && typeof e["Hrs 2021"] !== "undefined") {
                 valid++;
             }
         })
+        console.log(valid)
         if (valid > 0) {
-            calcHours.map((e) => {
+            await calcHours.map((e) => {
                 if (e["Course"] && !((e["Course"]).includes("/"))) {
                     e["Course"] = e["Course"].replace(/\s/g, "");
                     if (!e["Hrs 2020"]) {
@@ -259,7 +261,8 @@ app.post("/api/calcHours", async (req, res) => {
                     });
                 }
             });
-            calculation.forEach((a) => {
+
+            await calculation.forEach((a) => {
                 const hours = db
                     .collection("courses")
                     .doc(sem)
@@ -277,6 +280,7 @@ app.post("/api/calcHours", async (req, res) => {
         res.send(err);
     }
 });
+
 
 //test function to delete later i think
 app.get("/api/test/:course/:sem", async (req, res) => {
@@ -492,6 +496,73 @@ app.delete("/api/allocation/delete", async (req, res) => {
         console.log(err);
     }
 });
+
+app.get("/api/semester/:semester", async (req, res) => {
+    const semester = req.params.semester;
+    let response = [];
+    let courseIDs = [];
+    let courseData = [];
+
+    const coursesCollection = await db.collection('courses').doc(semester).collection('courses').get();
+    console.log(coursesCollection)
+    coursesCollection.forEach(doc => {
+        courseIDs.push(doc.id);
+        courseData.push(doc.data());
+    })
+    for(let i=0; i<courseIDs.length; i++) {
+        let courseTAs = [];
+        let hoursAlloc = [];
+        let courseApplicants = [];
+        let applicantNames = [];
+        const allocationsCollection = await db.collection('courses').doc(semester).collection('courses').doc(courseIDs[i]).collection('allocation').get();
+        allocationsCollection.forEach(ta => {
+            courseTAs.push(ta.id);
+            hoursAlloc.push(ta.get("hours_allocated"))
+        })
+        
+        const applicantsCollection = await db.collection('courses').doc(semester).collection('courses').doc(courseIDs[i]).collection('applicants').get();
+        applicantsCollection.forEach(a => {
+            courseApplicants.push(a.id);
+            applicantNames.push(a.get("name"))
+        })
+
+        let courseDetails = {
+            course: courseIDs[i],
+            details: courseData[i],
+            allocation: courseTAs,
+            hours_allocated: hoursAlloc,
+            applicants: courseApplicants,
+            names: applicantNames
+        }
+        response.push(courseDetails);
+    }
+    if(response.length != 0) {
+        res.json(response);
+    }else {
+        res.send("Semester does not exist!");
+    }
+});
+
+app.get("/api/applicants/:semester/:course", async (req, res) => {
+    const course = req.params.course;
+    const semester = req.params.semester;
+    let response = [];
+    const applicantsCollection = await db.collection('courses').doc(semester).collection('courses').doc(course).collection('applicants').get();
+    applicantsCollection.forEach(doc => {
+        console.log(doc.id, '=>', doc.data());
+
+        let applicantDetails = {
+            applicant: doc.id,
+            details: doc.data(),
+        }
+        response.push(applicantDetails);
+    })
+    if(response.length != 0) {
+        res.json(response);
+    }else {
+        res.send("No applicants for course");
+    }
+})
 
 app.listen(port, hostname, () => {
     console.log("Listening on: " + port);

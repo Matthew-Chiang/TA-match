@@ -104,6 +104,7 @@ export default function CourseInfoCard({
     }
 
     const changeTAStatus = (email, status) => {
+        console.log(courseState)
         fetch(`http://localhost:5000/api/allocation/changeStatus/${email}`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -114,6 +115,7 @@ export default function CourseInfoCard({
             }),
         })
             .then((res) => {
+                console.log(courseState)
                 const newState = { ...courseState };
                 newState["allocation_list"].filter(
                     (allocation) => allocation.email === email

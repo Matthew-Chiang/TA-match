@@ -58,7 +58,7 @@ function SimpleDialog(props) {
     return (
         <div>
         <Dialog onClose={handleClose} fullWidth={true} aria-labelledby="simple-dialog-title" open={open}>
-             <DialogTitle id="simple-dialog-title">Match TA and Courses</DialogTitle>
+             <DialogTitle id="simple-dialog-title">Set Priority</DialogTitle>
              <List>
                  {priorities.map((priority) => (
                     <ListItem button onClick={() => handleListItemClick(priority)} key={priority}>

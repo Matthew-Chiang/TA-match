@@ -3,6 +3,7 @@ import AdminFilesUpload from "../components/AdminFilesUpload";
 import AllCourseInfo from "../components/AllCourseInfo";
 import TogglePriority from "../components/TogglePriority";
 import HoursCalculation from "../components/HoursCalculation";
+import HistoricalData from "../components/HistoricalData";
 
 import "../App.css";
 
@@ -94,6 +95,16 @@ const ChairPage = () => {
                     <AllCourseInfo editPrivilege />
                 </TabPanel>
                 </div>
+//             <AdminFilesUpload />
+//             <br></br>
+//             <AllCourseInfo editPrivilege />
+//             <br />
+//             <br />
+//             <TogglePriority />
+//             <HoursCalculation />
+            <br />
+            <br />
+           // <HistoricalData /> change this
         </div>
     );
 };
