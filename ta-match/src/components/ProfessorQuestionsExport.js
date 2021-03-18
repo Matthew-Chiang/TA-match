@@ -2,6 +2,12 @@ import React from "react";
 import { ExportCSV } from "./ExportCSV";
 import {FormControl, InputLabel, Select, MenuItem, Button} from '@material-ui/core';
 import { withStyles, makeStyles } from '@material-ui/core/styles';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableContainer from '@material-ui/core/TableContainer';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
 
 const styles = theme => ({
     formControl: {
@@ -11,6 +17,12 @@ const styles = theme => ({
     btn: {
         margin: theme.spacing(2.5),
     },
+    table: {
+        minWidth: 650,
+      },
+      container: {
+        marginTop: 20,
+      },
 })
 
 class ProfessorQuestionsExport extends React.Component {
@@ -42,13 +54,13 @@ class ProfessorQuestionsExport extends React.Component {
             .then(
                 (result) => {
                     this.setState({
-                        isLoaded: true,
+                       isLoaded: true,
                         allQuestions: result,
                     });
                 },
                 (error) => {
                     this.setState({
-                        isLoaded: true,
+                       isLoaded: true,
                         error,
                     });
                 }
@@ -103,38 +115,51 @@ class ProfessorQuestionsExport extends React.Component {
                     <MenuItem value="2017">2017</MenuItem>
                 </Select>
                 </FormControl>
-                {/* <TextField
-                    variant="outlined"
-                    margin="normal"
-                    required
-                    fullWidth
-                    id="semester"
-                    label="Semester"
-                    name="semester"
-                    value={this.state.semesterInput}
-                    onChange={this.handleChange}
-                /> */}
+
                 <Button className={classes.btn} onClick={this.handleExport} color="primary" variant="contained">
                     View Questions for Export
                 </Button>
-
-                <ul>
-                    {allQuestions.map((item, index) => (
-                        <li key={item.course + index}>
-                            <p>
-                                <b>{item.course + ": "}</b>
-                            </p>
+                {isLoaded ? <TableContainer className={classes.container}>
+                    <Table className={classes.table}>
+                    <TableHead>
+                        <TableRow>
+                        <TableCell>Course</TableCell>
+                        <TableCell>Questions</TableCell>
+                        <TableCell></TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                    {allQuestions.map((item, index) => {
+                        return (
+                            <TableRow key={item.course+index}>
+                            <TableCell component="th" scope="row">{item.course}</TableCell>
+                            <TableCell >
                             {item.questions.map((question, index) => {
-                                return <p key={index}>{question}</p>;
-                            })}
-                        </li>
-                    ))}
-                </ul>
+                                return(
+                                <div>
+                                    <li style={{listStyleType: 'none'}}key={index}>{question}</li>
 
+                                </div>
+                                )
+                                 })}
+                            </TableCell>
+                           
+                            <TableCell align="right">
+                            </TableCell>
+                        </TableRow>
+                        )
+                        })}
+                    </TableBody>
+                    </Table>
+                </TableContainer>
+                : <div></div>}
+                <br></br>
+               
                 <ExportCSV
                     csvData={this.parseQuestionData()}
                     fileName={fileName}
                 />
+                 <hr></hr>
             </div>
         );
     }

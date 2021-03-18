@@ -109,14 +109,14 @@ class AdminFilesUpload extends React.Component {
             >
             Submit 
           </Button>
-          <Button className="submitButton"
+          {/* <Button className="submitButton"
             color="primary"
             variant="contained"
             onClick={()=>this.getAppicantData()}
             >
             Test 
-          </Button>
-          {console.log(Object.keys(applicants["profs"]))}
+          </Button> */}
+
           {/* {!this.state.isLoading ? */}
            <TableContainer>
           <Table>
@@ -161,7 +161,7 @@ class AdminFilesUpload extends React.Component {
             </TableBody> */}
           </Table>
         </TableContainer>
-        {/* : <div></div>} */}
+         {/* : <div></div>} */}
       
 
           {/* // <br/>
