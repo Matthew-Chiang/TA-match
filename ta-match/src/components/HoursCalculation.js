@@ -15,6 +15,8 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import TextField from '@material-ui/core/TextField';
+import Typography from '@material-ui/core/Typography';
+import Box from '@material-ui/core/Box';
 
 const apiURL = 'http://localhost:5000/api';
 
@@ -138,7 +140,12 @@ export default function HoursCalculation() {
         response.json()
           .then((data)=>{
             setCalcHours(data);
-            setIsLoading(false);
+            if(data.length == 0){
+              setIsLoading(true);
+            }else{
+              setIsLoading(false);
+            }
+            
             console.log(data)
           })
           .catch((err)=>{
@@ -154,6 +161,11 @@ export default function HoursCalculation() {
   return (
     <div>
       <h3>Calculate TA Hours</h3>
+      <Typography component="div">
+              <Box fontStyle="italic" >
+              This function will load all the course enrolment information to calculate recommended TA hours for each course.
+              </Box>
+          </Typography>
       <p>Please upload a file in the form of a spreadsheet (XLS, XLSX, CSV) and that includes the following columns: Instructor (email), Course, Hrs 2020, Enrol 2020, Enrol 2021.</p>
       <br></br>
       Upload spreadsheet: <input
@@ -164,13 +176,13 @@ export default function HoursCalculation() {
           readExcel(file);
         }}
       />
-      <Button 
+      {/* <Button 
             color="primary"
             variant="contained"
             // onClick={() => getCalcHours()}
              >
             Calculate TA Hours 
-          </Button>
+          </Button> */}
         {!isLoading ? <TableContainer className={classes.container}>
         <Table className={classes.table}>
           <TableHead>

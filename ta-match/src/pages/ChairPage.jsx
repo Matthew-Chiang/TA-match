@@ -95,16 +95,16 @@ const ChairPage = () => {
                     <AllCourseInfo editPrivilege />
                 </TabPanel>
                 </div>
-//             <AdminFilesUpload />
-//             <br></br>
-//             <AllCourseInfo editPrivilege />
-//             <br />
-//             <br />
-//             <TogglePriority />
-//             <HoursCalculation />
+             {/* <AdminFilesUpload />
+             <br></br>
+             <AllCourseInfo editPrivilege />
+             <br />
+             <br />
+             <TogglePriority />
+             <HoursCalculation /> */}
             <br />
             <br />
-           // <HistoricalData /> change this
+           <HistoricalData /> 
         </div>
     );
 };
