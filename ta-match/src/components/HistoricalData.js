@@ -99,8 +99,7 @@ export default function HistoricalData() {
             console.log(err);
             window.alert("That semester does not exist!");
             setSemesterInfo([]);
-            setApplicants([]);
-            setAllocations([]);
+
         });
     }
 
