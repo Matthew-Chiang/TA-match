@@ -1,9 +1,17 @@
 import React, { useState } from "react"
 import { useAuth } from "../contexts/AuthContext"
-import { Link, useHistory } from "react-router-dom"
-import Button from '@material-ui/core/Button';
+import { useHistory } from "react-router-dom"
+import {Box, Button, makeStyles} from '@material-ui/core';
 
-export default function Dashboard() {
+const useStyles = makeStyles({
+  navBar: {
+    marginLeft: 20,
+  }
+});
+
+export default function Dashboard(props) {
+    const classes = useStyles();
+
     const [error, setError] = useState("")
     const { currentUser, logout } = useAuth()
     const history = useHistory()
@@ -20,6 +28,12 @@ export default function Dashboard() {
     }
   
     return (
-        <Button color="secondary" onClick={handleLogout} style={{float: "right", marginLeft: "20px"}}>Logout</Button>
+        <Box display="flex" alignItems="center">
+          <Box flexGrow={1} textAlign="right">
+            <Button className={classes.navBar} href={'/'+props.role} color="primary">Dashboard</Button>
+            <Button className={classes.navBar} href={'/'+props.role+'/history'} color="primary">View History</Button>
+            <Button className={classes.navBar} color="secondary" onClick={handleLogout}>Logout</Button>
+          </Box>
+        </Box>
     )
   }
