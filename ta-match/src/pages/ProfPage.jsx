@@ -85,7 +85,7 @@ const ProfPage = () => {
 
     return (
         <div className="container">
-            <Dashboard />
+            <Dashboard role="professor"/>
             <Button
                 variant="contained"
                 color="primary"

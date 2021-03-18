@@ -44,7 +44,6 @@ TabPanel.propTypes = {
 const useStyles = makeStyles((theme) => ({
     root: {
       flexGrow: 1,
-      backgroundColor: theme.palette.background.paper,
       display: "flex",
       height: "100%",
       textAlign: "left",
@@ -68,7 +67,7 @@ const ChairPage = () => {
 
     return (
         <div className="container">
-            <Dashboard />
+            <Dashboard role="chair"/>
             <br></br>
             <h1>Welcome, <span style={{fontWeight: "normal"}}>Undergraduate Chair!</span></h1>
             <h6>Current Semester: Summer 2021</h6>
@@ -82,7 +81,7 @@ const ChairPage = () => {
                 >
                     <Tab label="1. Calculate TA Hours" />
                     <Tab label="2. Upload Applicant Data" />
-                    <Tab label="3. Match TA and Courses" />
+                    <Tab label="3. Match TA and Courses"/>
                 </Tabs>
                 <TabPanel value={value} index={0} className={classes.tabPanel}>
                     <HoursCalculation />
@@ -95,16 +94,16 @@ const ChairPage = () => {
                     <AllCourseInfo editPrivilege />
                 </TabPanel>
                 </div>
-//             <AdminFilesUpload />
-//             <br></br>
-//             <AllCourseInfo editPrivilege />
-//             <br />
-//             <br />
-//             <TogglePriority />
-//             <HoursCalculation />
+             {/* <AdminFilesUpload />
+             <br></br>
+            <AllCourseInfo editPrivilege />
+             <br />
+             <br />
+             <TogglePriority />
+             <HoursCalculation />
             <br />
             <br />
-           // <HistoricalData /> change this
+            <HistoricalData />  */}
         </div>
     );
 };

@@ -164,13 +164,13 @@ export default function HoursCalculation() {
           readExcel(file);
         }}
       />
-      <Button 
+      {/* <Button 
             color="primary"
             variant="contained"
             // onClick={() => getCalcHours()}
              >
             Calculate TA Hours 
-          </Button>
+          </Button> */}
         {!isLoading ? <TableContainer className={classes.container}>
         <Table className={classes.table}>
           <TableHead>
