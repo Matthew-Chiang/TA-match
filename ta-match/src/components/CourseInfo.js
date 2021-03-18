@@ -71,7 +71,7 @@ export default function CourseInfo({ email }) {
             .catch((err) => {
                 console.log(err);
             });
-    }, [courseData]);
+    }, []);
 
     const classes = useStyles();
     if (isLoading) {

@@ -12,7 +12,10 @@ import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import { useAuth } from "../contexts/AuthContext";
 import TextField from "@material-ui/core/TextField";
 import Modal from "@material-ui/core/Modal";
-
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
@@ -20,6 +23,7 @@ import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import QuestionAnswerModal from "./QuestionAnswerModal";
+import zIndex from "@material-ui/core/styles/zIndex";
 
 const useStyles = makeStyles({
     root: {
@@ -70,11 +74,59 @@ export default function CourseInfoCard({
     const [courseState, setCourseState] = useState(course);
     const [addTaEmail, setAddTaEmail] = useState("");
     const [addTaHours, setAddTaHours] = useState("");
+    const [modifiedTa, setModifiedTa] = useState("");
+    const [modifiedCourse, setModifiedCourse] = useState("");
+    const [oldTaHours, setOldTaHours] = useState("");
+    const [modifiedTaHours, setModifiedTaHours] = useState("");
+    const [open, setOpen] = useState(false);
     const [tempRanking, setTempRanking] = useState({});
 
     function setRank(email, rank) {
         // for profs
         setTempRanking({ ...tempRanking, [email]: rank - 1 });
+    }
+    const handleClickOpen = (courseCode, TaEmail, TaHours) => {
+        setModifiedCourse(courseCode)
+        setModifiedTa(TaEmail)
+        setOldTaHours(TaHours)
+        setOpen(true);
+      };
+
+    const handleOverride = () => {
+        updateTaHours()
+        handleClose();
+    }
+
+    const handleClose = () => {
+        setOpen(false);
+      };
+    
+    function updateTaHours() {
+        fetch(`http://localhost:5000/api/updateTaHours`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                hours: modifiedTaHours,
+                TaEmail: modifiedTa,
+                course: modifiedCourse,
+                semester: "summer2021"
+            }),
+        })
+            .then((response) => {
+                if (response.status == "404") {
+                    setError("Cannot assign new hours");
+                } else {
+                    const newState = { ...courseState };
+                    newState["allocation_list"].filter(
+                        (applicant) => applicant.email === modifiedTa
+                    )[0].hours_allocated = modifiedTaHours;
+                    setCourseState(newState);
+                    //window.location.reload()
+                }
+            })
+            .catch((err) => {
+                console.log(err);
+            });
     }
 
     function updateRank(course, email) {
@@ -173,6 +225,7 @@ export default function CourseInfoCard({
     };
 
     return (
+    <div>
         <Card className={classes.container} variant="outlined">
             <CardContent>
                 <Typography
@@ -355,16 +408,20 @@ export default function CourseInfoCard({
                                                 </Button>
                                             </div>
                                             {editPrivilege && (
-                                                <Button
-                                                    onClick={() => {
-                                                        deleteTaAllocation(
-                                                            allocation.email
-                                                        );
-                                                    }}
-                                                >
-                                                    Delete TA Allocation
-                                                </Button>
-                                                
+                                                <div>
+                                                    <Button
+                                                        onClick={() => {
+                                                            deleteTaAllocation(
+                                                                allocation.email
+                                                            );
+                                                        }}
+                                                    >
+                                                        Delete TA Allocation
+                                                    </Button>
+                                                    <Button variant="contained" color="default" onClick={() => {handleClickOpen(courseState["course_code"], allocation.email, allocation.hours_allocated)}}>
+                                                        Modify Hours
+                                                    </Button>
+                                                </div>
                                             )}
                                             <br></br>
                                         </div>
@@ -405,10 +462,47 @@ export default function CourseInfoCard({
                         >
                             Add TA Allocation
                         </Button>
+                        
                     </div>
                 )}
             </CardContent>
         </Card>
+        <Dialog
+          open={open}
+          fullWidth={true}
+          onClose={handleClose}
+        >
+          <DialogContent>
+            <DialogContentText className={classes.dialogText}>
+              <b>Course:</b> {modifiedCourse}
+              <br />
+              <br />
+              <b>TA:</b> {modifiedTa}
+              <br />
+              <br />
+              <b>Old Hours:</b> {oldTaHours}
+              <br />
+              <br />
+              <b>New Hours:</b>
+              <TextField 
+                className={classes.txtField} 
+                id="standard-basic" 
+                value={modifiedTaHours}
+                onChange={e => setModifiedTaHours(e.target.value)}
+              />
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button 
+                className={classes.overrideBtn} variant="contained" color="primary"
+                disabled={modifiedTaHours.length === 0}
+                onClick={handleOverride}
+            >
+              Override
+            </Button>
+          </DialogActions>
+      </Dialog>
+        </div>
     );
 }
 
