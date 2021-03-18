@@ -535,6 +535,8 @@ app.get("/api/semester/:semester", async (req, res) => {
         let hoursAlloc = [];
         let courseApplicants = [];
         let applicantNames = [];
+        let status = [];
+        let experience = [];
         const allocationsCollection = await db.collection('courses').doc(semester).collection('courses').doc(courseIDs[i]).collection('allocation').get();
         allocationsCollection.forEach(ta => {
             courseTAs.push(ta.id);
@@ -545,6 +547,25 @@ app.get("/api/semester/:semester", async (req, res) => {
         applicantsCollection.forEach(a => {
             courseApplicants.push(a.id);
             applicantNames.push(a.get("name"))
+            let check = a.get("fundable")
+            if(check==1){
+                check = "Fundable"
+            }
+            else if(check==2){
+                check = "Unfundable"
+            }
+            else if(check==3){
+                check = "External Hire"
+            }
+            status.push(check)
+            let check2 = a.get("availability")
+            if(check2 == 5){
+                check2 = "New student"
+            }
+            else if(check2 == 10){
+                check2 = "Experienced student"
+            }
+            experience.push(check2)
         })
 
         let courseDetails = {
@@ -553,7 +574,9 @@ app.get("/api/semester/:semester", async (req, res) => {
             allocation: courseTAs,
             hours_allocated: hoursAlloc,
             applicants: courseApplicants,
-            names: applicantNames
+            names: applicantNames,
+            status: status,
+            experience: experience,
         }
         response.push(courseDetails);
     }
@@ -564,6 +587,28 @@ app.get("/api/semester/:semester", async (req, res) => {
     }
 });
 
+// app.get("/api/applicants/:semester/:course", async (req, res) => {
+//     const course = req.params.course;
+//     const semester = req.params.semester;
+//     let response = [];
+//     const applicantsCollection = await db.collection('courses').doc(semester).collection('courses').doc(course).collection('applicants').get();
+//     applicantsCollection.forEach(doc => {
+//         console.log(doc.id, '=>', doc.data());
+
+//         let applicantDetails = {
+//             applicant: doc.id,
+//             details: doc.data(),
+//         }
+//         response.push(applicantDetails);
+//     })
+//     if(response.length != 0) {
+//         res.json(response);
+//     }else {
+//         res.send("No applicants for course");
+//     }
+// })
+
+//return nice list of all courses and their current applicants
 app.get("/api/applicants/:semester/:course", async (req, res) => {
     const course = req.params.course;
     const semester = req.params.semester;
@@ -584,6 +629,8 @@ app.get("/api/applicants/:semester/:course", async (req, res) => {
         res.send("No applicants for course");
     }
 })
+
+
 
 app.listen(port, hostname, () => {
     console.log("Listening on: " + port);

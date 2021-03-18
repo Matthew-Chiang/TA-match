@@ -3,7 +3,7 @@ import Button from '@material-ui/core/Button';
 import axios from 'axios';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
-import CourseInfoCard from './CourseInfoCard.js';
+import DisplayApplicants from './DisplayApplicants.js';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -23,7 +23,7 @@ class AdminFilesUpload extends React.Component {
         semester: 'summer',
         year: 2021,
         applicants: "",
-        //isLoading: React.useState(true),
+        isLoading: false,
       }
 
       this.onChangeHandler.bind(this);
@@ -46,39 +46,11 @@ class AdminFilesUpload extends React.Component {
   
       }).then(res => {
        console.log(res.statusText);
+       this.setState({
+         isLoading: true,
+       })
      });
     }
-
-    getAppicantData(){
-      fetch(`http://localhost:5000/api/getAllApplicantData`)
-            .then((response) => {
-                response
-                    .json()
-                    .then((data) => {
-                      this.setState({
-                        applicants: data,
-                      })
-                      // if(data.length ==0){
-                      //   this.setState({
-                      //     isLoading: React.useState(false)
-                      //   })
-                      // }
-                      // else{
-                      //   this.setState({
-                      //     isLoading: React.useState(false)
-                      //   })
-                      // }
-                      console.log(this.state.applicants)
-                    })
-                    .catch((err) => {
-                        console.log(err);
-                    });
-            })
-            .catch((err) => {
-                console.log(err);
-            });
-    }
-
 
     render() {
       const {applicants} = this.state;
@@ -109,59 +81,12 @@ class AdminFilesUpload extends React.Component {
             >
             Submit 
           </Button>
-          {/* <Button className="submitButton"
-            color="primary"
-            variant="contained"
-            onClick={()=>this.getAppicantData()}
-            >
-            Test 
-          </Button> */}
+          <DisplayApplicants></DisplayApplicants>
 
-          {/* {!this.state.isLoading ? */}
-           <TableContainer>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Course</TableCell>
-                <TableCell>Name</TableCell>
-                <TableCell>Email</TableCell>
-                <TableCell>Status</TableCell>
-                <TableCell>Experience</TableCell>
-                <TableCell></TableCell>
-              </TableRow>
-            </TableHead>
-            
-            {/* {console.log(applicants["profs"])} */}
-            {/* {Object.keys(applicants["profs"]).map((p)=>{
-              return(
-                console.log((applicants["profs"])[p])
-              )
-            })} */}
-            {/* <TableBody>
-            
-            {applicants["profs"].map((p)=>{
+          {this.state.isLoading ? 
+          <DisplayApplicants></DisplayApplicants>
 
-                return (
-                  applicants.profs[p].courseList.map((a)=>{
-                    console.log(a["applicant_list"].name)
-                  })
-                // <div>
-                //   <TableRow key={course["profs"]}>
-                //     <TableCell component="th" scope="row">{course["course"]}</TableCell>
-                //     <TableCell>{course["ta_hours"]}</TableCell>
-                //     <TableCell align="right">
-                //     <Button variant="contained" color="default" onClick={() => handleClickOpen(course["course"],course["ta_hours"])}>
-                //       Edit
-                //     </Button>
-                //     </TableCell>
-                // </TableRow>
-                // </div>
-                )
-              })}
-            </TableBody> */}
-          </Table>
-        </TableContainer>
-         {/* : <div></div>} */}
+          : <div></div>} 
       
 
           {/* // <br/>
@@ -186,3 +111,4 @@ class AdminFilesUpload extends React.Component {
 }
 export default AdminFilesUpload;
   
+

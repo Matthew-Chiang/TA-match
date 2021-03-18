@@ -184,7 +184,7 @@ export default function HoursCalculation() {
             Calculate TA Hours 
           </Button> */}
         {!isLoading ? <TableContainer className={classes.container}>
-        <Table className={classes.table}>
+        <Table className={classes.table} size="small">
           <TableHead>
             <TableRow>
               <TableCell>Course</TableCell>
