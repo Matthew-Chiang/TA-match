@@ -88,7 +88,7 @@ export default function HoursCalculation() {
         }
         else {
           console.log(response)
-          setTest(test+1);
+          //setTest(test+1);
         }
       })
       .catch(err =>{
@@ -176,13 +176,13 @@ export default function HoursCalculation() {
           readExcel(file);
         }}
       />
-      {/* <Button 
+      <Button 
             color="primary"
             variant="contained"
-            // onClick={() => getCalcHours()}
+            onClick={() => setTest(test+1)}
              >
             Calculate TA Hours 
-          </Button> */}
+          </Button>
         {!isLoading ? <TableContainer className={classes.container}>
         <Table className={classes.table} size="small">
           <TableHead>

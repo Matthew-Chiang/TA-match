@@ -159,7 +159,7 @@ class ProfessorQuestionsExport extends React.Component {
                     csvData={this.parseQuestionData()}
                     fileName={fileName}
                 />
-                 <hr></hr>
+
             </div>
         );
     }

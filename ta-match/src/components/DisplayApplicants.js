@@ -6,6 +6,7 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import { withStyles, makeStyles } from '@material-ui/core/styles';
+import { Checkbox } from "@material-ui/core";
 
 const useStyles = makeStyles({
     container: {
@@ -45,16 +46,27 @@ const useStyles = makeStyles({
     const [isLoading, setIsLoading] = useState(true);
     const [updating, setUpdating] = useState(0);
     const [test, setTest] = useState(0);
+    
 
     useEffect(() => {
+        let c = [];
         fetch(`http://localhost:5000/api/semester/${month+year}`)
           .then((response)=>{
             response.json()
               .then((data)=>{
                 setApplicantData(data);
+                data.map((k)=>{
+                    k.applicants.map((a)=>{
+                        c.push(a)
+                    })
+                })
                 if(data.length == 0){
                   setIsLoading(true);
-                }else{
+                }
+                else if(c.length == 0){
+                    setIsLoading(true);
+                }
+                else{
                   setIsLoading(false);
                 }
                 console.log(data)
@@ -78,7 +90,7 @@ const useStyles = makeStyles({
                 <TableCell>Name</TableCell>
                 <TableCell>Email</TableCell>
                 <TableCell>Status</TableCell>
-                <TableCell>Experience</TableCell>
+                <TableCell>Experience Level</TableCell>
                 <TableCell></TableCell>
             </TableRow>
           </TableHead>

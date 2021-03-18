@@ -518,6 +518,7 @@ app.delete("/api/allocation/delete", async (req, res) => {
     }
 });
 
+//get all applicant info
 app.get("/api/semester/:semester", async (req, res) => {
     const semester = req.params.semester;
     let response = [];
@@ -560,10 +561,10 @@ app.get("/api/semester/:semester", async (req, res) => {
             status.push(check)
             let check2 = a.get("availability")
             if(check2 == 5){
-                check2 = "New student"
+                check2 = "New"
             }
             else if(check2 == 10){
-                check2 = "Experienced student"
+                check2 = "Experienced"
             }
             experience.push(check2)
         })
@@ -607,29 +608,6 @@ app.get("/api/semester/:semester", async (req, res) => {
 //         res.send("No applicants for course");
 //     }
 // })
-
-//return nice list of all courses and their current applicants
-app.get("/api/applicants/:semester/:course", async (req, res) => {
-    const course = req.params.course;
-    const semester = req.params.semester;
-    let response = [];
-    const applicantsCollection = await db.collection('courses').doc(semester).collection('courses').doc(course).collection('applicants').get();
-    applicantsCollection.forEach(doc => {
-        console.log(doc.id, '=>', doc.data());
-
-        let applicantDetails = {
-            applicant: doc.id,
-            details: doc.data(),
-        }
-        response.push(applicantDetails);
-    })
-    if(response.length != 0) {
-        res.json(response);
-    }else {
-        res.send("No applicants for course");
-    }
-})
-
 
 
 app.listen(port, hostname, () => {

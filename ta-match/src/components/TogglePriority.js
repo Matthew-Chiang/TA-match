@@ -29,6 +29,7 @@ SimpleDialog.propTypes = {
     open: PropTypes.bool.isRequired,
     selectedValue: PropTypes.string.isRequired,
   };
+  
 function SimpleDialog(props) {
     const classes = useStyles();
     const { onClose, selectedValue, open } = props;
