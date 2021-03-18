@@ -457,11 +457,32 @@ app.post("/api/allocation/changeStatus/:email", async (req, res) => {
     }
 });
 
+app.post("/api/updateTaHours", async (req, res) => {
+    const hours = parseInt(req.body.hours);
+    const TaEmail = req.body.TaEmail;
+    const courseName = req.body.course;
+    const semester = req.body.semester;
+    try {
+        const allocation = await db
+            .collection("courses")
+            .doc(semester)
+            .collection("courses")
+            .doc(courseName)
+            .collection("allocation")
+            .doc(TaEmail)
+            .update({ hours_allocated: hours });
+        res.send("return");
+        
+    } catch (err) {
+        console.log(err);
+    }
+});
+
 app.post("/api/allocation/add", async (req, res) => {
     const semester = req.body.semester;
     const courseName = req.body.courseName;
     const email = req.body.email;
-
+    const hours = parseInt(req.body.hours);
     try {
         const allocation = await db
             .collection("courses")
@@ -470,7 +491,7 @@ app.post("/api/allocation/add", async (req, res) => {
             .doc(courseName)
             .collection("allocation")
             .doc(email)
-            .set({ status: "pending" });
+            .set({ status: "pending", hours_allocated: hours});
         res.send("return");
     } catch (err) {
         console.log(err);
