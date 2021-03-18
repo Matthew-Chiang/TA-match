@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import {IconButton } from '@material-ui/core';
+import {Button } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
 import axios from 'axios';
 
@@ -41,7 +41,15 @@ const useStyles = makeStyles((theme) => ({
       overrideBtn: {
         marginRight: 20,
         marginBottom: 10
-      }
+      },
+      row: {
+        fontSize: 22,
+        fontWeight: "bold",
+        backgroundColor: "#ECECEC"
+    },
+    btn: {
+        margin: theme.spacing(2.5),
+    },
 
   }));
 
@@ -117,14 +125,17 @@ export default function HistoricalData() {
                     <MenuItem value="2017">2017</MenuItem>
                 </Select>
             </FormControl>
-            <IconButton className={classes.searchIcon} color="primary" onClick={getSemesterInfo}>
+            {/* <IconButton className={classes.searchIcon} color="primary" onClick={getSemesterInfo}>
                 <SearchIcon />
-            </IconButton>
+            </IconButton> */}
+            <Button className={classes.btn} onClick={getSemesterInfo} color="primary" variant="contained">
+                    Search
+            </Button>
             {!isLoading ? 
             <TableContainer className={classes.container}>
                 <Table className={classes.table}>
                     <TableHead>
-                        <TableRow>
+                        <TableRow className={classes.row}s>
                             <TableCell>Course</TableCell>
                             <TableCell>Instructor</TableCell>
                             <TableCell>TA Hours Required</TableCell>

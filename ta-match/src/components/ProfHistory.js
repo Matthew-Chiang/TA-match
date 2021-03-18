@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import {IconButton } from '@material-ui/core';
+import {Button } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
 import axios from 'axios';
 
@@ -34,7 +34,8 @@ const useStyles = makeStyles((theme) => ({
       },
       row: {
           fontSize: 22,
-          fontStyle: "bold"
+          fontWeight: "bold",
+          backgroundColor: "#ECECEC"
       },
       dialogText: {
         fontSize: 18,
@@ -45,7 +46,10 @@ const useStyles = makeStyles((theme) => ({
       overrideBtn: {
         marginRight: 20,
         marginBottom: 10
-      }
+      },
+      btn: {
+        margin: theme.spacing(2.5),
+    },
 
   }));
 
@@ -125,9 +129,9 @@ export default function ProfHistory() {
                     <MenuItem value="2017">2017</MenuItem>
                 </Select>
             </FormControl>
-            <IconButton className={classes.searchIcon} color="primary" onClick={getSemesterInfo}>
-                <SearchIcon />
-            </IconButton>
+            <Button className={classes.btn} onClick={getSemesterInfo} color="primary" variant="contained">
+                    Search
+            </Button>
             {!isLoading ?
             <TableContainer className={classes.container}>
                 <Table className={classes.table}>
@@ -140,7 +144,7 @@ export default function ProfHistory() {
                             <TableCell>Hours Allocated</TableCell>
                         </TableRow>
                     </TableHead>
-                    <TableBody>
+                    <TableBody> 
                         {
                             semesterInfo.map(course => {
                                 console.log(course)
