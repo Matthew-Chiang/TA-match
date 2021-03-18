@@ -1,11 +1,17 @@
-import TextField from "@material-ui/core/TextField";
 import React from "react";
 import { ExportCSV } from "./ExportCSV";
-import FormControl from '@material-ui/core/FormControl';
-import InputLabel from '@material-ui/core/InputLabel';
-import Select from '@material-ui/core/Select';
-import MenuItem from '@material-ui/core/MenuItem';
+import {FormControl, InputLabel, Select, MenuItem, Button} from '@material-ui/core';
 import { withStyles, makeStyles } from '@material-ui/core/styles';
+
+const styles = theme => ({
+    formControl: {
+      margin: theme.spacing(1),
+      minWidth: 120,
+    },
+    btn: {
+        margin: theme.spacing(2.5),
+    },
+})
 
 class ProfessorQuestionsExport extends React.Component {
     constructor(props) {
@@ -73,15 +79,13 @@ class ProfessorQuestionsExport extends React.Component {
     render() {
         const { error, isLoaded, allQuestions } = this.state;
         const fileName = "Questions";
-        const useStyles = makeStyles((theme) => ({
-              margin: theme.spacing(1),
-              minWidth: 120,
-          }))
+
+        const {classes} = this.props;
          
         return (
             <div>
-                <h1>Export Questions</h1>
-                <FormControl className={useStyles} >
+                <h2>Export Questions</h2>
+                <FormControl className={classes.formControl} >
                 <InputLabel>Semester</InputLabel>
                 <Select value={this.state.semester} onChange={this.handleSemester}>
                     <MenuItem value="summer">Summer</MenuItem>
@@ -89,10 +93,9 @@ class ProfessorQuestionsExport extends React.Component {
                     <MenuItem value="winter">Winter</MenuItem>
                 </Select>
                 </FormControl>
-                <br></br>
-                <FormControl margin='normal' ml={5}>
+                <FormControl className={classes.formControl}>
                 <InputLabel>Year</InputLabel>
-                <Select margin='dense' value={this.state.year} onChange={this.handleYear}>
+                <Select value={this.state.year} onChange={this.handleYear}>
                     <MenuItem value="2021">2021</MenuItem>
                     <MenuItem value="2020">2020</MenuItem>
                     <MenuItem value="2019">2019</MenuItem>
@@ -111,10 +114,9 @@ class ProfessorQuestionsExport extends React.Component {
                     value={this.state.semesterInput}
                     onChange={this.handleChange}
                 /> */}
-                <br></br>
-                <button onClick={this.handleExport} noValidate>
+                <Button className={classes.btn} onClick={this.handleExport} color="primary" variant="contained">
                     View Questions for Export
-                </button>
+                </Button>
 
                 <ul>
                     {allQuestions.map((item, index) => (
@@ -137,4 +139,4 @@ class ProfessorQuestionsExport extends React.Component {
         );
     }
 }
-export default ProfessorQuestionsExport;
+export default withStyles(styles)(ProfessorQuestionsExport);

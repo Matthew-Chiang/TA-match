@@ -7,8 +7,18 @@ import CourseInfo from "../components/CourseInfo";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import { NativeSelect } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core/styles";
+
+const useStyles = makeStyles((theme) => ({
+    btn: {
+        float: "right",
+        marginTop: 20
+    }
+  }));
 
 const ProfPage = () => {
+    const classes = useStyles();
+
     const [openTaApp, setOpenTaApp] = useState(false);
     const [taQuestions, setTaQuestions] = useState([]);
     const [courseName, setCourseName] = useState("");
@@ -89,7 +99,7 @@ const ProfPage = () => {
             <Button
                 variant="contained"
                 color="primary"
-                className="prof-button"
+                className={classes.btn}
                 onClick={() => {
                     setOpenTaApp(true);
                     getOldQuestions();
@@ -98,7 +108,7 @@ const ProfPage = () => {
             >
                 New TA Application
             </Button>
-            <h1>Welcome, Professor!</h1>
+            <h1>Welcome, <span style={{fontWeight: "normal"}}>Professor!</span></h1>
             <h3>Your Courses:</h3>
             <CourseInfo email="john@uwo.ca"></CourseInfo>
 

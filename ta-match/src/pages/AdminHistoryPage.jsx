@@ -1,4 +1,5 @@
 import Dashboard from "../components/Dashboard";
+import HistoricalData from "../components/HistoricalData";
 
 import "../App.css";
 
@@ -6,7 +7,7 @@ const AdminHistoryPage = () => {
     return (
         <div className="container">
              <Dashboard role="administrator" />
-            <h1>View Admin History</h1>
+             <HistoricalData />
         </div>
     );
 };
