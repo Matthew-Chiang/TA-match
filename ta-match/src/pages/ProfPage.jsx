@@ -1,6 +1,9 @@
 import Dashboard from "../components/Dashboard";
 import "../App.css";
-import Modal from "@material-ui/core/Modal";
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogTitle from "@material-ui/core/DialogTitle";
 import React, { useState } from "react";
 import CourseInfo from "../components/CourseInfo";
 
@@ -9,21 +12,33 @@ import TextField from "@material-ui/core/TextField";
 import { NativeSelect } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 
-const useStyles = makeStyles((theme) => ({
-    btn: {
-        float: "right",
-        marginTop: 20
-    }
-  }));
-
 const ProfPage = () => {
-    const classes = useStyles();
-
     const [openTaApp, setOpenTaApp] = useState(false);
     const [taQuestions, setTaQuestions] = useState([]);
     const [courseName, setCourseName] = useState("");
     const [oldQuestions, setOldQuestions] = useState([]);
     const [currentCourseList, setCurrentCourseList] = useState([]);
+
+    const useStyles = makeStyles((theme) => ({
+        btn: {
+            float: "right",
+            marginTop: 20,
+        },
+        dialogTitle: {
+            textAlign: "center",
+            marginLeft: "auto",
+            marginRight: "auto",
+            width: "100%",
+        },
+        dialogContainer: {
+            paddingLeft: "70px",
+        },
+        addQuestionBtn: {
+            marginTop: "20px",
+        },
+    }));
+
+    const classes = useStyles();
 
     const handleQuestionTextChange = (event, index) => {
         let newQuestions = [...taQuestions];
@@ -95,7 +110,7 @@ const ProfPage = () => {
 
     return (
         <div className="container">
-            <Dashboard role="professor"/>
+            <Dashboard role="professor" />
             <Button
                 variant="contained"
                 color="primary"
@@ -108,82 +123,111 @@ const ProfPage = () => {
             >
                 New TA Application
             </Button>
-            <h1>Welcome, <span style={{fontWeight: "normal"}}>Professor!</span></h1>
+            <h1>
+                Welcome,{" "}
+                <span style={{ fontWeight: "normal" }}>Professor!</span>
+            </h1>
             <h3>Your Courses:</h3>
             <CourseInfo email="john@uwo.ca"></CourseInfo>
-
-            <Modal
+            <Dialog
                 open={openTaApp}
                 onClose={() => {
                     setOpenTaApp(false);
                 }}
-               >
-                <div style={{ backgroundColor: "white" }}>
-                    <h1>Create TA Application</h1>
-                    <p>Course Name: </p>
-
-                    <NativeSelect
-                        id="select"
-                        onChange={(e) => {
-                            setCourseName(e.target.value);
+                fullWidth={true}
+                maxWidth="md"
+            >
+                <DialogActions>
+                    <Button
+                        onClick={() => {
+                            setOpenTaApp(false);
                         }}
+                        color="primary"
                     >
-                        <option value=""> Select course</option>
-                        {currentCourseList.map((currentCourse, index) => {
+                        Close
+                    </Button>
+                </DialogActions>
+                <div style={{ backgroundColor: "white" }}>
+                    <DialogTitle>
+                        <h1 className={classes.dialogTitle}>
+                            Create TA Application
+                        </h1>
+                    </DialogTitle>
+                    <DialogContent className={classes.dialogContainer}>
+                        <p>Course Name: </p>
+
+                        <NativeSelect
+                            id="select"
+                            onChange={(e) => {
+                                setCourseName(e.target.value);
+                            }}
+                        >
+                            <option value=""> Select course</option>
+                            {currentCourseList.map((currentCourse, index) => {
+                                return (
+                                    <option key={index}>
+                                        {currentCourse.course_code}
+                                    </option>
+                                );
+                            })}
+                        </NativeSelect>
+                        {taQuestions.map((question, index) => {
                             return (
-                                <option key={index}>
-                                    {currentCourse.course_code}
-                                </option>
+                                <div key={index}>
+                                    <p>Question {index + 1}:</p>
+                                    <TextField
+                                        value={taQuestions[index]}
+                                        onChange={(event) => {
+                                            handleQuestionTextChange(
+                                                event,
+                                                index
+                                            );
+                                        }}
+                                    />
+                                    <p>OR select a previous question</p>
+
+                                    <NativeSelect
+                                        id="select"
+                                        onChange={(e) => {
+                                            handleQuestionTextChange(e, index);
+                                        }}
+                                    >
+                                        <option value="">
+                                            {" "}
+                                            Select question
+                                        </option>
+                                        {oldQuestions.map((question, index) => {
+                                            return (
+                                                <option key={index}>
+                                                    {question}
+                                                </option>
+                                            );
+                                        })}
+                                    </NativeSelect>
+                                </div>
                             );
                         })}
-                    </NativeSelect>
-                    {taQuestions.map((question, index) => {
-                        return (
-                            <div key={index}>
-                                <p>Question {index}:</p>
-                                <TextField
-                                    value={taQuestions[index]}
-                                    onChange={(event) => {
-                                        handleQuestionTextChange(event, index);
-                                    }}
-                                />
-                                <p>OR select a previous question</p>
-
-                                <NativeSelect
-                                    id="select"
-                                    onChange={(e) => {
-                                        handleQuestionTextChange(e, index);
-                                    }}
-                                >
-                                    <option value=""> Select question</option>
-                                    {oldQuestions.map((question, index) => {
-                                        return (
-                                            <option key={index}>
-                                                {question}
-                                            </option>
-                                        );
-                                    })}
-                                </NativeSelect>
-                            </div>
-                        );
-                    })}
-                    <Button
-                        onClick={() => {
-                            setTaQuestions([...taQuestions, ""]);
-                        }}
-                    >
-                        Add Question
-                    </Button>
-                    <Button
-                        onClick={() => {
-                            console.log(taQuestions);
-                            saveQuestions();
-                        }}
-                    >
-                        Save
-                    </Button>
+                        <Button
+                            className={classes.addQuestionBtn}
+                            onClick={() => {
+                                setTaQuestions([...taQuestions, ""]);
+                            }}
+                        >
+                            Add Question
+                        </Button>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button
+                            onClick={() => {
+                                console.log(taQuestions);
+                                saveQuestions();
+                            }}
+                        >
+                            Save
+                        </Button>
+                    </DialogActions>
                 </div>
-            </Modal>
+            </Dialog>
         </div>
     );
 };
