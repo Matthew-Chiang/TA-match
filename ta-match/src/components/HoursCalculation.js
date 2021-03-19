@@ -112,9 +112,7 @@ export default function HoursCalculation() {
   };
 
   const handleOverride = () => {
-    if(newHours != "") {
-      updateHours()
-    }
+    updateHours()
     handleClose();
     
   }
@@ -236,7 +234,7 @@ export default function HoursCalculation() {
             </DialogContentText>
           </DialogContent>
           <DialogActions>
-            <Button className={classes.overrideBtn} onClick={handleOverride} variant="contained" color="primary">
+            <Button className={classes.overrideBtn} disabled={newHours.length === 0} onClick={handleOverride} variant="contained" color="primary">
               Override
             </Button>
           </DialogActions>
