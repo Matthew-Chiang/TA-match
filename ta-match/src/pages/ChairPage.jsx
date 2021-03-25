@@ -1,9 +1,9 @@
 import Dashboard from "../components/Dashboard";
-import AdminFilesUpload from "../components/AdminFilesUpload";
+import AdminFilesUpload from "../components/ApplicantInfo";
 import AllCourseInfo from "../components/AllCourseInfo";
 import TogglePriority from "../components/TogglePriority";
 import HoursCalculation from "../components/HoursCalculation";
-import HistoricalData from "../components/HistoricalData";
+import CourseSetup from "../components/CourseSetup";
 
 import "../App.css";
 
@@ -14,6 +14,8 @@ import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
+import ProfessorQuestionsExport from "../components/ProfessorQuestionsExport";
+import InstructorSetup from "../components/InstructorSetup";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -78,17 +80,33 @@ const ChairPage = () => {
                     onChange={handleChange}
                     className={classes.tabs}
                 >
-                    <Tab label="1. Calculate TA Hours" />
-                    <Tab label="2. Upload Applicant Data" />
-                    <Tab label="3. Match TA and Courses"/>
+                    <Tab label="1. Course Setup" />
+                    <Tab label="2. Instructor Setup" />
+                    <Tab label="3. Course-Instructors Association" />
+                    <Tab label="4. Determine TA Hours" />
+                    <Tab label="5. Export Question List" />
+                    <Tab label="6. Import Applicant Information" />
+                    <Tab label="7. Match TA and Courses"/>
                 </Tabs>
                 <TabPanel value={value} index={0} className={classes.tabPanel}>
-                    <HoursCalculation />
+                    <CourseSetup />
                 </TabPanel>
                 <TabPanel value={value} index={1} className={classes.tabPanel}>
-                    <AdminFilesUpload />
+                    <InstructorSetup />
                 </TabPanel>
                 <TabPanel value={value} index={2} className={classes.tabPanel}>
+                    <h1>Course-Instructor Association</h1>
+                </TabPanel>
+                <TabPanel value={value} index={3} className={classes.tabPanel}>
+                    <HoursCalculation />
+                </TabPanel>
+                <TabPanel value={value} index={4} className={classes.tabPanel}>
+                    <ProfessorQuestionsExport />
+                </TabPanel>
+                <TabPanel value={value} index={5} className={classes.tabPanel}>
+                    <AdminFilesUpload />
+                </TabPanel>
+                <TabPanel value={value} index={6} className={classes.tabPanel}>
                     <TogglePriority />
                     <AllCourseInfo editPrivilege />
                 </TabPanel>

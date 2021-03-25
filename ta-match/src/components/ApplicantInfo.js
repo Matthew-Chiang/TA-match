@@ -52,7 +52,7 @@ class AdminFilesUpload extends React.Component {
       return (
         <div>
     
-            <h3>Upload Applicant Data</h3>
+            <h3>Import Applicant Information</h3>
             <Typography component="div">
               <Box fontStyle="italic" >
               This function will load all the application information into the database in preparation for the TA matching process.

@@ -96,7 +96,7 @@ class ProfessorQuestionsExport extends React.Component {
          
         return (
             <div>
-                <h2>Export Questions</h2>
+                <h3>Export Questions</h3>
                 <FormControl className={classes.formControl} >
                 <InputLabel>Semester</InputLabel>
                 <Select value={this.state.semester} onChange={this.handleSemester}>
