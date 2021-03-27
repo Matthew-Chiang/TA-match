@@ -4,10 +4,9 @@ const admin = require("firebase-admin");
 
 const db = admin.firestore();
 
-// Removing dedicated intructors spreadsheet
-/*
+
 // Read in profs data from temp folder and write to DB
-function parseProfData() {
+function parseProfData(month, year) {
     const sheet = [];
 
     // Build array of arrays for csv file
@@ -16,37 +15,27 @@ function parseProfData() {
         .on("data", (data) => sheet.push(data))
         .on("end", () => {
             sheet.forEach((prof) => {
-                const courses = [];
                 var nameKey = "";
                 var emailKey = "";
 
                 // Find relevant column names using likely substrings
                 Object.keys(prof).forEach((key) => {
-                    if (
-                        key.toLowerCase().includes("course") &&
-                        prof[key] != ""
-                    ) {
-                        // Check how many course prof teaches
-                        courses.push(prof[key]);
-                    } else if (key.toLowerCase().includes("name")) {
-                        // Get header for instructor name
+                    if (key.toLowerCase().includes("name")) { // Get header for instructor name
                         nameKey = key;
-                    } else if (key.toLowerCase().includes("email")) {
-                        // Get header for instructor email
+                    } else if (key.toLowerCase().includes("email")) { // Get header for instructor email
                         emailKey = key;
                     }
                 });
 
                 // Write profs data to db
-                const profDoc = db.collection("profs").doc(prof[emailKey]);
+                const profDoc = db.collection(`/courses/${month + year}/profs`).doc(prof[emailKey]); // Check if this needs to be async
                 profDoc.set({
-                    name: prof[nameKey],
-                    courseList: courses,
+                    name: prof[nameKey]
                 });
             });
         });
 }
-*/
+
 
 // Read in applicants data from temp folder and write to DB
 async function parseApplicantsData(semester) {
@@ -236,6 +225,6 @@ async function buildProfsObj(semester) {
     return profsObj;
 }
 
-// exports.parseProfData = parseProfData;
+exports.parseProfData = parseProfData;
 exports.parseApplicantsData = parseApplicantsData;
 exports.buildProfsObj = buildProfsObj;

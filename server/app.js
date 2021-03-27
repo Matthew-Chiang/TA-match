@@ -351,13 +351,13 @@ app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "../ta-match/build/index.html"));
 });
 
-// Upload enpoint for all instructors data
+// Upload endpoint for all instructors data
 app.post("/api/uploadInstructorsFile", function (req, res) {
     let upload = multer({ storage: storage }).single("InstructorsFile");
 
     upload(req, res, function (err) {
         console.log(req.file);
-        parseProfData();
+        parseProfData(month, year);
         res.status(200).send({ data: "Successful upload" });
     });
 });
