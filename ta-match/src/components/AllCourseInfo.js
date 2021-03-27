@@ -10,7 +10,7 @@ import Typography from "@material-ui/core/Typography";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import { useAuth } from "../contexts/AuthContext";
 import CourseInfoCard from "./CourseInfoCard";
-
+import { Alert } from "@material-ui/lab";
 const useStyles = makeStyles({
     root: {
         minWidth: 275,
@@ -31,7 +31,7 @@ const useStyles = makeStyles({
 export default function AllCourseInfo({ email, editPrivilege }) {
     const [isLoading, setIsLoading] = useState(true);
     const [courseData, setCourseData] = useState([]);
-
+    const [error, setError] = useState("");
     useEffect(() => {
         fetch(`http://localhost:5000/api/getAllApplicantData`)
             .then((response) => {
@@ -56,6 +56,7 @@ export default function AllCourseInfo({ email, editPrivilege }) {
     }
     return (
         <div>
+            {error && <Alert severity="error">{error}</Alert>}
             <Grid container spacing={3}>
                 {console.log(courseData)}
 
@@ -76,6 +77,7 @@ export default function AllCourseInfo({ email, editPrivilege }) {
                                         <CourseInfoCard
                                             course={course}
                                             semester={courseData.semester}
+                                            setError={setError}
                                             editPrivilege
                                         ></CourseInfoCard>
                                     </Grid>
