@@ -33,10 +33,8 @@ class AdminFilesUpload extends React.Component {
       console.log(filename);
       console.log(this.state['ApplicantsFile'])
       const data = new FormData();
-      data.append(filename, this.state[filename]);
-      data.append('semester', this.state.semester);
-      data.append('year', this.state.year);
-      axios.post(apiURL + '/upload' + filename, data, { 
+      data.append('ApplicantsFile', this.state[filename]);
+      axios.post(apiURL + '/uploadApplicantsFile', data, { 
   
       }).then(res => {
        console.log(res.statusText);

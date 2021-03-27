@@ -67,7 +67,6 @@ const storage = multer.diskStorage({
 
     // By default, multer removes file extensions so let's add them back
     filename: function (req, file, cb) {
-        console.log(file.originalName);
         cb(
             null,
             file.fieldname + "-" + "temp" + path.extname(file.originalname)
@@ -529,7 +528,7 @@ app.get("/api/semester/:semester", async (req, res) => {
     let courseData = [];
 
     const coursesCollection = await db.collection('courses').doc(semester).collection('courses').get();
-    console.log(coursesCollection)
+    // console.log(coursesCollection)
     coursesCollection.forEach(doc => {
         courseIDs.push(doc.id);
         courseData.push(doc.data());
