@@ -67,6 +67,7 @@ const storage = multer.diskStorage({
 
     // By default, multer removes file extensions so let's add them back
     filename: function (req, file, cb) {
+        console.log(file.originalName);
         cb(
             null,
             file.fieldname + "-" + "temp" + path.extname(file.originalname)
@@ -353,10 +354,12 @@ app.get("/", (req, res) => {
 
 // Upload endpoint for all instructors data
 app.post("/api/uploadInstructorsFile", function (req, res) {
+    // console.log(req.body.file);
+
     let upload = multer({ storage: storage }).single("InstructorsFile");
 
     upload(req, res, function (err) {
-        console.log(req.file);
+        // console.log(req.file);
         parseProfData(month, year);
         res.status(200).send({ data: "Successful upload" });
     });

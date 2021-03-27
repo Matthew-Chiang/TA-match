@@ -46,47 +46,69 @@ export default function InstructorSetup() {
   const [isLoading, setIsLoading] = useState(true);
   const [updating, setUpdating] = useState(0);
   const [test, setTest] = useState(0);
+  const [file, setFile] = useState();
 
-  const readExcel = (file) => {
-    const promise = new Promise((resolve, reject) => {
-      const fileReader = new FileReader();
-      fileReader.readAsArrayBuffer(file);
+  // const readExcel = (file) => {
+  //   const promise = new Promise((resolve, reject) => {
+  //     const fileReader = new FileReader();
+  //     fileReader.readAsArrayBuffer(file);
 
-      fileReader.onload = (e) => {
-        const bufferArray = e.target.result;
-        const wb = XLSX.read(bufferArray, { type: "buffer" });
-        const wsname = wb.SheetNames[0];
-        const ws = wb.Sheets[wsname];
-        const data = XLSX.utils.sheet_to_json(ws);
-        resolve(data);
+  //     fileReader.onload = (e) => {
+  //       const bufferArray = e.target.result;
+  //       const wb = XLSX.read(bufferArray, { type: "buffer" });
+  //       const wsname = wb.SheetNames[0];
+  //       const ws = wb.Sheets[wsname];
+  //       const data = XLSX.utils.sheet_to_json(ws);
+  //       resolve(data);
 
-      };
+  //     };
 
-      fileReader.onerror = (error) => {
-        reject(error);
-      };
-    });
-    // CHANGE
-    promise.then((d) => {
-      fetch(`${apiURL}/calcHours`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-            hours: d
-        }),
-      })
-      .then(response=>{
-        if (response.status == 400) {
-          alert("Spreadsheet Invalid. Please upload one with the following columns: Instructor Name, Instructor Email.")
-        }
-        else {
-          console.log(response)
-        }
+  //     fileReader.onerror = (error) => {
+  //       reject(error);
+  //     };
+  //   });
+  //   // CHANGE
+  //   promise.then((d) => {
+  //     fetch(`${apiURL}/calcHours`, {
+  //       method: "POST",
+  //       headers: { "Content-Type": "application/json" },
+  //       body: JSON.stringify({
+  //           hours: d
+  //       }),
+  //     })
+  //     .then(response=>{
+  //       if (response.status == 400) {
+  //         alert("Spreadsheet Invalid. Please upload one with the following columns: Instructor Name, Instructor Email.")
+  //       }
+  //       else {
+  //         console.log(response)
+  //       }
+  //     })
+  //     .catch(err =>{
+  //         alert(err);
+  //     })
+  //   });
+  // };
+
+  const sendFile = ({file}) => {
+    const filename = file.name;
+    console.log(filename);
+    console.log(file)
+    const data = new FormData();
+    data.append('InstructorsFile', file); 
+    axios.post(apiURL + '/uploadInstructorsFile', data, {
+
+    }).then(response=>{
+      if (response.status == 400) {
+        alert("Spreadsheet Invalid. Please upload one with the following columns: Instructor Name, Instructor Email.")
+      }
+      else {
+        console.log(response)
+      }
       })
       .catch(err =>{
           alert(err);
       })
-    });
   };
 
   //get all calculated hours
@@ -130,13 +152,15 @@ export default function InstructorSetup() {
         accept=".xlsx, .xls, .csv"
         onChange={(e) => {
           const file = e.target.files[0];
-          readExcel(file);
+          setFile(file);
+          console.log({file});
         }}
       />
       <Button 
             color="primary"
             variant="contained"
-            onClick={() => setTest(test+1)}
+            // onClick={() => setTest(test+1)}
+            onClick={() => sendFile({file})}
              >
             Submit
           </Button>

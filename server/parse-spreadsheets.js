@@ -1,41 +1,41 @@
 const fs = require("fs");
 const csv = require("csv-parser");
 const admin = require("firebase-admin");
+var XLSX = require('xlsx')
+
 
 const db = admin.firestore();
 
 
-// Read in profs data from temp folder and write to DB
 function parseProfData(month, year) {
     const sheet = [];
 
     // Build array of arrays for csv file
-    fs.createReadStream("./temp/InstructorsFile-temp.csv")
-        .pipe(csv())
-        .on("data", (data) => sheet.push(data))
-        .on("end", () => {
-            sheet.forEach((prof) => {
-                var nameKey = "";
-                var emailKey = "";
+    var workbook = XLSX.readFile("./temp/InstructorsFile-temp.xlsx")
+    var sheet_name_list = workbook.SheetNames;
+    var xlData = XLSX.utils.sheet_to_json(workbook.Sheets[sheet_name_list[0]]);
+    
+    var nameKey = "";
+    var emailKey = "";
 
-                // Find relevant column names using likely substrings
-                Object.keys(prof).forEach((key) => {
-                    if (key.toLowerCase().includes("name")) { // Get header for instructor name
-                        nameKey = key;
-                    } else if (key.toLowerCase().includes("email")) { // Get header for instructor email
-                        emailKey = key;
-                    }
-                });
+    // Find relevant column names using likely substrings    
+    Object.keys(xlData[0]).forEach((key) => {
 
-                // Write profs data to db
-                const profDoc = db.collection(`/courses/${month + year}/profs`).doc(prof[emailKey]); // Check if this needs to be async
-                profDoc.set({
-                    name: prof[nameKey]
-                });
-            });
+        if (key.toLowerCase().includes("name")) { // Get header for instructor name
+            nameKey = key;
+        } else if (key.toLowerCase().includes("email")) { // Get header for instructor email
+            emailKey = key;
+        }
+    });
+
+    // Write profs data to db
+    for (prof of xlData) {
+        const profDoc = db.collection(`/courses/${month + year}/profs`).doc(prof[emailKey]); // Check if this needs to be async
+        profDoc.set({
+            name: prof[nameKey]
         });
+    }
 }
-
 
 // Read in applicants data from temp folder and write to DB
 async function parseApplicantsData(semester) {
