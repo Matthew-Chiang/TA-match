@@ -16,6 +16,7 @@ import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
 import ProfessorQuestionsExport from "../components/ProfessorQuestionsExport";
 import InstructorSetup from "../components/InstructorSetup";
+import CourseInstructorAssociation from "../components/CourseInstructorAssociation";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -95,7 +96,7 @@ const ChairPage = () => {
                     <InstructorSetup />
                 </TabPanel>
                 <TabPanel value={value} index={2} className={classes.tabPanel}>
-                    <h1>Course-Instructor Association</h1>
+                    <CourseInstructorAssociation />
                 </TabPanel>
                 <TabPanel value={value} index={3} className={classes.tabPanel}>
                     <HoursCalculation />

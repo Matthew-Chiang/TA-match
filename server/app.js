@@ -52,7 +52,6 @@ admin.initializeApp({
 
 const parseSpreadsheets = require("./parse-spreadsheets.js");
 const allocateTAsFile = require("./allocate-tas.js");
-const { SSL_OP_SSLEAY_080_CLIENT_DH_BUG } = require("constants");
 const parseProfData = parseSpreadsheets.parseProfData;
 const parseApplicantsData = parseSpreadsheets.parseApplicantsData;
 const buildProfsObj = parseSpreadsheets.buildProfsObj;
