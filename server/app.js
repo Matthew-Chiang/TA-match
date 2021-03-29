@@ -364,6 +364,29 @@ app.post("/api/uploadInstructorsFile", function (req, res) {
     });
 });
 
+//retrieve all TA hours
+app.get("/api/getInstructors", async (req, res) => {
+    const sem = month+year;
+    let instructors = [];
+
+    try {
+        const find = await db
+            .collection("courses")
+            .doc(sem)
+            .collection("profs")
+            .get();
+        find.forEach((e) => {
+            instructors.push({
+                email: e.id,
+                name: e.data().name,
+            });
+        });
+        res.send(instructors);
+    } catch (err) {
+        console.log(err);
+    }
+});
+
 app.post("/api/addQuestionsForTA", async (req, res) => {
     //@leslie: check
     const semester = month+year;

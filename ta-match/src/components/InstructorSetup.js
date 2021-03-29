@@ -113,19 +113,16 @@ export default function InstructorSetup() {
 
   //get all calculated hours
   useEffect(() => {
-    fetch(`${apiURL}/getHours`)
+    fetch(`${apiURL}/getInstructors`)
       .then((response)=>{
         response.json()
           .then((data)=>{
-            // CHANGE
             setInstructorInfo(data);
             if(data.length == 0){
               setIsLoading(true);
             }else{
               setIsLoading(false);
             }
-            
-            console.log(data)
           })
           .catch((err)=>{
             console.log(err);
@@ -168,18 +165,17 @@ export default function InstructorSetup() {
         <Table className={classes.table} size="small">
           <TableHead>
             <TableRow className={classes.row}>
-              <TableCell>Course Code</TableCell>
-              <TableCell>Course Name</TableCell>
-              <TableCell></TableCell>
+              <TableCell>Instructor Name</TableCell>
+              <TableCell>Instructor Email</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-          {instructorInfo.map((course)=>{
+          {instructorInfo.map((e)=>{
               return (
                 // CHANGE
-                <TableRow key={course["course"]}>
-                  <TableCell component="th" scope="row">{course["course"]}</TableCell>
-                  <TableCell>{course["ta_hours"]}</TableCell>
+                <TableRow key={e["email"]}>
+                  <TableCell component="th" scope="row">{e["name"]}</TableCell>
+                  <TableCell>{e["email"]}</TableCell>
               </TableRow>
               )
             })}

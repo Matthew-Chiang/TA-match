@@ -5,7 +5,6 @@ import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 import DisplayApplicants from './DisplayApplicants.js';
 
-
 const apiURL = 'http://localhost:5000/api';
 
 class AdminFilesUpload extends React.Component {
@@ -45,8 +44,6 @@ class AdminFilesUpload extends React.Component {
     }
 
     render() {
-      const {applicants} = this.state;
-      console.log(applicants)
       return (
         <div>
     
@@ -79,23 +76,6 @@ class AdminFilesUpload extends React.Component {
           <DisplayApplicants></DisplayApplicants>
 
           : <div></div>} 
-      
-
-          {/* // <br/>
-          // <br/>
-          // Choose Instructors File: <input
-          //     type="file"
-          //     id="instructorsData"
-          //     accept=".xlsx, .xls, .csv"
-          //     onChange={(e)=>this.onChangeHandler(e, 'InstructorsFile')}
-          //   />
-          // <Button className="submitButton"
-          //   color="primary"
-          //   variant="contained"
-          //   onClick={()=>this.sendFile('InstructorsFile')}
-          //   >
-          //   Submit 
-          // </Button> */}
         </div>
         
       );
