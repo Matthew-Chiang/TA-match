@@ -68,7 +68,7 @@ export default function RejectTA(
   const handleOverride = () => {
       //updateHours
       
-    rejectionAPIcall(email, "rejected");
+    rejectionAPIcall(email, "rejected", description);
     handleClose();
     
   }
@@ -76,7 +76,7 @@ export default function RejectTA(
   
   return (
     <div>
-      <Button onClick={() => handleClickOpen("hello","bye")}>
+      <Button onClick={() => handleClickOpen()}>
             Reject From Course
         </Button >
       <Dialog

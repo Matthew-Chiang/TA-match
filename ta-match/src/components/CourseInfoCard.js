@@ -156,8 +156,8 @@ export default function CourseInfoCard({
             });
     }
 
-    const changeTAStatus = (email, status) => {
-        console.log(courseState)
+    const changeTAStatus = (email, status, reason) => {
+        console.log(email)
         console.log(email, status)
         fetch(`http://localhost:5000/api/allocation/changeStatus/${email}`, {
             method: "POST",
@@ -166,6 +166,7 @@ export default function CourseInfoCard({
                 newStatus: status,
                 // semester: semester.toLowerCase().replace(/ /g, ""),
                 courseName: course.course_code,
+                rejectionReason: reason
             }),
         })
             .then((res) => {
@@ -382,6 +383,7 @@ export default function CourseInfoCard({
                                         <div key={index}>
                                             <p>Email: {allocation.email}</p>
                                             <p>Status: {allocation.status}</p>
+                                            
                                             <p>Hours: {allocation.hours_allocated}</p>
                                             <div
                                                 className={
@@ -392,7 +394,8 @@ export default function CourseInfoCard({
                                                     onClick={() =>
                                                         changeTAStatus(
                                                             allocation.email,
-                                                            "confirmed"
+                                                            "confirmed",
+                                                            "N/A"
                                                         )
                                                     }
                                                 >
