@@ -41,8 +41,10 @@ const useStyles = makeStyles({
 
 export default function RejectTA(
     {
+        email,
         course,
         rejectionAPIcall,
+
     })
 {
   // styles
@@ -51,14 +53,11 @@ export default function RejectTA(
     // Modal 
   const [open, setOpen] = React.useState(false);
   const [description, setDescription] = useState("")
-  const [hours,setHours] = useState("N/A");
-  const [newHours, setNewHours] = useState("");
 
 
-  const handleClickOpen = (course,hours) => {
-    setNewHours("")
-    //setCourse(course);
-    //setHours(hours)
+
+  const handleClickOpen = () => {
+    console.log(email)
     setOpen(true);
   };
 
@@ -68,6 +67,8 @@ export default function RejectTA(
 
   const handleOverride = () => {
       //updateHours
+      
+    rejectionAPIcall(email, "rejected");
     handleClose();
     
   }
@@ -76,7 +77,7 @@ export default function RejectTA(
   return (
     <div>
       <Button onClick={() => handleClickOpen("hello","bye")}>
-            Reject into Course
+            Reject From Course
         </Button >
       <Dialog
           open={open}

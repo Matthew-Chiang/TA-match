@@ -158,6 +158,7 @@ export default function CourseInfoCard({
 
     const changeTAStatus = (email, status) => {
         console.log(courseState)
+        console.log(email, status)
         fetch(`http://localhost:5000/api/allocation/changeStatus/${email}`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -398,6 +399,7 @@ export default function CourseInfoCard({
                                                     Accept into Course
                                                 </Button>
                                                 <RejectTA
+                                                    email = {allocation.email}
                                                     course = {courseState.course_code}
                                                     rejectionAPIcall = {changeTAStatus}
                                                 >
