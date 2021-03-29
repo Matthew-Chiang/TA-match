@@ -141,12 +141,18 @@ export default function HoursCalculation() {
         response.json()
           .then((data)=>{
             setCalcHours(data);
-            if(data.length == 0){
-              setIsLoading(true);
-            }else{
-              setIsLoading(false);
-            }
-            
+            data.forEach((h)=>{
+              if(data.length != 0){
+                if(typeof h["ta_hours"] != "undefined"){
+                  setIsLoading(false);
+                }
+                else{
+                  setIsLoading(true);
+                }
+              }else{
+                setIsLoading(true);
+              }
+            })
             console.log(data)
           })
           .catch((err)=>{
@@ -188,7 +194,8 @@ export default function HoursCalculation() {
         <Table className={classes.table} size="small">
           <TableHead>
             <TableRow className={classes.row}>
-              <TableCell>Course</TableCell>
+              <TableCell>Course Code</TableCell>
+              <TableCell>Course Name</TableCell>
               <TableCell>Calculated Hours</TableCell>
               <TableCell></TableCell>
             </TableRow>
@@ -198,6 +205,7 @@ export default function HoursCalculation() {
               return (
                 <TableRow key={course["course"]}>
                   <TableCell component="th" scope="row">{course["course"]}</TableCell>
+                  <TableCell>{course["course_name"]}</TableCell>
                   <TableCell>{course["ta_hours"]}</TableCell>
                   <TableCell align="right">
                   <Button variant="contained" color="default" onClick={() => handleClickOpen(course["course"],course["ta_hours"])}>

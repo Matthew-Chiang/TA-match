@@ -103,6 +103,7 @@ export default function InstructorSetup() {
         alert("Spreadsheet Invalid. Please upload one with the following columns: Instructor Name, Instructor Email.")
       }
       else {
+        setTest(test+1);
         console.log(response)
       }
       })
@@ -111,7 +112,7 @@ export default function InstructorSetup() {
       })
   };
 
-  //get all calculated hours
+  //get all instructors
   useEffect(() => {
     fetch(`${apiURL}/getInstructors`)
       .then((response)=>{
@@ -131,7 +132,7 @@ export default function InstructorSetup() {
       .catch((err)=>{
         console.log(err)
       })
-  }, [updating,test]);
+  }, [test]);
 
   
   return (
