@@ -44,7 +44,6 @@ export default function CourseSetup() {
   // parse Excel
   const [courseInfo, setCourseInfo] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [updating, setUpdating] = useState(0);
   const [test, setTest] = useState(0);
 
   const readExcel = (file) => {
@@ -66,37 +65,36 @@ export default function CourseSetup() {
         reject(error);
       };
     });
-    // CHANGE
+
     promise.then((d) => {
       console.log(d)
-      // fetch(`${apiURL}/uploadCourseFile`, {
-      //   method: "POST",
-      //   headers: { "Content-Type": "application/json" },
-      //   body: JSON.stringify({
-      //       coursesInfo: d
-      //   }),
-      // })
-      // .then(response=>{
-      //   if (response.status == 400) {
-      //     alert("Spreadsheet Invalid. Please upload one with the following columns: Course Code, Course Name.")
-      //   }
-      //   else {
-      //     console.log(response)
-      //   }
-      // })
-      // .catch(err =>{
-      //     alert(err);
-      // })
+      fetch(`${apiURL}/uploadCourseFile`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            coursesInfo: d
+        }),
+      })
+      .then(response=>{
+        if (response.status == 400) {
+          alert("Spreadsheet Invalid. Please upload one with the following columns: Course Code, Course Name.")
+        }
+        else {
+          console.log(response)
+        }
+      })
+      .catch(err =>{
+          alert(err);
+      })
     });
   };
 
   //get all calculated hours
   useEffect(() => {
-    fetch(`${apiURL}/getHours`)
+    fetch(`${apiURL}/getCourses`)
       .then((response)=>{
         response.json()
           .then((data)=>{
-            // CHANGE
             setCourseInfo(data);
             if(data.length == 0){
               setIsLoading(true);
@@ -113,7 +111,7 @@ export default function CourseSetup() {
       .catch((err)=>{
         console.log(err)
       })
-  }, [updating,test]);
+  }, [test]);
 
   
   return (
@@ -153,10 +151,9 @@ export default function CourseSetup() {
           <TableBody>
           {courseInfo.map((course)=>{
               return (
-                // CHANGE
                 <TableRow key={course["course"]}>
                   <TableCell component="th" scope="row">{course["course"]}</TableCell>
-                  <TableCell>{course["ta_hours"]}</TableCell>
+                  <TableCell>{course["course_name"]}</TableCell>
               </TableRow>
               )
             })}
