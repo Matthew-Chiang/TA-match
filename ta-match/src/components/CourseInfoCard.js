@@ -80,6 +80,7 @@ export default function CourseInfoCard({
     const [oldTaHours, setOldTaHours] = useState("");
     const [modifiedTaHours, setModifiedTaHours] = useState("");
     const [open, setOpen] = useState(false);
+    const [rejectionReason, setRejectionReaon] = useState("")
     const [tempRanking, setTempRanking] = useState({});
 
     function setRank(email, rank) {
@@ -175,7 +176,11 @@ export default function CourseInfoCard({
                 newState["allocation_list"].filter(
                     (allocation) => allocation.email === email
                 )[0].status = status;
+                newState["allocation_list"].filter(
+                    (allocation) => allocation.email === email
+                )[0].rejection_reason = reason;
                 setCourseState(newState);
+                
             })
             .catch((e) => {
                 console.log(e);
@@ -383,7 +388,9 @@ export default function CourseInfoCard({
                                         <div key={index}>
                                             <p>Email: {allocation.email}</p>
                                             <p>Status: {allocation.status}</p>
-                                            
+                                            {allocation.status == "rejected" &&
+                                                <p>Reason for Rejection: {allocation.rejection_reason} </p>
+                                            }
                                             <p>Hours: {allocation.hours_allocated}</p>
                                             <div
                                                 className={
