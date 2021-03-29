@@ -83,10 +83,10 @@ const ChairPage = () => {
                 >
                     <Tab label="1. Course Setup" />
                     <Tab label="2. Instructor Setup" />
-                    <Tab label="3. Course-Instructors Association" />
+                    <Tab label="3. Assign Instructors" />
                     <Tab label="4. Determine TA Hours" />
                     <Tab label="5. Export Question List" />
-                    <Tab label="6. Import Applicant Information" />
+                    <Tab label="6. Import Applicants" />
                     <Tab label="7. Match TA and Courses"/>
                 </Tabs>
                 <TabPanel value={value} index={0} className={classes.tabPanel}>

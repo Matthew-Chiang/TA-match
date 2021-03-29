@@ -1,32 +1,6 @@
-import React, { Component, useState, useEffect } from "react";
-import Accordion from "@material-ui/core/Accordion";
-import { AccordionDetails, AccordionSummary } from "@material-ui/core";
-import { Select, MenuItem, InputLabel, NativeSelect } from "@material-ui/core";
-import { makeStyles } from "@material-ui/core/styles";
+import React, { useState, useEffect } from "react";
 import Grid from "@material-ui/core/Grid";
-import Card from "@material-ui/core/Card";
-import CardContent from "@material-ui/core/CardContent";
-import Typography from "@material-ui/core/Typography";
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import { useAuth } from "../contexts/AuthContext";
 import CourseInfoCard from "./CourseInfoCard";
-
-const useStyles = makeStyles({
-    root: {
-        minWidth: 275,
-    },
-    bullet: {
-        display: "inline-block",
-        margin: "0 2px",
-        transform: "scale(0.8)",
-    },
-    title: {
-        fontSize: 14,
-    },
-    pos: {
-        marginTop: 6,
-    },
-});
 
 export default function AllCourseInfo({ email, editPrivilege }) {
     const [isLoading, setIsLoading] = useState(true);
@@ -50,19 +24,14 @@ export default function AllCourseInfo({ email, editPrivilege }) {
             });
     }, []);
 
-    const classes = useStyles();
     if (isLoading) {
         return <div className="App">Loading...</div>;
     }
     return (
         <div>
             <Grid container spacing={3}>
-                {console.log(courseData)}
-
                 {Object.keys(courseData["profs"]).map((prof, index) => {
                     return (
-                        // <div>
-                        //     <Typography>{prof}</Typography>
                         courseData.profs[prof].courseList.map(
                             (course, index) => {
                                 return (
@@ -71,7 +40,6 @@ export default function AllCourseInfo({ email, editPrivilege }) {
                                         item
                                         xs={12}
                                         sm={6}
-                                        md={4}
                                     >
                                         <CourseInfoCard
                                             course={course}
@@ -82,7 +50,6 @@ export default function AllCourseInfo({ email, editPrivilege }) {
                                 );
                             }
                         )
-                        // </div>
                     );
                 })}
             </Grid>
