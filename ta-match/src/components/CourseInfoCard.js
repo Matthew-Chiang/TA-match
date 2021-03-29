@@ -24,6 +24,7 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import QuestionAnswerModal from "./QuestionAnswerModal";
 import zIndex from "@material-ui/core/styles/zIndex";
+import RejectTA from "./RejectTA";
 
 const useStyles = makeStyles({
     root: {
@@ -396,16 +397,13 @@ export default function CourseInfoCard({
                                                 >
                                                     Accept into Course
                                                 </Button>
-                                                <Button
-                                                    onClick={() =>
-                                                        changeTAStatus(
-                                                            allocation.email,
-                                                            "rejected"
-                                                        )
-                                                    }
+                                                <RejectTA
+                                                    course = {courseState.course_code}
+                                                    rejectionAPIcall = {changeTAStatus}
                                                 >
-                                                    Reject from Course
-                                                </Button>
+                                        
+                                                </RejectTA>
+                                                   
                                             </div>
                                             {editPrivilege && (
                                                 <div>
