@@ -68,24 +68,25 @@ export default function CourseSetup() {
     });
     // CHANGE
     promise.then((d) => {
-      fetch(`${apiURL}/calcHours`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-            hours: d
-        }),
-      })
-      .then(response=>{
-        if (response.status == 400) {
-          alert("Spreadsheet Invalid. Please upload one with the following columns: Course Code, Course Name.")
-        }
-        else {
-          console.log(response)
-        }
-      })
-      .catch(err =>{
-          alert(err);
-      })
+      console.log(d)
+      // fetch(`${apiURL}/uploadCourseFile`, {
+      //   method: "POST",
+      //   headers: { "Content-Type": "application/json" },
+      //   body: JSON.stringify({
+      //       coursesInfo: d
+      //   }),
+      // })
+      // .then(response=>{
+      //   if (response.status == 400) {
+      //     alert("Spreadsheet Invalid. Please upload one with the following columns: Course Code, Course Name.")
+      //   }
+      //   else {
+      //     console.log(response)
+      //   }
+      // })
+      // .catch(err =>{
+      //     alert(err);
+      // })
     });
   };
 

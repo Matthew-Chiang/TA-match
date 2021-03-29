@@ -87,7 +87,7 @@ export default function HoursCalculation() {
       })
       .then(response=>{
         if (response.status == 400) {
-          alert("Spreadsheet Invalid. Please upload one with the following columns: Instructor, Course, Hrs 2020,Enrol 2020, Enrol 2021.")
+          alert("Spreadsheet Invalid. Please upload one with the following columns: Course Code, Previous Enrollments, Previous TA Hours, Current Enrollments.")
         }
         else {
           console.log(response)
@@ -167,7 +167,7 @@ export default function HoursCalculation() {
               This function will load all the course enrolment information to calculate recommended TA hours for each course.
               </Box>
           </Typography>
-      <p>Please upload a file in the form of a spreadsheet (XLS, XLSX, CSV) and that includes the following columns: Instructor (email), Course, Hrs 2020, Enrol 2020, Enrol 2021.</p>
+      <p>Please upload a file in the form of a spreadsheet (XLS, XLSX, CSV) and that includes the following columns: Course Code, Previous Enrollments, Previous TA Hours, Current Enrollments.</p>
       <br></br>
       Upload spreadsheet: <input
         type="file"

@@ -236,28 +236,23 @@ app.post("/api/calcHours", async (req, res) => {
 
     try {
         await calcHours.map((e) => {
-            if (typeof e["Instructor"] !== "undefined" && typeof e["Course"] !== "undefined" && typeof e["Enrol 2020"] !== "undefined" && typeof e["Enrol 2021"] !== "undefined" && typeof e["Hrs 2021"] !== "undefined") {
+            if (typeof e["Course Code"] !== "undefined" && typeof e["Previous Enrollments"] !== "undefined" && typeof e["Previous TA Hours"] !== "undefined" && typeof e["Current Enrollments"] !== "undefined") {
                 valid++;
             }
         })
-        console.log(valid)
         if (valid > 0) {
             await calcHours.map((e) => {
-                if (e["Course"] && !((e["Course"]).includes("/"))) {
-                    e["Course"] = e["Course"].replace(/\s/g, "");
-                    if (!e["Hrs 2020"]) {
-                        e["Hrs 2020"] = 0;
-                    }
+                if (e["Course Code"] && !((e["Course Code"]).includes("/"))) {
+                    e["Course Code"] = e["Course Code"].replace(/\s/g, "");
                     let num = Math.ceil(
-                        ((e["Hrs 2020"] / e["Enrol 2020"]) * e["Enrol 2021"])/5
+                        ((e["Previous TA Hours"] / e["Previous Enrollments"]) * e["Current Enrollments"])/5
                     )*5;
                     if (isNaN(num)) {
                         num = 0;
                     }
                     calculation.push({
-                        course: e["Course"],
+                        course: e["Course Code"],
                         ta_hours: num,
-                        instructor: e["Instructor"],
                     });
                 }
             });
@@ -269,7 +264,7 @@ app.post("/api/calcHours", async (req, res) => {
                     .collection("courses")
                     .doc(a["course"]);
     
-                hours.set({ ta_hours: a["ta_hours"], instructor: a["instructor"] });
+                hours.set({ ta_hours: a["ta_hours"]});
             });
             res.send("success");
         }
@@ -386,6 +381,51 @@ app.get("/api/getInstructors", async (req, res) => {
         console.log(err);
     }
 });
+
+//calculate and populate the recommended TA hours into the db
+app.post("/api/uploadCourseFile", async (req, res) => {
+    const sem = month+year;
+    const courses = req.body.coursesInfo;
+
+    let courseData = [];
+    let valid = 0;
+
+    try {
+        await courses.map((e) => {
+            if (typeof e["Course Code"] !== "undefined" && typeof e["Course Name"] !== "undefined") {
+                valid++;
+            }
+        })
+        if (valid > 0) {
+            await courses.map((e) => {
+                if ((!(e["Course Code"]).includes("/")) && (!(e["Course Name"]).includes("/"))) {
+                    e["Course Code"] = e["Course Code"].replace(/\s/g, "");
+                    courseData.push({
+                        course_code: e["Course Code"],
+                        course_name: e["Course Name"],
+                    });
+                }
+            });
+
+            await courseData.forEach((a) => {
+                const find = db
+                    .collection("courses")
+                    .doc("winter20211") // CHANGE BACK TO "sem" later, testing right now
+                    .collection("courses")
+                    .doc("courses");
+    
+                // need to finish function
+            });
+            res.send("success");
+        }
+        else {
+            res.status(400).send("error");
+        }
+    } catch (err) {
+        res.send(err);
+    }
+});
+
 
 app.post("/api/addQuestionsForTA", async (req, res) => {
     //@leslie: check
