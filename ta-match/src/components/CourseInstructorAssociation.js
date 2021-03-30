@@ -31,10 +31,16 @@ const useStyles = makeStyles({
   formControl: {
     marginBottom: 5,
     minWidth: 140,
-}
+  },
+  submitBtn:{
+    marginLeft: 40,
+    marginBottom: 5,
+  }
 });
 
-export default function CourseInstructorAssociation() {
+export default function CourseInstructorAssociation({
+  setHoursFlag,
+}) {
   // styles
   const classes = useStyles();
   const [instructorInfo, setInstructorInfo] = useState([]);
@@ -104,9 +110,20 @@ export default function CourseInstructorAssociation() {
       <h3>Course-Instructor Association</h3>
       <Typography component="div">
               <Box fontStyle="italic" >
-              This function will assign instructors to courses for the current semester. 
+              This function will assign instructors to courses for the current semester.
+              <Button 
+                className={classes.submitBtn}
+                color="primary"
+                variant="contained"
+                onClick={() => {
+                  setHoursFlag(false)
+                }}
+             >
+            Submit
+          </Button> 
               </Box>
           </Typography>
+          
         {!isLoading ? <TableContainer className={classes.container}>
         <Table className={classes.table} size="small">
           <TableHead>

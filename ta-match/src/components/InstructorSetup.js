@@ -37,7 +37,9 @@ const useStyles = makeStyles({
   }
 });
 
-export default function InstructorSetup() {
+export default function InstructorSetup({
+    setAssociationFlag,
+  }) {
   // styles
   const classes = useStyles();
 
@@ -115,7 +117,9 @@ export default function InstructorSetup() {
       <Button 
             color="primary"
             variant="contained"
-            onClick={() => sendFile({file})}
+            onClick={() => {
+              sendFile({file});
+            }}
              >
             Submit
           </Button>
@@ -129,6 +133,7 @@ export default function InstructorSetup() {
           </TableHead>
           <TableBody>
           {instructorInfo.map((e)=>{
+              setAssociationFlag(false);
               return (
                 // CHANGE
                 <TableRow key={e["email"]}>

@@ -116,7 +116,13 @@ class ProfessorQuestionsExport extends React.Component {
                 </Select>
                 </FormControl>
 
-                <Button className={classes.btn} onClick={this.handleExport} color="primary" variant="contained">
+                <Button className={classes.btn} 
+                    onClick={() => {
+                        this.handleExport(); 
+                        this.props.setUplaodFlag(false)}}
+                    // onClick={this.handleExport} 
+                    color="primary" 
+                    variant="contained">
                     View Questions for Export
                 </Button>
                 {isLoaded ? <TableContainer className={classes.container}>

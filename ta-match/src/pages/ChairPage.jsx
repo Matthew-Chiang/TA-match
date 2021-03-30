@@ -63,7 +63,12 @@ const useStyles = makeStyles((theme) => ({
 const ChairPage = () => {
     const classes = useStyles();
     const [value, setValue] = useState(0);
-  
+    const [instructorFlag, setInstructorFlag] = useState(true)
+    const [associationFlag, setAssociationFlag] = useState(true)
+    const [hoursFlag, setHoursFlag] = useState(true)
+    const [exportFlag, setExportFlag] = useState(true)
+    const [uplaodFlag, setUplaodFlag] = useState(true)
+    const [allCourseFlag, setAllCourseFlag] = useState(true)
     const handleChange = (event, newValue) => {
       setValue(newValue);
     };
@@ -80,32 +85,45 @@ const ChairPage = () => {
                     value={value}
                     onChange={handleChange}
                     className={classes.tabs}
+                    
                 >
                     <Tab label="1. Course Setup" />
-                    <Tab label="2. Instructor Setup" />
-                    <Tab label="3. Assign Instructors" />
-                    <Tab label="4. Determine TA Hours" />
-                    <Tab label="5. Export Question List" />
-                    <Tab label="6. Import Applicants" />
-                    <Tab label="7. Match TA and Courses"/>
+                    <Tab label="2. Instructor Setup" disabled = {instructorFlag}/>
+                    <Tab label="3. Assign Instructors" disabled = {associationFlag}/>
+                    <Tab label="4. Determine TA Hours" disabled = {hoursFlag}/>
+                    <Tab label="5. Export Question List" disabled = {exportFlag}/>
+                    <Tab label="6. Import Applicants" disabled = {uplaodFlag}/>
+                    <Tab label="7. Match TA and Courses" disabled = {allCourseFlag}/>
                 </Tabs>
                 <TabPanel value={value} index={0} className={classes.tabPanel}>
-                    <CourseSetup />
+                    <CourseSetup 
+                    setInstructorFlag = {setInstructorFlag}
+                    />
                 </TabPanel>
                 <TabPanel value={value} index={1} className={classes.tabPanel}>
-                    <InstructorSetup />
+                    <InstructorSetup 
+                    setAssociationFlag = {setAssociationFlag}
+                    />
                 </TabPanel>
                 <TabPanel value={value} index={2} className={classes.tabPanel}>
-                    <CourseInstructorAssociation />
+                    <CourseInstructorAssociation
+                    setHoursFlag = {setHoursFlag}
+                    />
                 </TabPanel>
                 <TabPanel value={value} index={3} className={classes.tabPanel}>
-                    <HoursCalculation />
+                    <HoursCalculation 
+                    setExportFlag = {setExportFlag}
+                    />
                 </TabPanel>
                 <TabPanel value={value} index={4} className={classes.tabPanel}>
-                    <ProfessorQuestionsExport />
+                    <ProfessorQuestionsExport 
+                    setUplaodFlag = {setUplaodFlag}
+                    />
                 </TabPanel>
                 <TabPanel value={value} index={5} className={classes.tabPanel}>
-                    <AdminFilesUpload />
+                    <AdminFilesUpload 
+                    setAllCourseFlag ={setAllCourseFlag}
+                    />
                 </TabPanel>
                 <TabPanel value={value} index={6} className={classes.tabPanel}>
                     <TogglePriority />
