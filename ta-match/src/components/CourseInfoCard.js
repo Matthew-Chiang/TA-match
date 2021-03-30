@@ -24,6 +24,7 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import QuestionAnswerModal from "./QuestionAnswerModal";
 import zIndex from "@material-ui/core/styles/zIndex";
+import RejectTA from "./RejectTA";
 
 const useStyles = makeStyles({
     root: {
@@ -79,6 +80,7 @@ export default function CourseInfoCard({
     const [oldTaHours, setOldTaHours] = useState("");
     const [modifiedTaHours, setModifiedTaHours] = useState("");
     const [open, setOpen] = useState(false);
+    const [rejectionReason, setRejectionReaon] = useState("")
     const [tempRanking, setTempRanking] = useState({});
 
     function setRank(email, rank) {
@@ -156,8 +158,9 @@ export default function CourseInfoCard({
             });
     }
 
-    const changeTAStatus = (email, status) => {
-        console.log(courseState)
+    const changeTAStatus = (email, status, reason) => {
+        console.log(email)
+        console.log(email, status)
         fetch(`http://localhost:5000/api/allocation/changeStatus/${email}`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -165,6 +168,7 @@ export default function CourseInfoCard({
                 newStatus: status,
                 // semester: semester.toLowerCase().replace(/ /g, ""),
                 courseName: course.course_code,
+                rejectionReason: reason
             }),
         })
             .then((res) => {
@@ -173,7 +177,11 @@ export default function CourseInfoCard({
                 newState["allocation_list"].filter(
                     (allocation) => allocation.email === email
                 )[0].status = status;
+                newState["allocation_list"].filter(
+                    (allocation) => allocation.email === email
+                )[0].rejection_reason = reason;
                 setCourseState(newState);
+                
             })
             .catch((e) => {
                 console.log(e);
@@ -381,6 +389,9 @@ export default function CourseInfoCard({
                                         <div key={index}>
                                             <p>Email: {allocation.email}</p>
                                             <p>Status: {allocation.status}</p>
+                                            {allocation.status == "rejected" &&
+                                                <p>Reason for Rejection: {allocation.rejection_reason} </p>
+                                            }
                                             <p>Hours: {allocation.hours_allocated}</p>
                                             <div
                                                 className={
@@ -391,22 +402,21 @@ export default function CourseInfoCard({
                                                     onClick={() =>
                                                         changeTAStatus(
                                                             allocation.email,
-                                                            "confirmed"
+                                                            "confirmed",
+                                                            "N/A"
                                                         )
                                                     }
                                                 >
                                                     Accept into Course
                                                 </Button>
-                                                <Button
-                                                    onClick={() =>
-                                                        changeTAStatus(
-                                                            allocation.email,
-                                                            "rejected"
-                                                        )
-                                                    }
+                                                <RejectTA
+                                                    email = {allocation.email}
+                                                    course = {courseState.course_code}
+                                                    rejectionAPIcall = {changeTAStatus}
                                                 >
-                                                    Reject from Course
-                                                </Button>
+                                        
+                                                </RejectTA>
+                                                   
                                             </div>
                                             {editPrivilege && (
                                                 <div>
