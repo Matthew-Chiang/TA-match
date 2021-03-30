@@ -28,6 +28,16 @@ import zIndex from "@material-ui/core/styles/zIndex";
 import ScheduleIcon from '@material-ui/icons/Schedule';
 import PersonIcon from '@material-ui/icons/Person';
 
+import ListItemText from '@material-ui/core/ListItemText';
+import ListItem from '@material-ui/core/ListItem';
+import List from '@material-ui/core/List';
+import Divider from '@material-ui/core/Divider';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import IconButton from '@material-ui/core/IconButton';
+import CloseIcon from '@material-ui/icons/Close';
+import Slide from '@material-ui/core/Slide';
+
 import logo from "../uwo.png"
 
 const useStyles = makeStyles({
@@ -89,8 +99,21 @@ const useStyles = makeStyles({
         display: "flex",
         alignItems: "center",
         flexWrap: "wrap",
+    },
+    container: {
+        marginTop: 20,
+    },
+    table: {
+        minWidth: 650,
+    },
+    row: {
+        backgroundColor: "#ECECEC"
     }
 });
+
+const Transition = React.forwardRef(function Transition(props, ref) {
+    return <Slide direction="up" ref={ref} {...props} />;
+  });
 
 export default function CourseInfoCard({
     course,
@@ -109,6 +132,16 @@ export default function CourseInfoCard({
     const [modifiedTaHours, setModifiedTaHours] = useState("");
     const [open, setOpen] = useState(false);
     const [tempRanking, setTempRanking] = useState({});
+
+    const [openCoursePopup, setCoursePopup] = useState(false);
+
+    const handlePopupOpen = () => {
+        setCoursePopup(true);
+      };
+    
+      const handlePopupClose = () => {
+        setCoursePopup(false);
+      };
 
     function setRank(email, rank) {
         // for profs
@@ -280,6 +313,7 @@ export default function CourseInfoCard({
                     <Button
                         className={classes.moreBtn}
                         variant="contained"
+                        onClick={handlePopupOpen}
                     >Manage
                     </Button>
                     </Grid>
@@ -511,6 +545,60 @@ export default function CourseInfoCard({
                 )} */}
             </CardContent>
         </Card>
+        <Dialog fullScreen open={openCoursePopup} onClose={handlePopupClose} TransitionComponent={Transition}>
+            <Toolbar>
+                <IconButton edge="start" color="inherit" onClick={handlePopupClose} aria-label="close">
+                <CloseIcon />
+                </IconButton>
+            </Toolbar>
+            <Typography>Course Name</Typography>
+            <Typography>Course Code</Typography>
+            <Typography># of TA hours</Typography>
+            <Divider />
+
+                <TableContainer className={classes.container}>
+                    <Table className={classes.table} size="small">
+                    <TableHead>
+                        <TableRow className={classes.row}>
+                        <TableCell>Name</TableCell>
+                        <TableCell>Email</TableCell>
+                        <TableCell>Fundability</TableCell>
+                        <TableCell>Hours Assigned</TableCell>
+                        <TableCell></TableCell>
+                        <TableCell>Status</TableCell>
+                        <TableCell></TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                            <TableRow>
+                            <TableCell>Jenny</TableCell>
+                            <TableCell>jenny@uwo.ca</TableCell>
+                            <TableCell>no :(</TableCell>
+                            <TableCell>4</TableCell>
+                            <TableCell align="right">
+                            <Button variant="contained" color="default">
+                                Modify
+                            </Button>
+                            </TableCell>
+                            <TableCell>accepted</TableCell>
+                            <TableCell>
+                                <Button variant="contained" color="default">
+                                    accept
+                                </Button>
+                                <Button variant="contained" color="default">
+                                    reject
+                                </Button>
+                                <Button variant="contained" color="default">
+                                    delete
+                                </Button>
+                            </TableCell>
+                        </TableRow>
+
+                    </TableBody>
+                    </Table>
+                </TableContainer>
+        </Dialog>
+
         <Dialog
           open={open}
           fullWidth={true}
