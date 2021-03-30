@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Grid from "@material-ui/core/Grid";
-import CourseInfoCard from "./CourseInfoCard";
+import CourseInfoCardNew from "./CourseInfoCardNew";
 
 export default function AllCourseInfo({ email, editPrivilege }) {
     const [isLoading, setIsLoading] = useState(true);
@@ -29,7 +29,7 @@ export default function AllCourseInfo({ email, editPrivilege }) {
     }
     return (
         <div>
-            <Grid container spacing={3}>
+            <Grid container spacing={1}>
                 {Object.keys(courseData["profs"]).map((prof, index) => {
                     return (
                         courseData.profs[prof].courseList.map(
@@ -39,13 +39,12 @@ export default function AllCourseInfo({ email, editPrivilege }) {
                                         key={index}
                                         item
                                         xs={12}
-                                        sm={6}
                                     >
-                                        <CourseInfoCard
+                                        <CourseInfoCardNew
                                             course={course}
                                             semester={courseData.semester}
                                             editPrivilege
-                                        ></CourseInfoCard>
+                                        ></CourseInfoCardNew>
                                     </Grid>
                                 );
                             }

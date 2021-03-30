@@ -145,7 +145,6 @@ export default function CourseSetup() {
             <TableRow className={classes.row}>
               <TableCell>Course Code</TableCell>
               <TableCell>Course Name</TableCell>
-              <TableCell></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
