@@ -1,7 +1,7 @@
 import React, { Component, useState, useEffect } from "react";
 import Accordion from "@material-ui/core/Accordion";
 import { AccordionDetails, AccordionSummary } from "@material-ui/core";
-import { Select, MenuItem, InputLabel, NativeSelect } from "@material-ui/core";
+import { Select, MenuItem, InputLabel, NativeSelect, FormControl } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import Card from "@material-ui/core/Card";
@@ -61,6 +61,14 @@ const useStyles = makeStyles({
         marginRight: 20,
         marginBottom: 10,
     },
+    formControl: {
+        margin: 1,
+        minWidth: 140,
+    },
+    rankBtn: {
+        marginLeft: 20,
+        marginTop: 8,
+      },
 });
 
 export default function CourseInfoCard({
@@ -83,7 +91,9 @@ export default function CourseInfoCard({
 
     function setRank(email, rank) {
         // for profs
-        setTempRanking({ ...tempRanking, [email]: rank - 1 });
+        console.log(email)
+        console.log(rank)
+        setTempRanking({ ...tempRanking, [email]: rank});
     }
     const handleClickOpen = (courseCode, TaEmail, TaHours) => {
         setModifiedCourse(courseCode)
@@ -128,6 +138,7 @@ export default function CourseInfoCard({
     }
 
     function updateRank(course, email) {
+        console.log(tempRanking[email])
         fetch(`http://localhost:5000/api/rank`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -139,7 +150,8 @@ export default function CourseInfoCard({
         })
             .then((response) => {
                 if (response.status == "404") {
-                    setError("Cannot assign same rank to multiple applicants");
+                    //setError("Cannot assign same rank to multiple applicants");
+                    alert("Cannot assign same rank to multiple applicants");
                 } else {
                     const newState = { ...courseState };
                     newState["applicant_list"].filter(
@@ -298,44 +310,22 @@ export default function CourseInfoCard({
                                                             {applicant.profRank}
                                                         </TableCell>
                                                         <TableCell>
-                                                            <NativeSelect
-                                                                id="select"
-                                                                onChange={(
-                                                                    e
-                                                                ) => {
-                                                                    setRank(
-                                                                        applicant.email,
-                                                                        e.target
-                                                                            .selectedIndex +
-                                                                            1
-                                                                    );
-                                                                }}
-                                                            >
-                                                                <option value="">
-                                                                    {" "}
-                                                                    Select rank
-                                                                </option>
-                                                                {courseState[
-                                                                    "applicant_list"
-                                                                ].map(
-                                                                    (
-                                                                        applicant,
-                                                                        index
-                                                                    ) => {
-                                                                        return (
-                                                                            <option
-                                                                                key={
-                                                                                    index
-                                                                                }
-                                                                            >
-                                                                                {index +
-                                                                                    1}
-                                                                            </option>
-                                                                        );
-                                                                    }
-                                                                )}
-                                                            </NativeSelect>
-                                                            <Button
+                                                        <FormControl className={classes.formControl}>
+                                                        <InputLabel>Select rank</InputLabel>
+                                                        <Select defaultValue="" id="select" onChange={(e)=>{setRank(applicant.email, e.target.value);}}> 
+                                                                <MenuItem value="Unranked">
+                                                                    Unranked
+                                                                </MenuItem>
+                                                            {courseState["applicant_list"].map((applicant,index)=>{
+                                                                return(
+                                                                    <MenuItem key={index} value={index+1}>
+                                                                        {index+1}
+                                                                    </MenuItem>
+                                                                )
+                                                            })}
+                                                        </Select>
+                                                        </FormControl>
+                                                            <Button className={classes.rankBtn}
                                                                 color="primary"
                                                                 onClick={() => {
                                                                     updateRank(

@@ -196,6 +196,7 @@ export default function HoursCalculation() {
             <TableRow className={classes.row}>
               <TableCell>Course Code</TableCell>
               <TableCell>Course Name</TableCell>
+              <TableCell>Instructor</TableCell>
               <TableCell>Calculated Hours</TableCell>
               <TableCell></TableCell>
             </TableRow>
@@ -206,6 +207,7 @@ export default function HoursCalculation() {
                 <TableRow key={course["course"]}>
                   <TableCell component="th" scope="row">{course["course"]}</TableCell>
                   <TableCell>{course["course_name"]}</TableCell>
+                  <TableCell>{course["instructor"]}</TableCell>
                   <TableCell>{course["ta_hours"]}</TableCell>
                   <TableCell align="right">
                   <Button variant="contained" color="default" onClick={() => handleClickOpen(course["course"],course["ta_hours"])}>

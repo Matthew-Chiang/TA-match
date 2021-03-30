@@ -240,7 +240,6 @@ app.post("/api/calcHours", async (req, res) => {
                 valid++;
             }
         })
-        console.log(valid)
         if(valid > 0){
             await calcHours.map((e) => {
                 if (e["Course Code"] && !((e["Course Code"]).includes("/"))) {
@@ -294,6 +293,7 @@ app.get("/api/getHours", async (req, res) => {
                 course: e.id,
                 ta_hours: e.data().ta_hours,
                 course_name: e.data().course_name,
+                instructor: e.data().instructor,
             });
         });
         res.send(hours);

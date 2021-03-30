@@ -10,7 +10,7 @@ import TableRow from '@material-ui/core/TableRow';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
-import NativeSelect from '@material-ui/core/NativeSelect';
+import { Select, MenuItem, InputLabel, NativeSelect, FormControl } from "@material-ui/core";
 
 const apiURL = 'http://localhost:5000/api';
 
@@ -23,10 +23,15 @@ const useStyles = makeStyles({
   },
   assignBtn: {
     marginLeft: 20,
+    marginTop: 10,
   },
   row: {
     backgroundColor: "#ECECEC"
-  }
+  },
+  formControl: {
+    marginBottom: 5,
+    minWidth: 140,
+}
 });
 
 export default function CourseInstructorAssociation() {
@@ -103,7 +108,7 @@ export default function CourseInstructorAssociation() {
               </Box>
           </Typography>
         {!isLoading ? <TableContainer className={classes.container}>
-        <Table className={classes.table}>
+        <Table className={classes.table} size="small">
           <TableHead>
             <TableRow className={classes.row}>
               <TableCell>Course Code</TableCell>
@@ -119,21 +124,19 @@ export default function CourseInstructorAssociation() {
                   <TableCell>{course["course"]}</TableCell>
                   <TableCell>{course["course_name"]}</TableCell>
                   <TableCell>{course["instructor"]}</TableCell>
-                  <TableCell>                                                            
-                    <NativeSelect
-                        id="select"
-                        onChange={(e) => {
+                  <TableCell>     
+                  <FormControl className={classes.formControl}>
+                  <InputLabel>Select professor</InputLabel>
+                  <Select defaultValue="" id="select" onChange={(e) => {
                           assignInstructor(course["course"],e.target.value)
-                        }}
-                        >
-                        <option value="">Select professor</option>
-                        
-                        {instructorInfo.map(
-                            (inst,index) => {
-                                return (<option key={index}>{inst["email"]}</option>);
-                            }
-                        )}
-                      </NativeSelect>
+                        }}>
+                    {instructorInfo.map(
+                        (inst,index) => {
+                            return (<MenuItem value={inst["email"]} key={index}>{inst["email"]}</MenuItem>);
+                        }
+                    )}
+                  </Select>
+                  </FormControl>                                                      
                       <Button className={classes.assignBtn}
                           color="primary"
                           onClick={() => {
