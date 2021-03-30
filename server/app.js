@@ -441,7 +441,7 @@ app.post("/api/allocation/changeStatus/:email", async (req, res) => {
     const semester = month+year;
     const courseName = req.body.courseName;
     const newStatus = req.body.newStatus;
-    const rejectionResaon = req.body.rejectionReason
+
     try {
         const allocation = await db
             .collection("courses")
@@ -450,11 +450,7 @@ app.post("/api/allocation/changeStatus/:email", async (req, res) => {
             .doc(courseName)
             .collection("allocation")
             .doc(email)
-            .update({ 
-                status: newStatus,
-                rejection_reason: rejectionResaon
-            
-            });
+            .update({ status: newStatus });
         res.send("return");
     } catch (err) {
         console.log(err);
