@@ -458,25 +458,37 @@ app.post("/api/allocation/changeStatus/:email", async (req, res) => {
 });
 
 app.post("/api/updateTaHours", async (req, res) => {
-    const hours = parseInt(req.body.hours);
+    const TAHours = parseInt(req.body.hours);
     const TaEmail = req.body.TaEmail;
-    const courseName = req.body.course;
-    const semester = month+year;
-    try {
-        const allocation = await db
-            .collection("courses")
-            .doc(semester)
-            .collection("courses")
-            .doc(courseName)
-            .collection("allocation")
-            .doc(TaEmail)
-            .update({ hours_allocated: hours });
-        res.send("return");
-        
-    } catch (err) {
-        console.log(err);
+    const courseName = req.body.course; 
+    const semester = month+year;    
+    try {   
+        const courseData = await db    
+            .collection("courses")    
+            .doc(semester)    
+            .collection("courses")   
+            .doc(courseName)    
+            .get()    
+            courseHours = courseData.data().ta_hours    
+            if (TAHours > courseHours){    
+            res.status(404).send("hello")    
+    }   
+
+    else{    
+        const hoursUpdate = await db    
+        .collection("courses")    
+        .doc(semester)    
+        .collection("courses")    
+        .doc(courseName)    
+        .collection("allocation")    
+        .doc(TaEmail)    
+        .update({ hours_allocated: TAHours });
+        return res.send("return")   
+    }  
+    } catch (err) {  
+        res.send(err);   
     }
-});
+    });
 
 app.post("/api/allocation/add", async (req, res) => {
     const semester = month+year;

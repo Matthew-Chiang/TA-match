@@ -51,7 +51,6 @@ export default function CourseInfo({ email }) {
     const [isLoading, setIsLoading] = useState(true);
     const [courseData, setCourseData] = useState([]);
     const { currentUser } = useAuth();
-
     const [error, setError] = useState("");
     let ranking = 0;
 
