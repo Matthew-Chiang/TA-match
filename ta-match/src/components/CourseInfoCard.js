@@ -120,7 +120,6 @@ export default function CourseInfoCard({
                         (applicant) => applicant.email === modifiedTa
                     )[0].hours_allocated = modifiedTaHours;
                     setCourseState(newState);
-                    //window.location.reload()
                 }
             })
             .catch((err) => {

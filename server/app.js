@@ -233,34 +233,45 @@ app.post("/api/calcHours", async (req, res) => {
 
     let calculation = [];
     let valid = 0;
-    console.log(calcHours)
+    //console.log(calcHours)
     try {
         await calcHours.map((e) => {
-            if (e["Course Code"] && !((e["Course Code"]).includes("/"))) {
-                e["Course Code"] = e["Course Code"].replace(/\s/g, "");
-                let num = Math.ceil(
-                    ((e["Previous TA hours"] / e["Previous Enrollments"]) * e["Current Enrollemnts "])/5
-                )*5;
-                if (isNaN(num)) {
-                    num = 0;
-                }
-                calculation.push({
-                    course: e["Course Code"],
-                    ta_hours: num,
-                });
+            if (typeof e["Course Code"] !== "undefined" && typeof e["Previous Enrollments"] !== "undefined" && typeof e["Previous TA hours"] !== "undefined" && typeof e["Current Enrollemnts "] !== "undefined") {
+                valid++;
             }
-        });
-
-        await calculation.forEach((a) => {
-            const hours = db
-                .collection("courses")
-                .doc(sem)
-                .collection("courses")
-                .doc(a["course"]);
-
-            hours.update({ ta_hours: a["ta_hours"]});
-        });
-        res.send("success");
+        })
+        console.log(valid)
+        if(valid > 0){
+            await calcHours.map((e) => {
+                if (e["Course Code"] && !((e["Course Code"]).includes("/"))) {
+                    e["Course Code"] = e["Course Code"].replace(/\s/g, "");
+                    let num = Math.ceil(
+                        ((e["Previous TA hours"] / e["Previous Enrollments"]) * e["Current Enrollemnts "])/5
+                    )*5;
+                    if (isNaN(num)) {
+                        num = 0;
+                    }
+                    calculation.push({
+                        course: e["Course Code"],
+                        ta_hours: num,
+                    });
+                }
+            });
+            await calculation.forEach((a) => {
+                const hours = db
+                    .collection("courses")
+                    .doc(sem)
+                    .collection("courses")
+                    .doc(a["course"]);
+    
+                hours.update({ ta_hours: a["ta_hours"]});
+            });
+            res.send("success")
+        }
+        else {
+            res.status(400).send("error");
+        }
+        //res.send("success");
     } catch (err) {
         res.send(err);
     }
@@ -414,12 +425,35 @@ app.get("/api/getCourses", async (req, res) => {
             courses.push({
                 course: e.id,
                 course_name: e.data().course_name,
+                instructor: e.data().instructor,
             });
         });
         res.send(courses);
     } catch (err) {
         console.log(err);
     }
+});
+
+app.post("/api/assignInstructors", async (req,res)=>{
+    const sem = "summer2018";
+    //const sem = month+year;
+    const course = req.body.course;
+    const instructor = req.body.instructor;
+
+    try {
+        const assign = db
+            .collection("courses")
+            .doc(sem)
+            .collection("courses")
+            .doc(course)
+            .update({ instructor: instructor });
+        console.log(assign);
+        res.send("success");
+    } catch (err) {
+        console.log(err);
+        res.send(err);
+    } 
+
 });
 
 

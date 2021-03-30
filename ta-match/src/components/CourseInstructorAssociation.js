@@ -32,24 +32,74 @@ const useStyles = makeStyles({
 export default function CourseInstructorAssociation() {
   // styles
   const classes = useStyles();
+  const [instructorInfo, setInstructorInfo] = useState([]);
+  const [courseInfo, setCourseInfo] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [test, setTest] = useState(0);
 
-  const [isLoading, setIsLoading] = useState(false); // fix once useEffect is populated
-  const courseData = [
-    {"course": "ECE123"},
-    {"course": "ECE456"},
-    {"course": "ECE789"},
-  ]
+  useEffect(() => {
+    fetch(`${apiURL}/getInstructors`)
+      .then((response)=>{
+        response.json()
+          .then((data)=>{
+            console.log(data)
+            setInstructorInfo(data);
+            if(data.length == 0){
+              setIsLoading(true);
+            }else{
+              setIsLoading(false);
+            }
+          })
+          .catch((err)=>{
+            console.log(err);
+          })
+      })
+      .catch((err)=>{
+        console.log(err)
+      })
 
-  const courseState = [
-      "alice@uwo.ca", "bob@uwo.ca", "charles@uwo.ca", "derek@uwo.ca"
-  ]
+      fetch(`${apiURL}/getCourses`)
+      .then((response)=>{
+        response.json()
+          .then((data)=>{
+            setCourseInfo(data);
+            console.log(data)
+          })
+          .catch((err)=>{
+            console.log(err);
+          })
+      })
+      .catch((err)=>{
+        console.log(err)
+      })
+
+  }, [test]);
+
+  function assignInstructor(course, instructor) {
+    fetch(`${apiURL}/assignInstructors`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+          course: course,
+          instructor: instructor,
+      }),
+   })
+    .then((response)=>{
+      console.log(response)
+      
+    })
+    .catch((err)=>{
+      console.log(err);
+    });
+  };
+
   
   return (
     <div>
       <h3>Course-Instructor Association</h3>
       <Typography component="div">
               <Box fontStyle="italic" >
-              This function will assign instructors to courses for the current semester.
+              This function will assign instructors to courses for the current semester. 
               </Box>
           </Typography>
         {!isLoading ? <TableContainer className={classes.container}>
@@ -57,38 +107,38 @@ export default function CourseInstructorAssociation() {
           <TableHead>
             <TableRow className={classes.row}>
               <TableCell>Course Code</TableCell>
-              <TableCell>Assigned Professor</TableCell>
+              <TableCell>Course Name</TableCell>
+              <TableCell>Current Professor</TableCell>
+              <TableCell>Assign Professor</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-          {courseData.map((course)=>{
+          {courseInfo.map((course)=>{
               return (
                 <TableRow key={course["course"]}>
                   <TableCell>{course["course"]}</TableCell>
+                  <TableCell>{course["course_name"]}</TableCell>
+                  <TableCell>{course["instructor"]}</TableCell>
                   <TableCell>                                                            
                     <NativeSelect
                         id="select"
                         onChange={(e) => {
-                          console.log(e.target.selectedIndex) // update
-                            // setRank(
-                            //     applicant.email,
-                            //     e.target.selectedIndex +1
-                            // );
+                          assignInstructor(course["course"],e.target.value)
                         }}
                         >
                         <option value="">Select professor</option>
                         
-                        {courseState.map(
+                        {instructorInfo.map(
                             (inst,index) => {
-                                return (<option key={index}>{inst}</option>);
+                                return (<option key={index}>{inst["email"]}</option>);
                             }
                         )}
                       </NativeSelect>
                       <Button className={classes.assignBtn}
                           color="primary"
-                          // onClick={() => {
-                          //     updateRank(courseState["course_code"],applicant.email);
-                          // }}
+                          onClick={() => {
+                            setTest(test+1)
+                          }}
                       >Assign</Button>
                  </TableCell>
               </TableRow>
