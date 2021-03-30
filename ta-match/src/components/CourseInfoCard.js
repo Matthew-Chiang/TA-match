@@ -125,13 +125,15 @@ export default function CourseInfoCard({
         })
             .then((response) => {
                 if (response.status == "404") {
-                    setError("Cannot assign new hours");
+                    setError("Cannot assign TA hours higher than the course hours");
                 } else {
                     const newState = { ...courseState };
                     newState["allocation_list"].filter(
                         (applicant) => applicant.email === modifiedTa
                     )[0].hours_allocated = modifiedTaHours;
                     setCourseState(newState);
+                    setError("");
+                    //window.location.reload()
                 }
             })
             .catch((err) => {
@@ -408,6 +410,7 @@ export default function CourseInfoCard({
                                             </div>
                                             {editPrivilege && (
                                                 <div>
+                                                    
                                                     <Button
                                                         onClick={() => {
                                                             deleteTaAllocation(
@@ -417,6 +420,7 @@ export default function CourseInfoCard({
                                                     >
                                                         Delete TA Allocation
                                                     </Button>
+                                                    
                                                     <Button variant="contained" color="default" onClick={() => {handleClickOpen(courseState["course_code"], allocation.email, allocation.hours_allocated)}}>
                                                         Modify Hours
                                                     </Button>
