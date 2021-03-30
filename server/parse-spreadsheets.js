@@ -155,13 +155,13 @@ async function buildProfsObj(semester) {
     profsObj = {};
 
     const coursesRef = await db
-    //@leslie: check
         .collection(`courses/${semester}/courses`)
         .get();
 
     // course per term
     coursesRef.forEach(async (course) => {
         tempCourse = course.data();
+        console.log(course.data())
         tempCourse.course_code = course.id;
         coursesList.push(tempCourse);
     });
@@ -177,7 +177,6 @@ async function buildProfsObj(semester) {
         applicantsList = [];
         const applicantsCol = await db
             .collection(
-                //@leslie: check
                 `courses/${semester}/courses/${courseId}/applicants`
             )
             .get();
@@ -191,7 +190,6 @@ async function buildProfsObj(semester) {
         allocationsList = [];
         const allocationsCol = await db
             .collection(
-                //@leslie: check
                 `courses/${semester}/courses/${courseId}/allocation`
             )
             .get();

@@ -49,10 +49,10 @@ async function allocateTAs(semester=month+year, preferenceWeighting=1){
             allocatedHours = Math.min(applicant.availability, hoursRequired);
             
             if (!allocationObj[courseCode]){
-                allocationObj[courseCode] = [{email: applicant.email, hours: allocatedHours}];
+                allocationObj[courseCode] = [{email: applicant.email, hours: allocatedHours, name: applicant.name, fundability: applicant.status}];
             }
             else{
-                allocationObj[courseCode].push({email: applicant.email, hours: allocatedHours});
+                allocationObj[courseCode].push({email: applicant.email, hours: allocatedHours, name: applicant.name, fundability: applicant.status});
             }
 
             hoursRequired -= applicant.availability;
@@ -67,14 +67,15 @@ async function allocateTAs(semester=month+year, preferenceWeighting=1){
         for (ta of allocationObj[courseCode]){
             await allocationCol.doc(ta.email).set({
                 status: 'pending',
-                hours_allocated: ta.hours
+                hours_allocated: ta.hours,
+                name: ta.name,
+                fundability: ta.fundability,
             });
         }
 
     }
 
 }
-
 
 async function buildCoursesObj(semester, preferenceWeighting){
     const courseDocs = await db.collection(`/courses/${semester}/courses/`).get();

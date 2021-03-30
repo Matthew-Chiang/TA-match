@@ -80,7 +80,8 @@ app.post("/api/uploadApplicantsFile", function (req, res) {
     upload(req, res, function (err) {
         // console.log(req.file);
         //@leslie: check
-        parseApplicantsData(month+year);
+        //parseApplicantsData(month+year);
+        parseApplicantsData("summer2018");
         res.status(200).send({ data: "Successful upload" });
     });
 });
@@ -120,13 +121,12 @@ app.get("/api/signin/:email", async (req, res) => {
 
 app.get("/api/getAllApplicantData", async (req, res) => {
     try {
-        //@leslie: check
-        let profs = await buildProfsObj(month+year);
-
+        //let profs = await buildProfsObj(month+year);
+        let profs = await buildProfsObj("summer2018");
         // sends information back about what term we're looking at
         // changing the above line should also change the line below
-        //@leslie: check
-        const responseObj = { profs, semester: `${month} ${year}` };
+        //const responseObj = { profs, semester: `${month} ${year}` };
+        const responseObj = { profs, semester: "summer2018" };
         res.send(responseObj);
     } catch (err) {
         console.log(err);
@@ -137,13 +137,13 @@ app.get("/api/getApplicantData/:email", async (req, res) => {
     const email = req.params.email;
 
     try {
-        //@leslie: check
-        let profs = await buildProfsObj(month+year);
+        //let profs = await buildProfsObj(month+year);
+        let profs = await buildProfsObj("summer2018");
         // sends information back about what term we're looking at
         // changing the above line should also change the line below
         if (profs[email]) {
-            //@leslie: check
-            const responseObj = { ...profs[email], semester: `${month} ${year}` };
+            //const responseObj = { ...profs[email], semester: `${month} ${year}` };
+            const responseObj = { ...profs[email], semester: "summer2018" };
             res.send(responseObj);
         } else {
             res.send({});
@@ -154,7 +154,6 @@ app.get("/api/getApplicantData/:email", async (req, res) => {
 });
 
 app.get("/api/allocateTAs/", async (req, res) => {
-    //@leslie: check
     const semester = req.query.semester ? req.params.semester : month+year;
     const preference = req.query.preference;
 
@@ -162,7 +161,9 @@ app.get("/api/allocateTAs/", async (req, res) => {
         let profs = await allocateTAs(semester, preference);
         res.status(200).send("success");
     } catch (err) {
-        res.status(404).send({ err: err });
+        //res.status(404).send({ err: err });
+        console.log(err)
+        res.send(err)
     }
 });
 
@@ -170,7 +171,6 @@ app.get("/api/allocateTAs/", async (req, res) => {
 app.post("/api/rank", async (req, res) => {
     const course = req.body.course;
     const applicantEmail = req.body.email;
-    //@leslie: check
     const semester = month+year;
     let rank;
     
@@ -631,7 +631,8 @@ app.delete("/api/allocation/delete", async (req, res) => {
 
 //get all applicant info
 app.get("/api/semester/:semester", async (req, res) => {
-    const semester = req.params.semester;
+    const semester = "summer2018"
+    //const semester = req.params.semester;
     let response = [];
     let courseIDs = [];
     let courseData = [];
