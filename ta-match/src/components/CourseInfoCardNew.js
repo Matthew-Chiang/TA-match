@@ -37,6 +37,10 @@ import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import Slide from '@material-ui/core/Slide';
+import DeleteIcon from '@material-ui/icons/Delete';
+import EditIcon from '@material-ui/icons/Edit';
+import ThumbUpIcon from '@material-ui/icons/ThumbUp';
+import ThumbDownIcon from '@material-ui/icons/ThumbDown';
 
 import logo from "../uwo.png"
 
@@ -108,6 +112,28 @@ const useStyles = makeStyles({
     },
     row: {
         backgroundColor: "#ECECEC"
+    },
+    dialogContainer: {
+        margin: 120,
+        marginTop: 20,
+        marginBottom: 20
+    },
+    dName: {
+        color: "grey"
+    },
+    dCode: {
+        fontSize: 36,
+        fontWeight: "bold",
+        marginBottom: 15
+    },
+    dHrs: {
+        float: "right",
+        marginTop: 20,
+        marginBottom: 15
+    },
+    noTa: {
+        width: 100,
+        height: 100
     }
 });
 
@@ -217,8 +243,7 @@ export default function CourseInfoCard({
             });
     }
 
-    const changeTAStatus = (email, status) => {
-        console.log(courseState)
+    const changeTAStatus = (email, status, reason) => {
         fetch(`http://localhost:5000/api/allocation/changeStatus/${email}`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -226,6 +251,7 @@ export default function CourseInfoCard({
                 newStatus: status,
                 // semester: semester.toLowerCase().replace(/ /g, ""),
                 courseName: course.course_code,
+                rejectionReason: reason
             }),
         })
             .then((res) => {
@@ -234,7 +260,11 @@ export default function CourseInfoCard({
                 newState["allocation_list"].filter(
                     (allocation) => allocation.email === email
                 )[0].status = status;
+                newState["allocation_list"].filter(
+                    (allocation) => allocation.email === email
+                )[0].rejection_reason = reason;
                 setCourseState(newState);
+                
             })
             .catch((e) => {
                 console.log(e);
@@ -307,7 +337,7 @@ export default function CourseInfoCard({
                         <ScheduleIcon style={{marginRight: 10}}/> 
                         <span style={{marginRight: 20, fontSize: 14}}>8 TA Hours</span>
                         <PersonIcon style={{marginRight: 10}}/>
-                        <span style={{fontSize: 14}}>10 Applicants</span>
+                        <span style={{fontSize: 14}}>10 Allocations</span>
                     </Grid>
                     <Grid item xs={2}>
                     <Button
@@ -545,59 +575,108 @@ export default function CourseInfoCard({
                 )} */}
             </CardContent>
         </Card>
-        <Dialog fullScreen open={openCoursePopup} onClose={handlePopupClose} TransitionComponent={Transition}>
-            <Toolbar>
+        {"allocation_list" in courseState && courseState.allocation_list.length > 0 ? (
+            <Dialog fullScreen open={openCoursePopup} onClose={handlePopupClose} TransitionComponent={Transition} className={classes.dialogFull}>
+        <Toolbar>
                 <IconButton edge="start" color="inherit" onClick={handlePopupClose} aria-label="close">
                 <CloseIcon />
                 </IconButton>
             </Toolbar>
-            <Typography>Course Name</Typography>
-            <Typography>Course Code</Typography>
-            <Typography># of TA hours</Typography>
-            <Divider />
-
+            <div className={classes.dialogContainer}>
+                <Typography className={classes.dName}>Course Name</Typography>
+                <Typography className={classes.dHrs}>Number of TA Hours: #</Typography>
+                <Typography className={classes.dCode}>{courseState["course_code"]}</Typography>
+                <Divider />
                 <TableContainer className={classes.container}>
-                    <Table className={classes.table} size="small">
-                    <TableHead>
-                        <TableRow className={classes.row}>
-                        <TableCell>Name</TableCell>
-                        <TableCell>Email</TableCell>
-                        <TableCell>Fundability</TableCell>
-                        <TableCell>Hours Assigned</TableCell>
-                        <TableCell></TableCell>
-                        <TableCell>Status</TableCell>
-                        <TableCell></TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                            <TableRow>
-                            <TableCell>Jenny</TableCell>
-                            <TableCell>jenny@uwo.ca</TableCell>
-                            <TableCell>no :(</TableCell>
-                            <TableCell>4</TableCell>
-                            <TableCell align="right">
-                            <Button variant="contained" color="default">
-                                Modify
-                            </Button>
-                            </TableCell>
-                            <TableCell>accepted</TableCell>
-                            <TableCell>
-                                <Button variant="contained" color="default">
-                                    accept
-                                </Button>
-                                <Button variant="contained" color="default">
-                                    reject
-                                </Button>
-                                <Button variant="contained" color="default">
-                                    delete
-                                </Button>
-                            </TableCell>
-                        </TableRow>
-
-                    </TableBody>
+                        <Table className={classes.table} size="small">
+                        <TableHead>
+                            <TableRow className={classes.row}>
+                            <TableCell>Name</TableCell>
+                            <TableCell>Email</TableCell>
+                            <TableCell>Fundability</TableCell>
+                            <TableCell>Hours Assigned</TableCell>
+                            <TableCell></TableCell>
+                            <TableCell>Status</TableCell>
+                            <TableCell></TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+            {courseState["allocation_list"].map((allocation, index) => {
+                return (
+                    <TableRow key={index}>
+                    <TableCell>Jenny</TableCell>
+                    <TableCell>{allocation.email}</TableCell>
+                    <TableCell>no :(</TableCell>
+                    <TableCell>{allocation.hours_allocated}</TableCell>
+                    <TableCell align="right">
+                        {editPrivilege && (
+                        <Button
+                            color="default"
+                            size="small"
+                            startIcon={<EditIcon />}
+                            onClick={() => {
+                                handleClickOpen(courseState["course_code"],allocation.email,allocation.hours_allocated)
+                            }}
+                        >
+                            Modify
+                        </Button>
+                        )}
+                    </TableCell>
+                    <TableCell>{allocation.status}
+                    {/* {allocation.status == "rejected" &&
+                    <p>Reason for Rejection: {allocation.rejection_reason} </p>
+                    } */}
+                    </TableCell>
+                    <TableCell align="right">
+                        <Button
+                            color="default"
+                            size="small"
+                            style={{marginLeft: 10}}
+                            startIcon={<ThumbUpIcon />}
+                            onClick={() => {changeTAStatus(allocation.email,"confirmed","N/A")}}
+                        >
+                            Accept
+                        </Button>
+                        <Button
+                            color="default"
+                            size="small"
+                            style={{marginLeft: 10}}
+                            startIcon={<ThumbDownIcon />}
+                        >
+                            Reject
+                        </Button>
+                        {editPrivilege && (
+                        <Button
+                            color="default"
+                            size="small"
+                            style={{marginLeft: 10}}
+                            startIcon={<DeleteIcon />}
+                            onClick={() => {
+                                deleteTaAllocation(allocation.email)
+                            }}
+                        >
+                            Delete
+                        </Button>
+                        )}
+                    </TableCell>
+                </TableRow>
+                )
+            })}
+                        </TableBody>
                     </Table>
                 </TableContainer>
+            </div>
         </Dialog>
+        ) : (
+            <Dialog open={openCoursePopup} onClose={handlePopupClose}>
+               <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                        No TAs have been allocated yet.
+                    </DialogContentText>
+                </DialogContent>
+            </Dialog>
+        )}
+        
 
         <Dialog
           open={open}
