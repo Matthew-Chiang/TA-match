@@ -536,7 +536,8 @@ app.get("/api/pastQuestions/:professor", async (req, res) => {
 
 app.post("/api/allocation/changeStatus/:email", async (req, res) => {
     const email = req.params.email;
-    const semester = month+year;
+    // const semester = month+year;
+    const semester="summer2018"
     const courseName = req.body.courseName;
     const newStatus = req.body.newStatus;
     const rejectionReason = req.body.rejectionReason
@@ -593,7 +594,8 @@ app.post("/api/updateTaHours", async (req, res) => {
     });
 
 app.post("/api/allocation/add", async (req, res) => {
-    const semester = month+year;
+    const semester = "summer2018"
+    // const semester = month+year;
     const courseName = req.body.courseName;
     const email = req.body.email;
     const fundability = req.body.fundability

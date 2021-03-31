@@ -1,4 +1,4 @@
-import React, { Component, useState, useEffect } from "react";
+import React, { useState, useRef } from "react";
 import { Select, MenuItem, InputLabel, FormControl, Grid, Card, CardContent, Typography, Button, TextField, Dialog, DialogActions, DialogContent, DialogContentText, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Divider, Toolbar, IconButton, Slide } from "@material-ui/core";
 
 import { makeStyles } from "@material-ui/core/styles";
@@ -138,6 +138,7 @@ export default function CourseInfoCard({
     const [addTaName, setAddTaName] = useState("");
     const [addTaEmail, setAddTaEmail] = useState("");
     const [addTaHours, setAddTaHours] = useState("");
+    const [addTaFundability, setAddTaFundability] = useState("");
     const [modifiedTa, setModifiedTa] = useState("");
     const [modifiedCourse, setModifiedCourse] = useState("");
     const [oldTaHours, setOldTaHours] = useState("");
@@ -150,6 +151,9 @@ export default function CourseInfoCard({
     const [rejectModal, setRejectModal] = useState(false);
     const [description, setDescription] = useState("")
     const [email, setEmail] = useState("")
+    
+    const labelRef = useRef()
+    const labelWidth = labelRef.current ? labelRef.current.clientWidth : 0
 
     const handlePopupOpen = () => {
         setCoursePopup(true);
@@ -253,17 +257,24 @@ export default function CourseInfoCard({
             body: JSON.stringify({
                 // semester: semester.toLowerCase().replace(/ /g, ""),
                 courseName: course.course_code,
+                name: addTaName,
                 email: addTaEmail,
                 hours: addTaHours,
+                fundability: addTaFundability
             }),
         })
             .then((res) => {
-                let newState = { ...courseState };
-                newState["allocation_list"] = [
-                    ...newState["allocation_list"],
-                    { status: "pending", email: addTaEmail, hours_allocated: addTaHours},
-                ];
-                setCourseState(newState);
+                if (res.status == "404") {
+                    setError("Total hours assigned must not exceed number of TA hours");
+                } 
+                else {
+                    let newState = { ...courseState };
+                    newState["allocation_list"] = [
+                        ...newState["allocation_list"],
+                        { status: "pending", name: addTaName, email: addTaEmail, hours_allocated: addTaHours, fundability: addTaFundability},
+                    ];
+                    setCourseState(newState);
+                }
             })
             .catch((e) => {
                 console.log(e);
@@ -380,7 +391,7 @@ export default function CourseInfoCard({
                     <TableCell>{allocation.status}</TableCell>
                     <TableCell>
                     {allocation.status == "rejected" &&
-                    <p>Reason for Rejection: {allocation.rejection_reason} </p>
+                    <span>Reason for Rejection: {allocation.rejection_reason} </span>
                     }
                     </TableCell>
                     <TableCell align="right">
@@ -445,19 +456,19 @@ export default function CourseInfoCard({
                                 setAddTaEmail(event.target.value);
                             }}
                         />
-                        {/* <FormControl className={classes.formControl} variant="outlined" size="small">
-                        <InputLabel id="demo-simple-select-outlined-label">Fundability</InputLabel>
-                        <Select defaultValue="" id="demo-simple-select-outlined"
-                            // onChange={(e) => {
-                            //     assignInstructor(course["course"],e.target.value)
-                            // }}
+                        <FormControl className={classes.formControl} variant="outlined" size="small">
+                        <InputLabel ref={labelRef}>Fundability</InputLabel> 
+                        <Select defaultValue="" labelWidth={labelWidth}
+                            onChange={(event) => {
+                                setAddTaFundability(event.target.value);
+                            }}
                             >
                             <MenuItem value="">Select fundability</MenuItem>
                             <MenuItem value={1} key={1}>Fundable</MenuItem>
                             <MenuItem value={2} key={2}>Non-fundable</MenuItem>
                             <MenuItem value={3} key={3}>External</MenuItem>
                         </Select>
-                        </FormControl>   */}
+                        </FormControl>  
                         <TextField className={classes.allocateTxtField}
                             variant="outlined"
                             label="Hours"
