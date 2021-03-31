@@ -41,8 +41,11 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import ThumbUpIcon from '@material-ui/icons/ThumbUp';
 import ThumbDownIcon from '@material-ui/icons/ThumbDown';
+import Alert from '@material-ui/lab/Alert';
 
 import logo from "../uwo.png"
+
+import RejectTA from "./RejectTA";
 
 const useStyles = makeStyles({
     root: {
@@ -56,11 +59,12 @@ const useStyles = makeStyles({
     },
     title: {
         fontSize: 14,
-        color: "grey"
+        color: "grey",
+        marginTop: 3
     },
     pos: {
         fontSize: 18,
-        marginTop: 6,
+        marginTop: 3,
         fontWeight: "bold"
     },
     container: {
@@ -146,7 +150,7 @@ export default function CourseInfoCard({
     // semester,
     viewApplicant,
     editPrivilege,
-    setError,
+    // setError,
 }) {
     const classes = useStyles();
     const [courseState, setCourseState] = useState(course);
@@ -160,19 +164,16 @@ export default function CourseInfoCard({
     const [tempRanking, setTempRanking] = useState({});
 
     const [openCoursePopup, setCoursePopup] = useState(false);
+    const [error, setError] = useState("");
 
     const handlePopupOpen = () => {
         setCoursePopup(true);
-      };
+    };
     
-      const handlePopupClose = () => {
+    const handlePopupClose = () => {
         setCoursePopup(false);
-      };
+    };
 
-    function setRank(email, rank) {
-        // for profs
-        setTempRanking({ ...tempRanking, [email]: rank - 1 });
-    }
     const handleClickOpen = (courseCode, TaEmail, TaHours) => {
         setModifiedCourse(courseCode)
         setModifiedTa(TaEmail)
@@ -187,7 +188,7 @@ export default function CourseInfoCard({
 
     const handleClose = () => {
         setOpen(false);
-      };
+    };
     
     function updateTaHours() {
         fetch(`http://localhost:5000/api/updateTaHours`, {
@@ -201,40 +202,14 @@ export default function CourseInfoCard({
         })
             .then((response) => {
                 if (response.status == "404") {
-                    setError("Cannot assign new hours");
+                    setError("Total hours assigned must not exceed number of TA hours");
                 } else {
                     const newState = { ...courseState };
                     newState["allocation_list"].filter(
                         (applicant) => applicant.email === modifiedTa
                     )[0].hours_allocated = modifiedTaHours;
                     setCourseState(newState);
-                    //window.location.reload()
-                }
-            })
-            .catch((err) => {
-                console.log(err);
-            });
-    }
-
-    function updateRank(course, email) {
-        fetch(`http://localhost:5000/api/rank`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                course: course,
-                email: email,
-                rank: tempRanking[email],
-            }),
-        })
-            .then((response) => {
-                if (response.status == "404") {
-                    setError("Cannot assign same rank to multiple applicants");
-                } else {
-                    const newState = { ...courseState };
-                    newState["applicant_list"].filter(
-                        (applicant) => applicant.email === email
-                    )[0].profRank = tempRanking[email];
-                    setCourseState(newState);
+                    setError("")
                     //window.location.reload()
                 }
             })
@@ -326,18 +301,18 @@ export default function CourseInfoCard({
                         <img className={classes.logo} src={logo} />
                     </Grid>
                     <Grid item xs={5}>
-                        <Typography className={classes.title} variant="h5" component="h2">
-                        Adobe Photoshop CC 2019 - Free Essentials
-                        </Typography>
                         <Typography className={classes.pos} variant="h5" component="h2">
-                            {courseState["course_code"]}
+                            {courseState["course_code"]}: <span style={{fontWeight: "normal"}}>{courseState["course_name"]}</span>
+                        </Typography>
+                        <Typography className={classes.title} variant="h5" component="h2">
+                        Professor: {courseState["instructor"]} 
                         </Typography>
                     </Grid>
                     <Grid item xs={4} className={classes.icons}>
-                        <ScheduleIcon style={{marginRight: 10}}/> 
-                        <span style={{marginRight: 20, fontSize: 14}}>8 TA Hours</span>
-                        <PersonIcon style={{marginRight: 10}}/>
-                        <span style={{fontSize: 14}}>10 Allocations</span>
+                        <ScheduleIcon style={{marginRight: 5}}/> 
+                        <span style={{marginRight: 20, fontSize: 14}}>{courseState["ta_hours"]} TA Hours</span>
+                        <PersonIcon style={{marginRight: 5}}/>
+                        <span style={{fontSize: 14}}>{courseState.allocation_list.length} Allocations</span>
                     </Grid>
                     <Grid item xs={2}>
                     <Button
@@ -348,231 +323,6 @@ export default function CourseInfoCard({
                     </Button>
                     </Grid>
                 </Grid>
-                {/*TODO this accordion should prob be put in its own component - there are 2 of them for applicants and allocations*/}
-                {/* {viewApplicant && (
-                    <Accordion>
-                        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                            <div>Applicants:</div>
-                        </AccordionSummary>
-                        <AccordionDetails className={classes.tableContainer}>
-                            <TableContainer>
-                                <Table className={classes.table}>
-                                    <TableHead>
-                                        <TableRow>
-                                            <TableCell>
-                                                <h3>Name</h3>
-                                            </TableCell>
-                                            <TableCell>
-                                                <h3>Email</h3>
-                                            </TableCell>
-                                            <TableCell>
-                                                <h3>Fundable</h3>
-                                            </TableCell>
-                                            <TableCell>
-                                                <h3>Current Rank</h3>
-                                            </TableCell>
-                                            <TableCell>
-                                                <h3>Update Rank</h3>
-                                            </TableCell>
-                                            <TableCell>
-                                                <h3>See More</h3>
-                                            </TableCell>
-                                        </TableRow>
-                                    </TableHead>
-                                    <TableBody>
-                                        {courseState["applicant_list"].map(
-                                            (applicant, index) => {
-                                                if (!applicant.profRank) {
-                                                    applicant.profRank =
-                                                        "Unranked";
-                                                }
-                                                return (
-                                                    <TableRow
-                                                        key={
-                                                            courseState[
-                                                                "course"
-                                                            ]
-                                                        }
-                                                    >
-                                                        <TableCell>
-                                                            {applicant.name}
-                                                        </TableCell>
-                                                        <TableCell>
-                                                            {applicant.email}
-                                                        </TableCell>
-                                                        <TableCell>
-                                                            {applicant.fundable}
-                                                        </TableCell>
-                                                        <TableCell>
-                                                            {applicant.profRank}
-                                                        </TableCell>
-                                                        <TableCell>
-                                                            <NativeSelect
-                                                                id="select"
-                                                                onChange={(
-                                                                    e
-                                                                ) => {
-                                                                    setRank(
-                                                                        applicant.email,
-                                                                        e.target
-                                                                            .selectedIndex +
-                                                                            1
-                                                                    );
-                                                                }}
-                                                            >
-                                                                <option value="">
-                                                                    {" "}
-                                                                    Select rank
-                                                                </option>
-                                                                {courseState[
-                                                                    "applicant_list"
-                                                                ].map(
-                                                                    (
-                                                                        applicant,
-                                                                        index
-                                                                    ) => {
-                                                                        return (
-                                                                            <option
-                                                                                key={
-                                                                                    index
-                                                                                }
-                                                                            >
-                                                                                {index +
-                                                                                    1}
-                                                                            </option>
-                                                                        );
-                                                                    }
-                                                                )}
-                                                            </NativeSelect>
-                                                            <Button
-                                                                color="primary"
-                                                                onClick={() => {
-                                                                    updateRank(
-                                                                        courseState[
-                                                                            "course_code"
-                                                                        ],
-                                                                        applicant.email
-                                                                    );
-                                                                }}
-                                                            >
-                                                                Submit
-                                                            </Button>
-                                                        </TableCell>
-                                                        <TableCell>
-                                                            <QuestionAnswerModal
-                                                                questionAnswers={
-                                                                    applicant.questionAnswerPairs
-                                                                }
-                                                            />
-                                                        </TableCell>
-                                                    </TableRow>
-                                                );
-                                            }
-                                        )}
-                                    </TableBody>
-                                </Table>
-                            </TableContainer>
-                        </AccordionDetails>
-                    </Accordion>
-                )} */}
-                {/* {"allocation_list" in courseState &&
-                courseState.allocation_list.length > 0 ? (
-                    <Accordion>
-                        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                            <div>TA Allocations:</div>
-                        </AccordionSummary>
-                        <AccordionDetails>
-                            {courseState["allocation_list"].map(
-                                (allocation, index) => {
-                                    return (
-                                        <div key={index}>
-                                            <p>Email: {allocation.email}</p>
-                                            <p>Status: {allocation.status}</p>
-                                            <p>Hours: {allocation.hours_allocated}</p>
-                                            <div
-                                                className={
-                                                    classes.sideBySideDisplay
-                                                }
-                                            >
-                                                <Button
-                                                    onClick={() =>
-                                                        changeTAStatus(
-                                                            allocation.email,
-                                                            "confirmed"
-                                                        )
-                                                    }
-                                                >
-                                                    Accept into Course
-                                                </Button>
-                                                <Button
-                                                    onClick={() =>
-                                                        changeTAStatus(
-                                                            allocation.email,
-                                                            "rejected"
-                                                        )
-                                                    }
-                                                >
-                                                    Reject from Course
-                                                </Button>
-                                            </div>
-                                            {editPrivilege && (
-                                                <div>
-                                                    <Button
-                                                        onClick={() => {
-                                                            deleteTaAllocation(
-                                                                allocation.email
-                                                            );
-                                                        }}
-                                                    >
-                                                        Delete TA Allocation
-                                                    </Button>
-                                                    <Button variant="contained" color="default" onClick={() => {handleClickOpen(courseState["course_code"], allocation.email, allocation.hours_allocated)}}>
-                                                        Modify Hours
-                                                    </Button>
-                                                </div>
-                                            )}
-                                            <br></br>
-                                        </div>
-                                    );
-                                }
-                            )}
-                        </AccordionDetails>
-                    </Accordion>
-                ) : (
-                    <Typography>No TAs have been allocated yet.</Typography>
-                )} */}
-
-                {/* {editPrivilege && (
-                    <div>
-                        <br />
-                        <Typography variant="h6">
-                            Manually Allocate TA's
-                        </Typography>
-                        <TextField
-                            label="email"
-                            value={addTaEmail}
-                            onChange={(event) => {
-                                setAddTaEmail(event.target.value);
-                            }}
-                        />
-                        <TextField
-                            label="hours"
-                            value={addTaHours}
-                            onChange={(event) => {
-                                setAddTaHours(event.target.value);
-                            }}
-                        />
-                        <Button
-                            onClick={() => {
-                                addTaAllocation();
-                            }}
-                            disabled={addTaEmail.length === 0 || addTaHours.length === 0}
-                        >
-                            Add TA Allocation
-                        </Button>
-                        
-                    </div>
-                )} */}
             </CardContent>
         </Card>
         {"allocation_list" in courseState && courseState.allocation_list.length > 0 ? (
@@ -583,10 +333,11 @@ export default function CourseInfoCard({
                 </IconButton>
             </Toolbar>
             <div className={classes.dialogContainer}>
-                <Typography className={classes.dName}>Course Name</Typography>
-                <Typography className={classes.dHrs}>Number of TA Hours: #</Typography>
-                <Typography className={classes.dCode}>{courseState["course_code"]}</Typography>
-                <Divider />
+                <Typography className={classes.dName}>Professor: {courseState["instructor"]}</Typography>
+                <Typography className={classes.dHrs}><span style={{fontWeight:"bold"}}>Number of TA Hours:</span> {courseState["ta_hours"]}</Typography>
+                <Typography className={classes.dCode}>{courseState["course_code"]}: <span style={{fontWeight: "normal"}}>{courseState["course_name"]}</span></Typography>
+                <Divider style={{marginBottom: 20}}/>
+                {error && <Alert severity="error">{error}</Alert>}
                 <TableContainer className={classes.container}>
                         <Table className={classes.table} size="small">
                         <TableHead>
@@ -598,15 +349,16 @@ export default function CourseInfoCard({
                             <TableCell></TableCell>
                             <TableCell>Status</TableCell>
                             <TableCell></TableCell>
+                            <TableCell></TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
             {courseState["allocation_list"].map((allocation, index) => {
                 return (
                     <TableRow key={index}>
-                    <TableCell>Jenny</TableCell>
+                    <TableCell>{allocation.name}</TableCell>
                     <TableCell>{allocation.email}</TableCell>
-                    <TableCell>no :(</TableCell>
+                    <TableCell>{allocation.fundability == 1 ? "Fundable" : allocation.fundability == 2 ? "Non-fundable" : "External"}</TableCell>
                     <TableCell>{allocation.hours_allocated}</TableCell>
                     <TableCell align="right">
                         {editPrivilege && (
@@ -622,14 +374,15 @@ export default function CourseInfoCard({
                         </Button>
                         )}
                     </TableCell>
-                    <TableCell>{allocation.status}
-                    {/* {allocation.status == "rejected" &&
+                    <TableCell>{allocation.status}</TableCell>
+                    <TableCell>
+                    {allocation.status == "rejected" &&
                     <p>Reason for Rejection: {allocation.rejection_reason} </p>
-                    } */}
+                    }
                     </TableCell>
                     <TableCell align="right">
                         <Button
-                            color="default"
+                            color="primary"
                             size="small"
                             style={{marginLeft: 10}}
                             startIcon={<ThumbUpIcon />}
@@ -638,7 +391,7 @@ export default function CourseInfoCard({
                             Accept
                         </Button>
                         <Button
-                            color="default"
+                            color="secondary"
                             size="small"
                             style={{marginLeft: 10}}
                             startIcon={<ThumbDownIcon />}

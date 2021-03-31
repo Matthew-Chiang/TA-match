@@ -29,7 +29,7 @@ const useStyles = makeStyles({
 export default function AllCourseInfo({ email, editPrivilege }) {
     const [isLoading, setIsLoading] = useState(true);
     const [courseData, setCourseData] = useState([]);
-    const [error, setError] = useState("");
+    // const [error, setError] = useState("");
     useEffect(() => {
         fetch(`http://localhost:5000/api/getAllApplicantData`)
             .then((response) => {
@@ -53,10 +53,8 @@ export default function AllCourseInfo({ email, editPrivilege }) {
     }
     return (
         <div>
-            {error && <Alert severity="error">{error}</Alert>}
-            <Grid container spacing={3}>
-                {console.log(courseData)}
-
+            {/* {error && <Alert severity="error">{error}</Alert>} */}
+            <Grid container spacing={0.75}>
                 {Object.keys(courseData["profs"]).map((prof, index) => {
                     return (
                         courseData.profs[prof].courseList.map(
@@ -70,7 +68,7 @@ export default function AllCourseInfo({ email, editPrivilege }) {
                                         <CourseInfoCardNew
                                             course={course}
                                             semester={courseData.semester}
-                                            setError={setError}
+                                            // setError={setError}
                                             editPrivilege
                                         ></CourseInfoCardNew>
                                     </Grid>
