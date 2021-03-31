@@ -539,7 +539,7 @@ app.post("/api/allocation/changeStatus/:email", async (req, res) => {
     const semester = month+year;
     const courseName = req.body.courseName;
     const newStatus = req.body.newStatus;
-    const rejectionResaon = req.body.rejectionReason
+    const rejectionReason = req.body.rejectionReason
     try {
         const allocation = await db
             .collection("courses")
@@ -550,7 +550,7 @@ app.post("/api/allocation/changeStatus/:email", async (req, res) => {
             .doc(email)
             .update({ 
                 status: newStatus,
-                rejection_reason: rejectionResaon
+                rejection_reason: rejectionReason
             
             });
         res.send("return");
@@ -608,7 +608,7 @@ app.post("/api/allocation/add", async (req, res) => {
             .get()    
             courseHours = courseData.data().ta_hours    
             if (hours > courseHours){    
-            res.status(404).send("hello")    
+            res.status(404).send("failed")    
         }   
         else{
             const allocation = await db
