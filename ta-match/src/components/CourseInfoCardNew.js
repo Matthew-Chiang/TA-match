@@ -1,42 +1,12 @@
 import React, { Component, useState, useEffect } from "react";
-import Accordion from "@material-ui/core/Accordion";
-import { AccordionDetails, AccordionSummary } from "@material-ui/core";
-import { Select, MenuItem, InputLabel, NativeSelect } from "@material-ui/core";
+import { Select, MenuItem, InputLabel, FormControl, Grid, Card, CardContent, Typography, Button, TextField, Dialog, DialogActions, DialogContent, DialogContentText, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Divider, Toolbar, IconButton, Slide } from "@material-ui/core";
+
 import { makeStyles } from "@material-ui/core/styles";
-import Grid from "@material-ui/core/Grid";
-import Card from "@material-ui/core/Card";
-import CardContent from "@material-ui/core/CardContent";
-import Typography from "@material-ui/core/Typography";
-import Button from "@material-ui/core/Button";
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import { useAuth } from "../contexts/AuthContext";
-import TextField from "@material-ui/core/TextField";
-import Modal from "@material-ui/core/Modal";
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import TableContainer from "@material-ui/core/TableContainer";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
-import QuestionAnswerModal from "./QuestionAnswerModal";
-import zIndex from "@material-ui/core/styles/zIndex";
 
 import ScheduleIcon from '@material-ui/icons/Schedule';
 import PersonIcon from '@material-ui/icons/Person';
 
-import ListItemText from '@material-ui/core/ListItemText';
-import ListItem from '@material-ui/core/ListItem';
-import List from '@material-ui/core/List';
-import Divider from '@material-ui/core/Divider';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
-import Slide from '@material-ui/core/Slide';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import ThumbUpIcon from '@material-ui/icons/ThumbUp';
@@ -44,8 +14,6 @@ import ThumbDownIcon from '@material-ui/icons/ThumbDown';
 import Alert from '@material-ui/lab/Alert';
 
 import logo from "../uwo.png"
-
-import RejectTA from "./RejectTA";
 
 const useStyles = makeStyles({
     root: {
@@ -138,6 +106,19 @@ const useStyles = makeStyles({
     noTa: {
         width: 100,
         height: 100
+    },
+    subtitle: {
+        marginTop: 20,
+        marginBottom: 20,
+        fontWeight: "bold",
+        fontSize: 18
+    },
+    allocateTxtField: {
+        marginRight: 10
+    },
+    formControl: {
+        marginRight: 10,
+        minWidth: 200,
     }
 });
 
@@ -154,6 +135,7 @@ export default function CourseInfoCard({
 }) {
     const classes = useStyles();
     const [courseState, setCourseState] = useState(course);
+    const [addTaName, setAddTaName] = useState("");
     const [addTaEmail, setAddTaEmail] = useState("");
     const [addTaHours, setAddTaHours] = useState("");
     const [modifiedTa, setModifiedTa] = useState("");
@@ -165,6 +147,9 @@ export default function CourseInfoCard({
 
     const [openCoursePopup, setCoursePopup] = useState(false);
     const [error, setError] = useState("");
+    const [rejectModal, setRejectModal] = useState(false);
+    const [description, setDescription] = useState("")
+    const [email, setEmail] = useState("")
 
     const handlePopupOpen = () => {
         setCoursePopup(true);
@@ -190,6 +175,20 @@ export default function CourseInfoCard({
         setModifiedTaHours("")
         setOpen(false);
     };
+
+    const handleRejectOpen = (email) => {
+        setRejectModal(true);
+        setEmail(email);
+    }
+
+    const handleRejectClose = () => {
+        setRejectModal(false);
+    }
+
+    const handleRejectOverride = () => {
+        changeTAStatus(email,"rejected",description);
+        handleRejectClose();
+    }
     
     function updateTaHours() {
         fetch(`http://localhost:5000/api/updateTaHours`, {
@@ -337,7 +336,10 @@ export default function CourseInfoCard({
                 <Typography className={classes.dName}>Professor: {courseState["instructor"]}</Typography>
                 <Typography className={classes.dHrs}><span style={{fontWeight:"bold"}}>Number of TA Hours:</span> {courseState["ta_hours"]}</Typography>
                 <Typography className={classes.dCode}>{courseState["course_code"]}: <span style={{fontWeight: "normal"}}>{courseState["course_name"]}</span></Typography>
-                <Divider style={{marginBottom: 20}}/>
+                <Divider/>
+                <Typography className={classes.subtitle}>
+                    TA Allocations
+                </Typography>
                 {error && <Alert severity="error">{error}</Alert>}
                 <TableContainer className={classes.container}>
                         <Table className={classes.table} size="small">
@@ -396,7 +398,8 @@ export default function CourseInfoCard({
                             size="small"
                             style={{marginLeft: 10}}
                             startIcon={<ThumbDownIcon />}
-                        >
+                            onClick={() => handleRejectOpen(allocation.email)}
+                        > 
                             Reject
                         </Button>
                         {editPrivilege && (
@@ -419,6 +422,65 @@ export default function CourseInfoCard({
                         </TableBody>
                     </Table>
                 </TableContainer>
+                {editPrivilege && (
+                    <div>
+                        <Typography className={classes.subtitle}>
+                            Manually Allocate TA's
+                        </Typography>
+                        <TextField className={classes.allocateTxtField}
+                            variant="outlined"
+                            label="Name"
+                            size="small"
+                            value={addTaName}
+                            onChange={(event) => {
+                                setAddTaName(event.target.value);
+                            }}
+                        />
+                        <TextField className={classes.allocateTxtField}
+                            variant="outlined"
+                            label="Email"
+                            size="small"
+                            value={addTaEmail}
+                            onChange={(event) => {
+                                setAddTaEmail(event.target.value);
+                            }}
+                        />
+                        {/* <FormControl className={classes.formControl} variant="outlined" size="small">
+                        <InputLabel id="demo-simple-select-outlined-label">Fundability</InputLabel>
+                        <Select defaultValue="" id="demo-simple-select-outlined"
+                            // onChange={(e) => {
+                            //     assignInstructor(course["course"],e.target.value)
+                            // }}
+                            >
+                            <MenuItem value="">Select fundability</MenuItem>
+                            <MenuItem value={1} key={1}>Fundable</MenuItem>
+                            <MenuItem value={2} key={2}>Non-fundable</MenuItem>
+                            <MenuItem value={3} key={3}>External</MenuItem>
+                        </Select>
+                        </FormControl>   */}
+                        <TextField className={classes.allocateTxtField}
+                            variant="outlined"
+                            label="Hours"
+                            size="small"
+                            value={addTaHours}
+                            onChange={(event) => {
+                                setAddTaHours(event.target.value);
+                            }}
+                        />
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            style={{marginTop: 2}}
+                            onClick={() => {
+                                addTaAllocation();
+                            }}
+                            disabled={addTaEmail.length === 0 || addTaHours.length === 0}
+                        >
+                            Add TA Allocation
+                        </Button>
+                        
+                    </div>
+                )}
             </div>
         </Dialog>
         ) : (
@@ -431,7 +493,6 @@ export default function CourseInfoCard({
             </Dialog>
         )}
         
-
         <Dialog
           open={open}
           fullWidth={true}
@@ -467,8 +528,32 @@ export default function CourseInfoCard({
             </Button>
           </DialogActions>
       </Dialog>
+
+      <Dialog
+          open={rejectModal}
+          fullWidth={true}
+          onClose={handleRejectClose}
+        >
+          <DialogContent>
+            <DialogContentText className={classes.dialogText}>
+              <b>Course:</b> {courseState.course_code}
+              <br />
+              <br />
+              <b>Reason for Rejection:</b>
+              <TextField 
+              className={classes.txtField} 
+              id="standard-basic" 
+              value={description}
+              onChange={e => setDescription(e.target.value)}
+              />
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button className={classes.overrideBtn} disabled={description.length === 0} onClick={handleRejectOverride} variant="contained" color="primary">
+              Submit Rejection
+            </Button>
+          </DialogActions>
+      </Dialog>
         </div>
     );
 }
-
-// export default withStyles(styles)(CourseInfo)

@@ -135,7 +135,6 @@ export default function InstructorSetup({
           <TableBody>
           {instructorInfo.map((e)=>{
               return (
-                // CHANGE
                 <TableRow key={e["email"]}>
                   <TableCell component="th" scope="row">{e["name"]}</TableCell>
                   <TableCell>{e["email"]}</TableCell>
