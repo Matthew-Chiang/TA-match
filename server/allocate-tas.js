@@ -7,15 +7,17 @@ const db = admin.firestore();
 var today = new Date();
 var year = today.getFullYear()
 var month = today.getMonth()+1;
-if(month >= 1 && month <= 4){
-    month = "winter";
-}
-else if(month >= 5 && month <= 8){
-    month = "summer";
-}
-else{
-    month = "fall";
-}
+// if(month >= 1 && month <= 4){
+//     month = "winter";
+// }
+// else if(month >= 5 && month <= 8){
+//     month = "summer";
+// }
+// else{
+//     month = "fall";
+// }
+month = "summer";
+year = "2018"
 //-----------------------------------------
 
 //@leslie: check

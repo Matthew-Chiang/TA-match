@@ -155,6 +155,7 @@ export default function HoursCalculation({
                   setIsLoading(true);
                 }
               }else{
+                //setExportFlag(false);
                 setIsLoading(true);
               }
             })
@@ -169,7 +170,12 @@ export default function HoursCalculation({
       })
   }, [updating,test]);
 
-  
+  //did this so that we don't need two buttons lolz
+  function doThis(){
+    setTest(test+1)
+    setExportFlag(true)
+  }
+
   return (
     <div>
       <h3>Calculate TA Hours</h3>
@@ -191,18 +197,19 @@ export default function HoursCalculation({
       <Button 
             color="primary"
             variant="contained"
-            onClick={() => setTest(test+1)}
+            onClick={() => 
+              doThis()}
              >
             Calculate TA Hours 
-          </Button>
-      <Button
+      </Button>
+      {/* <Button
         className = {classes.submitBtn} 
         color="primary"
         variant="contained"
         onClick={() => setExportFlag(true)}
         >
         Submit Time Hour Edits 
-          </Button>
+          </Button> */}
         {!isLoading ? <TableContainer className={classes.container}>
         <Table className={classes.table} size="small">
           <TableHead>
