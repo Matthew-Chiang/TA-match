@@ -73,7 +73,7 @@ const ChairPage = () => {
     const handleChange = (event, newValue) => {
       setValue(newValue);
     };
-
+//make tabs persistent across session
     useEffect(() => {
       setInstructorFlag(sessionStorage.getItem("localInstructorFlag") == "true")
       setAssociationFlag(sessionStorage.getItem("localAssociationFlag") == "true")
