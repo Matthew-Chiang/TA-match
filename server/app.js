@@ -79,7 +79,6 @@ app.post("/api/uploadApplicantsFile", function (req, res) {
 
     upload(req, res, function (err) {
         // console.log(req.file);
-        //@leslie: check
         parseApplicantsData(month+year);
         res.status(200).send({ data: "Successful upload" });
     });
@@ -120,12 +119,10 @@ app.get("/api/signin/:email", async (req, res) => {
 
 app.get("/api/getAllApplicantData", async (req, res) => {
     try {
-        //@leslie: check
         let profs = await buildProfsObj(month+year);
 
         // sends information back about what term we're looking at
         // changing the above line should also change the line below
-        //@leslie: check
         const responseObj = { profs, semester: `${month} ${year}` };
         res.send(responseObj);
     } catch (err) {
@@ -441,13 +438,16 @@ app.post("/api/assignInstructors", async (req,res)=>{
     const instructor = req.body.instructor;
 
     try {
-        const assign = db
+        for(let i=0;i<course.length;i++){
+            const assign = await db
             .collection("courses")
             .doc(sem)
             .collection("courses")
-            .doc(course)
-            .update({ instructor: instructor });
-        console.log(assign);
+            .doc(course[i])
+            .update({ instructor: instructor[i] });
+            //console.log(assign);
+            
+        } 
         res.send("success");
     } catch (err) {
         console.log(err);
