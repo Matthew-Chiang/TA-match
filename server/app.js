@@ -596,17 +596,31 @@ app.post("/api/allocation/add", async (req, res) => {
     const semester = month+year;
     const courseName = req.body.courseName;
     const email = req.body.email;
+    const fundability = req.body.fundability
+    const name = req.body.name
     const hours = parseInt(req.body.hours);
     try {
-        const allocation = await db
+        const courseData = await db    
+            .collection("courses")    
+            .doc(semester)    
+            .collection("courses")   
+            .doc(courseName)    
+            .get()    
+            courseHours = courseData.data().ta_hours    
+            if (hours > courseHours){    
+            res.status(404).send("hello")    
+        }   
+        else{
+            const allocation = await db
             .collection("courses")
             .doc(semester)
             .collection("courses")
             .doc(courseName)
             .collection("allocation")
             .doc(email)
-            .set({ status: "pending", hours_allocated: hours});
+            .set({ status: "pending", hours_allocated: hours, fundability: fundability, name:name });
         res.send("return");
+        }
     } catch (err) {
         console.log(err);
     }
