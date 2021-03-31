@@ -41,6 +41,7 @@ const useStyles = makeStyles({
     tableContainer: {
         marginTop: 10,
         overflowX: "auto",
+        marginBottom: 50
     },
     table: {
         minWidth: 1000,
@@ -87,8 +88,8 @@ const useStyles = makeStyles({
     },
     dialogContainer: {
         margin: 120,
-        marginTop: 20,
-        marginBottom: 20
+        marginTop: 0,
+        marginBottom: 60
     },
     dName: {
         color: "grey"
@@ -357,7 +358,7 @@ export default function CourseInfoCard({
                     TA Allocations
                 </Typography>
                 {error && <Alert severity="error">{error}</Alert>}
-                <TableContainer className={classes.container}>
+                <TableContainer className={classes.tableContainer}>
                         <Table className={classes.table} size="small">
                         <TableHead>
                             <TableRow className={classes.row}>
@@ -365,9 +366,7 @@ export default function CourseInfoCard({
                             <TableCell>Email</TableCell>
                             <TableCell>Fundability</TableCell>
                             <TableCell>Hours Assigned</TableCell>
-                            <TableCell></TableCell>
                             <TableCell>Status</TableCell>
-                            <TableCell></TableCell>
                             <TableCell></TableCell>
                             </TableRow>
                         </TableHead>
@@ -378,25 +377,25 @@ export default function CourseInfoCard({
                     <TableCell>{allocation.name}</TableCell>
                     <TableCell>{allocation.email}</TableCell>
                     <TableCell>{allocation.fundability == 1 ? "Fundable" : allocation.fundability == 2 ? "Non-fundable" : "External"}</TableCell>
-                    <TableCell>{allocation.hours_allocated}</TableCell>
-                    <TableCell align="right">
+                    <TableCell>
+                        {allocation.hours_allocated}     
                         {editPrivilege && (
                         <Button
                             color="default"
                             size="small"
                             startIcon={<EditIcon />}
+                            style={{float: "right"}}
                             onClick={() => {
                                 handleClickOpen(courseState["course_code"],allocation.email,allocation.hours_allocated)
                             }}
                         >
                             Modify
                         </Button>
-                        )}
+                        )}               
                     </TableCell>
-                    <TableCell>{allocation.status}</TableCell>
-                    <TableCell>
+                    <TableCell>{allocation.status}
                     {allocation.status == "Rejected" &&
-                    <span style={{fontStyle: "italic"}}>Reason for Rejection: {allocation.rejection_reason} </span>
+                    <span style={{fontStyle: "italic"}}> (Reason: {allocation.rejection_reason})</span>
                     }
                     </TableCell>
                     <TableCell align="right">

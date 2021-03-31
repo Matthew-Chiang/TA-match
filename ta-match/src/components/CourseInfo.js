@@ -4,7 +4,7 @@ import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import { useAuth } from "../contexts/AuthContext";
 import { Alert } from "@material-ui/lab";
-import CourseInfoCard from "./CourseInfoCard";
+import CourseInfoCardNew from "./CourseInfoCardNew";
 
 const useStyles = makeStyles({
     root: {
@@ -74,11 +74,11 @@ export default function CourseInfo({ email }) {
         return (
             <div>
                 {error && <Alert severity="error">{error}</Alert>}
-                <Grid container spacing={3}>
+                <Grid container spacing={0.75}>
                     {courseData["courseList"].map((course, index) => {
                         return (
                             <Grid key={index} item xs={12}>
-                                <CourseInfoCard
+                                <CourseInfoCardNew
                                     course={course}
                                     semester={courseData.semester}
                                     setError={setError}
