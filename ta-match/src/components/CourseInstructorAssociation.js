@@ -31,16 +31,25 @@ const useStyles = makeStyles({
   formControl: {
     marginBottom: 5,
     minWidth: 140,
-}
+  },
+  submitBtn:{
+    marginLeft: 40,
+    marginBottom: 5,
+  }
 });
 
-export default function CourseInstructorAssociation() {
+export default function CourseInstructorAssociation({
+  setHoursFlag,
+}) {
   // styles
   const classes = useStyles();
   const [instructorInfo, setInstructorInfo] = useState([]);
   const [courseInfo, setCourseInfo] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [test, setTest] = useState(0);
+  let courseMatch = [];
+  let instructorMatch = [];
+  let invalid = 0;
 
   useEffect(() => {
     fetch(`${apiURL}/getInstructors`)
@@ -80,33 +89,74 @@ export default function CourseInstructorAssociation() {
 
   }, [test]);
 
-  function assignInstructor(course, instructor) {
-    fetch(`${apiURL}/assignInstructors`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-          course: course,
-          instructor: instructor,
-      }),
-   })
-    .then((response)=>{
-      console.log(response)
-      
-    })
-    .catch((err)=>{
-      console.log(err);
-    });
+  function assignInstructor() {
+    if(courseMatch.length == 0){
+      alert("Please choose an instructor assignment before submitting")
+    }
+    else{
+      courseInfo.map((c)=>{
+        if(typeof c["instructor"] === "undefined"){
+          for(let i=0;i<courseMatch.length;i++){
+            if(courseMatch[i]==c["course"]){
+              invalid=0;
+            }else{
+              invalid++;
+            }
+          }
+        }
+      })
+      if(invalid ==0){
+        fetch(`${apiURL}/assignInstructors`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+              course: courseMatch,
+              instructor: instructorMatch,
+          }),
+       })
+        .then((response)=>{
+          console.log(response)
+          courseMatch = [];
+          instructorMatch = [];
+          invalid = 0;
+          setTest(test+1)
+        })
+        .catch((err)=>{
+          console.log(err);
+        });
+      }
+      else{
+        alert("Please assign an instructor to all courses before pressing submit")
+      }
+    }
   };
 
-  
+  function storeAssignments(course, instructor){
+    courseMatch.push(course);
+    instructorMatch.push(instructor);
+  }
+ 
   return (
     <div>
       <h3>Course-Instructor Association</h3>
       <Typography component="div">
               <Box fontStyle="italic" >
-              This function will assign instructors to courses for the current semester. 
+              This function will assign instructors to courses for the current semester.
+              <Button 
+                className={classes.submitBtn}
+                color="primary"
+                variant="contained"
+                onClick={() => {
+                  setHoursFlag(true)
+                  assignInstructor()
+                 
+                }}
+             >
+            Submit
+          </Button> 
               </Box>
           </Typography>
+          
         {!isLoading ? <TableContainer className={classes.container}>
         <Table className={classes.table} size="small">
           <TableHead>
@@ -119,6 +169,7 @@ export default function CourseInstructorAssociation() {
           </TableHead>
           <TableBody>
           {courseInfo.map((course)=>{
+            console.log(course["instructor"])
               return (
                 <TableRow key={course["course"]}>
                   <TableCell>{course["course"]}</TableCell>
@@ -128,7 +179,8 @@ export default function CourseInstructorAssociation() {
                   <FormControl className={classes.formControl}>
                   <InputLabel>Select professor</InputLabel>
                   <Select defaultValue="" id="select" onChange={(e) => {
-                          assignInstructor(course["course"],e.target.value)
+                         // assignInstructor(course["course"],e.target.value)
+                          storeAssignments(course["course"],e.target.value)
                         }}>
                     {instructorInfo.map(
                         (inst,index) => {
@@ -137,12 +189,13 @@ export default function CourseInstructorAssociation() {
                     )}
                   </Select>
                   </FormControl>                                                      
-                      <Button className={classes.assignBtn}
+                      {/* <Button className={classes.assignBtn}
                           color="primary"
                           onClick={() => {
                             setTest(test+1)
                           }}
-                      >Assign</Button>
+                      >Assign</Button> */}
+                      
                  </TableCell>
               </TableRow>
               )
@@ -150,6 +203,7 @@ export default function CourseInstructorAssociation() {
           </TableBody>
         </Table>
       </TableContainer>
+      
       : <div></div>}
     </div>
   )

@@ -39,10 +39,15 @@ const useStyles = makeStyles({
   },
   row: {
     backgroundColor: "#ECECEC"
+  },
+  submitBtn:{
+    marginLeft: 20,
   }
 });
 
-export default function HoursCalculation() {
+export default function HoursCalculation({
+  setExportFlag,
+}) {
   // styles
   const classes = useStyles();
 
@@ -189,6 +194,14 @@ export default function HoursCalculation() {
             onClick={() => setTest(test+1)}
              >
             Calculate TA Hours 
+          </Button>
+      <Button
+        className = {classes.submitBtn} 
+        color="primary"
+        variant="contained"
+        onClick={() => setExportFlag(true)}
+        >
+        Submit Time Hour Edits 
           </Button>
         {!isLoading ? <TableContainer className={classes.container}>
         <Table className={classes.table} size="small">

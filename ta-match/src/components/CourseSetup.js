@@ -37,7 +37,9 @@ const useStyles = makeStyles({
   }
 });
 
-export default function CourseSetup() {
+export default function CourseSetup({
+  setInstructorFlag,
+}) {
   // styles
   const classes = useStyles();
 
@@ -135,7 +137,10 @@ export default function CourseSetup() {
       <Button 
             color="primary"
             variant="contained"
-            onClick={() => setTest(test+1)}
+            onClick={() => {
+              setTest(test+1);
+              
+            }}
              >
             Submit
           </Button>
@@ -149,6 +154,7 @@ export default function CourseSetup() {
           </TableHead>
           <TableBody>
           {courseInfo.map((course)=>{
+              setInstructorFlag(true);
               return (
                 <TableRow key={course["course"]}>
                   <TableCell component="th" scope="row">{course["course"]}</TableCell>

@@ -441,13 +441,16 @@ app.post("/api/assignInstructors", async (req,res)=>{
     const instructor = req.body.instructor;
 
     try {
-        const assign = db
+        for(let i=0;i<course.length;i++){
+            const assign = await db
             .collection("courses")
             .doc(sem)
             .collection("courses")
-            .doc(course)
-            .update({ instructor: instructor });
-        console.log(assign);
+            .doc(course[i])
+            .update({ instructor: instructor[i] });
+            //console.log(assign);
+            
+        } 
         res.send("success");
     } catch (err) {
         console.log(err);
