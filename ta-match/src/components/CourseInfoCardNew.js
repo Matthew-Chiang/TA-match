@@ -14,6 +14,7 @@ import ThumbDownIcon from '@material-ui/icons/ThumbDown';
 import Alert from '@material-ui/lab/Alert';
 
 import logo from "../uwo.png"
+import QuestionAnswerModal from "./QuestionAnswerModal";
 
 const useStyles = makeStyles({
     root: {
@@ -120,7 +121,15 @@ const useStyles = makeStyles({
     formControl: {
         marginRight: 10,
         minWidth: 200,
-    }
+    },
+    formControlSelect: {
+        marginTop: 4,
+        minWidth: 100
+    },
+    rankBtn: {
+        marginLeft: 20,
+        marginTop: 4,
+    },
 });
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -309,6 +318,42 @@ export default function CourseInfoCard({
             });
     };
 
+    function setRank(email, rank) {
+        // for profs
+        console.log(email)
+        console.log(rank)
+        setTempRanking({ ...tempRanking, [email]: rank});
+    }
+
+    function updateRank(course, email) {
+        console.log(tempRanking[email])
+        fetch(`http://localhost:5000/api/rank`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                course: course,
+                email: email,
+                rank: tempRanking[email],
+            }),
+        })
+            .then((response) => {
+                if (response.status == "404") {
+                    //setError("Cannot assign same rank to multiple applicants");
+                    alert("Cannot assign same rank to multiple applicants");
+                } else {
+                    const newState = { ...courseState };
+                    newState["applicant_list"].filter(
+                        (applicant) => applicant.email === email
+                    )[0].profRank = tempRanking[email];
+                    setCourseState(newState);
+                    //window.location.reload()
+                }
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    }
+
     return (
     <div>
         <Card className={classes.container} variant="outlined">
@@ -354,10 +399,74 @@ export default function CourseInfoCard({
                 <Typography className={classes.dHrs}><span style={{fontWeight:"bold"}}>Number of TA Hours:</span> {courseState["ta_hours"]}</Typography>
                 <Typography className={classes.dCode}>{courseState["course_code"]}: <span style={{fontWeight: "normal"}}>{courseState["course_name"]}</span></Typography>
                 <Divider/>
+                {error && <Alert severity="error">{error}</Alert>}
+                {viewApplicant && (
+                    <div>
+                    <Typography className={classes.subtitle}>
+                        Applicants
+                    </Typography>
+                    <TableContainer className={classes.tableContainer}>
+                        <Table className={classes.table} size="small">
+                            <TableHead>
+                                <TableRow className={classes.row}>
+                                    <TableCell>Name</TableCell>
+                                    <TableCell>Email</TableCell>
+                                    <TableCell>Fundable</TableCell>
+                                    <TableCell>Current Rank</TableCell>
+                                    <TableCell>Update Rank</TableCell>
+                                    <TableCell></TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {courseState["applicant_list"].map((applicant,index) => {
+                                    if (!applicant.profRank) {
+                                        applicant.profRank = "Unranked";
+                                    }
+                                    return (
+                                        <TableRow key={courseState["course"]}>
+                                            <TableCell>{applicant.name}</TableCell>
+                                            <TableCell>{applicant.email}</TableCell>
+                                            <TableCell>{applicant.fundable}</TableCell>
+                                            <TableCell>{applicant.profRank}</TableCell>
+                                            <TableCell>
+                                                <FormControl className={classes.formControlSelect}>
+                                                    <Select defaultValue="Unranked" id="select" displayEmpty onChange={(e) => {
+                                                        setRank(applicant.email,e.target.value)
+                                                    }}>
+                                                        <MenuItem value="Unranked">
+                                                            Unranked
+                                                        </MenuItem>
+                                                        {courseState["applicant_list"].map((applicant,index) => {
+                                                            return (
+                                                                <MenuItem key={index} value={index+1}>
+                                                                    {index+1}
+                                                                </MenuItem>
+                                                            )
+                                                        })}
+                                                    </Select>
+                                                </FormControl>
+                                                <Button className={classes.rankBtn}
+                                                    color="primary"
+                                                    onClick={() => {
+                                                        updateRank(courseState["course_code"],applicant.email)
+                                                    }}>
+                                                        Submit
+                                                    </Button>
+                                            </TableCell>
+                                            <TableCell align="right">
+                                                <QuestionAnswerModal questionAnswers={applicant.questionAnswerPairs} />
+                                            </TableCell>
+                                        </TableRow>
+                                    )
+                                })}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                    </div>
+                )}
                 <Typography className={classes.subtitle}>
                     TA Allocations
                 </Typography>
-                {error && <Alert severity="error">{error}</Alert>}
                 <TableContainer className={classes.tableContainer}>
                         <Table className={classes.table} size="small">
                         <TableHead>
