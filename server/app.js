@@ -564,7 +564,8 @@ app.post("/api/updateTaHours", async (req, res) => {
     const TAHours = parseInt(req.body.hours);
     const TaEmail = req.body.TaEmail;
     const courseName = req.body.course; 
-    const semester = month+year;    
+    // const semester = month+year;   
+    const semester="summer2018" 
     try {   
         const courseData = await db    
             .collection("courses")    
@@ -620,7 +621,7 @@ app.post("/api/allocation/add", async (req, res) => {
             .doc(courseName)
             .collection("allocation")
             .doc(email)
-            .set({ status: "pending", hours_allocated: hours, fundability: fundability, name:name });
+            .set({ status: "Pending", hours_allocated: hours, fundability: fundability, name:name });
         res.send("return");
         }
     } catch (err) {
@@ -629,7 +630,8 @@ app.post("/api/allocation/add", async (req, res) => {
 });
 
 app.delete("/api/allocation/delete", async (req, res) => {
-    const semester = month+year;
+    const semester="summer2018"
+    // const semester = month+year;
     const courseName = req.body.courseName;
     const email = req.body.email;
 

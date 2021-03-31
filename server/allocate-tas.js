@@ -68,7 +68,7 @@ async function allocateTAs(semester=month+year, preferenceWeighting=1){
 
         for (ta of allocationObj[courseCode]){
             await allocationCol.doc(ta.email).set({
-                status: 'pending',
+                status: 'Pending',
                 hours_allocated: ta.hours,
                 name: ta.name,
                 fundability: ta.fundability,

@@ -186,11 +186,12 @@ export default function CourseInfoCard({
     }
 
     const handleRejectClose = () => {
+        setDescription("")
         setRejectModal(false);
     }
 
     const handleRejectOverride = () => {
-        changeTAStatus(email,"rejected",description);
+        changeTAStatus(email,"Rejected",description);
         handleRejectClose();
     }
     
@@ -271,9 +272,13 @@ export default function CourseInfoCard({
                     let newState = { ...courseState };
                     newState["allocation_list"] = [
                         ...newState["allocation_list"],
-                        { status: "pending", name: addTaName, email: addTaEmail, hours_allocated: addTaHours, fundability: addTaFundability},
+                        { status: "Pending", name: addTaName, email: addTaEmail, hours_allocated: addTaHours, fundability: addTaFundability},
                     ];
                     setCourseState(newState);
+                    setAddTaName("");
+                    setAddTaEmail("");
+                    setAddTaFundability("");
+                    setAddTaHours("")
                 }
             })
             .catch((e) => {
@@ -390,29 +395,33 @@ export default function CourseInfoCard({
                     </TableCell>
                     <TableCell>{allocation.status}</TableCell>
                     <TableCell>
-                    {allocation.status == "rejected" &&
-                    <span>Reason for Rejection: {allocation.rejection_reason} </span>
+                    {allocation.status == "Rejected" &&
+                    <span style={{fontStyle: "italic"}}>Reason for Rejection: {allocation.rejection_reason} </span>
                     }
                     </TableCell>
                     <TableCell align="right">
-                        <Button
+                        {(allocation.status == "Pending" || allocation.status == "Rejected") &&
+                            <Button
                             color="primary"
                             size="small"
                             style={{marginLeft: 10}}
                             startIcon={<ThumbUpIcon />}
-                            onClick={() => {changeTAStatus(allocation.email,"confirmed","N/A")}}
-                        >
-                            Accept
-                        </Button>
-                        <Button
+                            onClick={() => {changeTAStatus(allocation.email,"Confirmed","N/A")}}
+                            >
+                                Accept
+                            </Button>
+                        }
+                        {(allocation.status == "Pending" || allocation.status == "Confirmed") &&
+                            <Button
                             color="secondary"
                             size="small"
                             style={{marginLeft: 10}}
                             startIcon={<ThumbDownIcon />}
                             onClick={() => handleRejectOpen(allocation.email)}
-                        > 
-                            Reject
-                        </Button>
+                            > 
+                                Reject
+                            </Button>
+                        }
                         {editPrivilege && (
                         <Button
                             color="default"
@@ -436,7 +445,7 @@ export default function CourseInfoCard({
                 {editPrivilege && (
                     <div>
                         <Typography className={classes.subtitle}>
-                            Manually Allocate TA's
+                            Manually Allocate TAs
                         </Typography>
                         <TextField className={classes.allocateTxtField}
                             variant="outlined"
