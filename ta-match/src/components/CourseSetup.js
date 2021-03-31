@@ -100,6 +100,7 @@ export default function CourseSetup({
             setCourseInfo(data);
             if(data.length == 0){
               setIsLoading(true);
+              localStorage.clear()
             }else{
               setIsLoading(false);
             }

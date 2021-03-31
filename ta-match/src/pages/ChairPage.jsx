@@ -75,22 +75,22 @@ const ChairPage = () => {
     };
 //make tabs persistent across session
     useEffect(() => {
-      setInstructorFlag(sessionStorage.getItem("localInstructorFlag") == "true")
-      setAssociationFlag(sessionStorage.getItem("localAssociationFlag") == "true")
-      setHoursFlag(sessionStorage.getItem("localHoursFlag") == "true")
-      setExportFlag(sessionStorage.getItem("localExportFlag") == "true")
-      setUplaodFlag(sessionStorage.getItem("localUplaodFlag") == "true")
-      setAllCourseFlag(sessionStorage.getItem("localAllCourseFlag") == "true")
+      setInstructorFlag(localStorage.getItem("localInstructorFlag") == "true")
+      setAssociationFlag(localStorage.getItem("localAssociationFlag") == "true")
+      setHoursFlag(localStorage.getItem("localHoursFlag") == "true")
+      setExportFlag(localStorage.getItem("localExportFlag") == "true")
+      setUplaodFlag(localStorage.getItem("localUplaodFlag") == "true")
+      setAllCourseFlag(localStorage.getItem("localAllCourseFlag") == "true")
     }, [])
 
     useEffect(() => {
-      console.log(associationFlag, sessionStorage.getItem("localAssociationFlag"))
-      sessionStorage.setItem("localInstructorFlag", instructorFlag);
-      sessionStorage.setItem("localAssociationFlag", associationFlag);
-      sessionStorage.setItem("localHoursFlag", hoursFlag);
-      sessionStorage.setItem("localExportFlag", exportFlag);
-      sessionStorage.setItem("localUplaodFlag", uplaodFlag);
-      sessionStorage.setItem("localAllCourseFlag", allCourseFlag);
+      console.log(associationFlag, localStorage.getItem("localAssociationFlag"))
+      localStorage.setItem("localInstructorFlag", instructorFlag);
+      localStorage.setItem("localAssociationFlag", associationFlag);
+      localStorage.setItem("localHoursFlag", hoursFlag);
+      localStorage.setItem("localExportFlag", exportFlag);
+      localStorage.setItem("localUplaodFlag", uplaodFlag);
+      localStorage.setItem("localAllCourseFlag", allCourseFlag);
     },[instructorFlag, associationFlag, hoursFlag, exportFlag, uplaodFlag, allCourseFlag])
 
     return (

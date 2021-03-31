@@ -119,6 +119,7 @@ export default function InstructorSetup({
             variant="contained"
             onClick={() => {
               sendFile({file});
+              setAssociationFlag(true);
             }}
              >
             Submit
@@ -133,7 +134,6 @@ export default function InstructorSetup({
           </TableHead>
           <TableBody>
           {instructorInfo.map((e)=>{
-              setAssociationFlag(true);
               return (
                 // CHANGE
                 <TableRow key={e["email"]}>

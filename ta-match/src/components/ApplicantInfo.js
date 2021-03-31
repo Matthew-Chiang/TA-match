@@ -66,7 +66,10 @@ class AdminFilesUpload extends React.Component {
           <Button className="submitButton"
             color="primary"
             variant="contained"
-            onClick={()=>this.sendFile('ApplicantsFile')}
+            onClick={()=>{
+              this.sendFile('ApplicantsFile')
+              this.props.setAllCourseFlag(true)
+            }}
             >
             Submit 
           </Button>
