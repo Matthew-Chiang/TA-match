@@ -187,6 +187,7 @@ export default function CourseInfoCard({
     }
 
     const handleClose = () => {
+        setModifiedTaHours("")
         setOpen(false);
     };
     
