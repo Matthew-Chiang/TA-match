@@ -154,7 +154,7 @@ export default function CourseSetup({
           </TableHead>
           <TableBody>
           {courseInfo.map((course)=>{
-              setInstructorFlag(false);
+              setInstructorFlag(true);
               return (
                 <TableRow key={course["course"]}>
                   <TableCell component="th" scope="row">{course["course"]}</TableCell>

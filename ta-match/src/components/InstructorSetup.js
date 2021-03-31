@@ -133,7 +133,7 @@ export default function InstructorSetup({
           </TableHead>
           <TableBody>
           {instructorInfo.map((e)=>{
-              setAssociationFlag(false);
+              setAssociationFlag(true);
               return (
                 // CHANGE
                 <TableRow key={e["email"]}>

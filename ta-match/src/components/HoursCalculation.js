@@ -199,7 +199,7 @@ export default function HoursCalculation({
         className = {classes.submitBtn} 
         color="primary"
         variant="contained"
-        onClick={() => setExportFlag(false)}
+        onClick={() => setExportFlag(true)}
         >
         Submit Time Hour Edits 
           </Button>

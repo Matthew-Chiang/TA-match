@@ -7,7 +7,7 @@ import CourseSetup from "../components/CourseSetup";
 
 import "../App.css";
 
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import PropTypes from "prop-types";
 import { makeStyles } from "@material-ui/core/styles";
 import Tabs from "@material-ui/core/Tabs";
@@ -17,6 +17,7 @@ import Box from "@material-ui/core/Box";
 import ProfessorQuestionsExport from "../components/ProfessorQuestionsExport";
 import InstructorSetup from "../components/InstructorSetup";
 import CourseInstructorAssociation from "../components/CourseInstructorAssociation";
+
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -63,15 +64,34 @@ const useStyles = makeStyles((theme) => ({
 const ChairPage = () => {
     const classes = useStyles();
     const [value, setValue] = useState(0);
-    const [instructorFlag, setInstructorFlag] = useState(true)
-    const [associationFlag, setAssociationFlag] = useState(true)
-    const [hoursFlag, setHoursFlag] = useState(true)
-    const [exportFlag, setExportFlag] = useState(true)
-    const [uplaodFlag, setUplaodFlag] = useState(true)
-    const [allCourseFlag, setAllCourseFlag] = useState(true)
+    const [instructorFlag, setInstructorFlag] = useState()
+    const [associationFlag, setAssociationFlag] = useState()
+    const [hoursFlag, setHoursFlag] = useState()
+    const [exportFlag, setExportFlag] = useState()
+    const [uplaodFlag, setUplaodFlag] = useState()
+    const [allCourseFlag, setAllCourseFlag] = useState()
     const handleChange = (event, newValue) => {
       setValue(newValue);
     };
+
+    useEffect(() => {
+      setInstructorFlag(sessionStorage.getItem("localInstructorFlag") == "true")
+      setAssociationFlag(sessionStorage.getItem("localAssociationFlag") == "true")
+      setHoursFlag(sessionStorage.getItem("localHoursFlag") == "true")
+      setExportFlag(sessionStorage.getItem("localExportFlag") == "true")
+      setUplaodFlag(sessionStorage.getItem("localUplaodFlag") == "true")
+      setAllCourseFlag(sessionStorage.getItem("localAllCourseFlag") == "true")
+    }, [])
+
+    useEffect(() => {
+      console.log(associationFlag, sessionStorage.getItem("localAssociationFlag"))
+      sessionStorage.setItem("localInstructorFlag", instructorFlag);
+      sessionStorage.setItem("localAssociationFlag", associationFlag);
+      sessionStorage.setItem("localHoursFlag", hoursFlag);
+      sessionStorage.setItem("localExportFlag", exportFlag);
+      sessionStorage.setItem("localUplaodFlag", uplaodFlag);
+      sessionStorage.setItem("localAllCourseFlag", allCourseFlag);
+    },[instructorFlag, associationFlag, hoursFlag, exportFlag, uplaodFlag, allCourseFlag])
 
     return (
         <div className="container">
@@ -88,12 +108,12 @@ const ChairPage = () => {
                     
                 >
                     <Tab label="1. Course Setup" />
-                    <Tab label="2. Instructor Setup" disabled = {instructorFlag}/>
-                    <Tab label="3. Assign Instructors" disabled = {associationFlag}/>
-                    <Tab label="4. Determine TA Hours" disabled = {hoursFlag}/>
-                    <Tab label="5. Export Question List" disabled = {exportFlag}/>
-                    <Tab label="6. Import Applicants" disabled = {uplaodFlag}/>
-                    <Tab label="7. Match TA and Courses" disabled = {allCourseFlag}/>
+                    <Tab label="2. Instructor Setup" disabled = {!instructorFlag}/>
+                    <Tab label="3. Assign Instructors" disabled = {!associationFlag}/>
+                    <Tab label="4. Determine TA Hours" disabled = {!hoursFlag}/>
+                    <Tab label="5. Export Question List" disabled = {!exportFlag}/>
+                    <Tab label="6. Import Applicants" disabled = {!uplaodFlag}/>
+                    <Tab label="7. Match TA and Courses" disabled = {!allCourseFlag}/>
                 </Tabs>
                 <TabPanel value={value} index={0} className={classes.tabPanel}>
                     <CourseSetup 

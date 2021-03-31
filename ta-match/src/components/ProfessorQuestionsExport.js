@@ -119,7 +119,7 @@ class ProfessorQuestionsExport extends React.Component {
                 <Button className={classes.btn} 
                     onClick={() => {
                         this.handleExport(); 
-                        this.props.setUplaodFlag(false)}}
+                        this.props.setUplaodFlag(true)}}
                     // onClick={this.handleExport} 
                     color="primary" 
                     variant="contained">

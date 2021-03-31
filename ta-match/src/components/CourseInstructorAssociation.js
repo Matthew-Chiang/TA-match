@@ -116,7 +116,7 @@ export default function CourseInstructorAssociation({
                 color="primary"
                 variant="contained"
                 onClick={() => {
-                  setHoursFlag(false)
+                  setHoursFlag(true)
                 }}
              >
             Submit
