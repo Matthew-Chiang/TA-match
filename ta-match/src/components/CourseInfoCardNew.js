@@ -163,7 +163,8 @@ export default function CourseInfoCard({
     const [rejectModal, setRejectModal] = useState(false);
     const [description, setDescription] = useState("")
     const [email, setEmail] = useState("")
-    const [filter, setFilter] = useState(0)
+    const [fundableFilter, setFundableFilter] = useState(0)
+    const [experienceFilter, setExperienceFilter] = useState(0)
     
     const labelRef = useRef()
     const labelWidth = labelRef.current ? labelRef.current.clientWidth : 0
@@ -215,8 +216,11 @@ export default function CourseInfoCard({
         changeTAStatus(email,"Rejected",description);
         handleRejectClose();
     }
-    const handleFilterChange = (event) => {
-        setFilter(event.target.value);
+    const handleFundableFilterChange = (event) => {
+        setFundableFilter(event.target.value);
+      };
+      const handleExperienceFilterChange = (event) => {
+        setExperienceFilter(event.target.value);
       };
     
     function updateTaHours() {
@@ -625,18 +629,30 @@ export default function CourseInfoCard({
                     <Typography className={classes.subtitle}>
                         Applicants
                         <FormControl className={classes.formControl}>
-                            <InputLabel id="demo-simple-select-label">Age</InputLabel>
+                            <InputLabel id="demo-simple-select-label">Fundability Filter</InputLabel>
                                 <Select
                                 labelId="demo-simple-select-label"
                                 id="demo-simple-select"
-                                value={filter}
-                                onChange={handleFilterChange}
+                                value={fundableFilter}
+                                onChange={handleFundableFilterChange}
                                 >
-                                    {console.log(filter)}
                                 <MenuItem value={0}>No Filter</MenuItem>
                                 <MenuItem value={1}>Fundable</MenuItem>
                                 <MenuItem value={2}>Non-Fundable</MenuItem>
                                 <MenuItem value={3}>External</MenuItem>
+                                </Select>
+                        </FormControl>
+                        <FormControl className={classes.formControl}>
+                            <InputLabel id="demo-simple-select-label">Experience Filter</InputLabel>
+                                <Select
+                                labelId="demo-simple-select-label"
+                                id="demo-simple-select"
+                                value={experienceFilter}
+                                onChange={handleExperienceFilterChange}
+                                >
+                                <MenuItem value={0}>No Filter</MenuItem>
+                                <MenuItem value={5}>New TA</MenuItem>
+                                <MenuItem value={10}>Experienced</MenuItem>
                                 </Select>
                         </FormControl>
                     </Typography>
@@ -647,8 +663,10 @@ export default function CourseInfoCard({
                                     <TableCell>Name</TableCell>
                                     <TableCell>Email</TableCell>
                                     <TableCell>Fundable</TableCell>
+                                    <TableCell>Experience Level</TableCell>
                                     <TableCell>Current Rank</TableCell>
                                     <TableCell>Update Rank</TableCell>
+                                    <TableCell></TableCell>
                                     <TableCell></TableCell>
                                 </TableRow>
                             </TableHead>
@@ -658,15 +676,18 @@ export default function CourseInfoCard({
                                     if (!applicant.profRank) {
                                         applicant.profRank = "Unranked";
                                     }
+                                    console.log(experienceFilter, "filter")
+                                    console.log(applicant.availability, "db")
+                                    console.log( (experienceFilter == 0 ))
                                     return (
                                         <React.Fragment>
-                                        {console.log(filter, "filter")}
-                                        {console.log(applicant.fundable, "applicant")}
-                                        {(filter == 0 || applicant.fundable == filter) &&
+                                        {(fundableFilter == 0 || applicant.fundable == fundableFilter) && (experienceFilter == 0 || applicant.availability == experienceFilter) &&
                                             <TableRow key={courseState["course"]}>
                                             <TableCell>{applicant.name}</TableCell>
                                             <TableCell>{applicant.email}</TableCell>
                                             <TableCell>{applicant.fundable == 1 ? "Fundable" : applicant.fundable == 2 ? "Non-fundable" : "External"}</TableCell>
+                                            <TableCell>{applicant.availability == 5 ? "New"  : "Experienced"}</TableCell>
+                                            <TableCell>{applicant.profRank}</TableCell>
                                             <TableCell>{applicant.profRank}</TableCell>
                                             <TableCell>
                                                 <FormControl className={classes.formControlSelect}>
