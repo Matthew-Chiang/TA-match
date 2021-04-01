@@ -8,7 +8,6 @@ import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import { useAuth } from "../contexts/AuthContext";
 import Button from "@material-ui/core/Button";
 import { Alert } from "@material-ui/lab";
 import CourseInfoCard from "./CourseInfoCard";
@@ -50,7 +49,6 @@ const useStyles = makeStyles({
 export default function CourseInfo({ email }) {
     const [isLoading, setIsLoading] = useState(true);
     const [courseData, setCourseData] = useState([]);
-    const { currentUser } = useAuth();
     const [error, setError] = useState("");
     let ranking = 0;
 
