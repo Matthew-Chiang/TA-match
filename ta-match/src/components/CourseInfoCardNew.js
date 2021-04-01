@@ -163,6 +163,7 @@ export default function CourseInfoCard({
     const [rejectModal, setRejectModal] = useState(false);
     const [description, setDescription] = useState("")
     const [email, setEmail] = useState("")
+    const [filter, setFilter] = useState(0)
     
     const labelRef = useRef()
     const labelWidth = labelRef.current ? labelRef.current.clientWidth : 0
@@ -214,6 +215,9 @@ export default function CourseInfoCard({
         changeTAStatus(email,"Rejected",description);
         handleRejectClose();
     }
+    const handleFilterChange = (event) => {
+        setFilter(event.target.value);
+      };
     
     function updateTaHours() {
         fetch(`http://localhost:5000/api/updateTaHours`, {
@@ -620,6 +624,21 @@ export default function CourseInfoCard({
                     <div>
                     <Typography className={classes.subtitle}>
                         Applicants
+                        <FormControl className={classes.formControl}>
+                            <InputLabel id="demo-simple-select-label">Age</InputLabel>
+                                <Select
+                                labelId="demo-simple-select-label"
+                                id="demo-simple-select"
+                                value={filter}
+                                onChange={handleFilterChange}
+                                >
+                                    {console.log(filter)}
+                                <MenuItem value={0}>No Filter</MenuItem>
+                                <MenuItem value={1}>Fundable</MenuItem>
+                                <MenuItem value={2}>Non-Fundable</MenuItem>
+                                <MenuItem value={3}>External</MenuItem>
+                                </Select>
+                        </FormControl>
                     </Typography>
                     <TableContainer className={classes.tableContainer}>
                         <Table className={classes.table} size="small">
@@ -640,7 +659,11 @@ export default function CourseInfoCard({
                                         applicant.profRank = "Unranked";
                                     }
                                     return (
-                                        <TableRow key={courseState["course"]}>
+                                        <React.Fragment>
+                                        {console.log(filter, "filter")}
+                                        {console.log(applicant.fundable, "applicant")}
+                                        {(filter == 0 || applicant.fundable == filter) &&
+                                            <TableRow key={courseState["course"]}>
                                             <TableCell>{applicant.name}</TableCell>
                                             <TableCell>{applicant.email}</TableCell>
                                             <TableCell>{applicant.fundable == 1 ? "Fundable" : applicant.fundable == 2 ? "Non-fundable" : "External"}</TableCell>
@@ -673,7 +696,8 @@ export default function CourseInfoCard({
                                             <TableCell align="right">
                                                 <QuestionAnswerModal questionAnswers={applicant.questionAnswerPairs} />
                                             </TableCell>
-                                        </TableRow>
+                                        </TableRow>}
+                                        </React.Fragment>
                                     )
                                 })}
                             </TableBody>
