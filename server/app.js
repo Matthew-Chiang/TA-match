@@ -564,7 +564,8 @@ app.post("/api/updateTaHours", async (req, res) => {
     const TAHours = parseInt(req.body.hours);
     const TaEmail = req.body.TaEmail;
     const courseName = req.body.course; 
-    const semester = month+year;   
+    const semester = month+year;
+    var totalCurrentHours = 0;   
     //const semester="summer2018" 
     try {   
         const courseData = await db    
@@ -573,22 +574,37 @@ app.post("/api/updateTaHours", async (req, res) => {
             .collection("courses")   
             .doc(courseName)    
             .get()    
-            courseHours = courseData.data().ta_hours    
-            if (TAHours > courseHours){    
+            courseHours = courseData.data().ta_hours
+        const allocationsCollection = await db
+            .collection("courses")    
+            .doc(semester)    
+            .collection("courses")   
+            .doc(courseName)
+            .collection("allocation")    
+            .get()
+            allocationsCollection.forEach((doc) => {
+                let fields = doc.data();
+                if(doc.id == TaEmail){
+                    return;
+                }
+                totalCurrentHours += fields.hours_allocated;
+            });
+            console.log(totalCurrentHours + TAHours)    
+        if (TAHours + totalCurrentHours > courseHours){    
             res.status(404).send("hello")    
-    }   
+        }   
 
-    else{    
-        const hoursUpdate = await db    
-        .collection("courses")    
-        .doc(semester)    
-        .collection("courses")    
-        .doc(courseName)    
-        .collection("allocation")    
-        .doc(TaEmail)    
-        .update({ hours_allocated: TAHours });
-        return res.send("return")   
-    }  
+        else{    
+            const hoursUpdate = await db    
+            .collection("courses")    
+            .doc(semester)    
+            .collection("courses")    
+            .doc(courseName)    
+            .collection("allocation")    
+            .doc(TaEmail)    
+            .update({ hours_allocated: TAHours });
+            return res.send("return")   
+        }  
     } catch (err) {  
         res.send(err);   
     }
@@ -602,6 +618,7 @@ app.post("/api/allocation/add", async (req, res) => {
     const fundability = req.body.fundability
     const name = req.body.name
     const hours = parseInt(req.body.hours);
+    var totalCurrentHours = 0;
     try {
         const courseData = await db    
             .collection("courses")    
@@ -609,9 +626,24 @@ app.post("/api/allocation/add", async (req, res) => {
             .collection("courses")   
             .doc(courseName)    
             .get()    
-            courseHours = courseData.data().ta_hours    
-            if (hours > courseHours){    
-            res.status(404).send("failed")    
+            courseHours = courseData.data().ta_hours
+        const allocationsCollection = await db
+            .collection("courses")    
+            .doc(semester)    
+            .collection("courses")   
+            .doc(courseName)
+            .collection("allocation")    
+            .get()
+            allocationsCollection.forEach((doc) => {
+                let fields = doc.data();
+                if(doc.id == email){
+                    return;
+                }
+                totalCurrentHours += fields.hours_allocated;
+            });
+            console.log(totalCurrentHours + hours)    
+        if (hours + totalCurrentHours > courseHours){    
+            res.status(404).send("hello")    
         }   
         else{
             const allocation = await db
