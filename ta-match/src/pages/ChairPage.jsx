@@ -14,7 +14,6 @@ import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
-import ProfessorQuestionsExport from "../components/ProfessorQuestionsExport";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -79,21 +78,17 @@ const ChairPage = () => {
                     onChange={handleChange}
                     className={classes.tabs}
                 >
-                    <Tab label="1. Export Prof Questions" />
-                    <Tab label="2. Calculate TA Hours" />
-                    <Tab label="3. Upload Applicant Data" />
-                    <Tab label="4. Match TA and Courses"/>
+                    <Tab label="1. Calculate TA Hours" />
+                    <Tab label="2. Upload Applicant Data" />
+                    <Tab label="3. Match TA and Courses"/>
                 </Tabs>
                 <TabPanel value={value} index={0} className={classes.tabPanel}>
-                    <ProfessorQuestionsExport />
-                </TabPanel>
-                <TabPanel value={value} index={1} className={classes.tabPanel}>
                     <HoursCalculation />
                 </TabPanel>
-                <TabPanel value={value} index={2} className={classes.tabPanel}>
+                <TabPanel value={value} index={1} className={classes.tabPanel}>
                     <AdminFilesUpload />
                 </TabPanel>
-                <TabPanel value={value} index={3} className={classes.tabPanel}>
+                <TabPanel value={value} index={2} className={classes.tabPanel}>
                     <TogglePriority />
                     <AllCourseInfo editPrivilege />
                 </TabPanel>
