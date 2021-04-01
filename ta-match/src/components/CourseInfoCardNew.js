@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Select, MenuItem, InputLabel, FormControl, Grid, Card, CardContent, Typography, Button, TextField, Dialog, DialogActions, DialogContent, DialogContentText, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Divider, Toolbar, IconButton, Slide } from "@material-ui/core";
+import { Select, MenuItem, InputLabel, FormControl, FormGroup, FormControlLabel, Grid, Card, CardContent, Typography, Button, TextField, Dialog, DialogActions, DialogContent, DialogContentText, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Divider, Toolbar, IconButton, Slide } from "@material-ui/core";
 
 import { makeStyles } from "@material-ui/core/styles";
 
@@ -13,6 +13,9 @@ import ThumbUpIcon from '@material-ui/icons/ThumbUp';
 import ThumbDownIcon from '@material-ui/icons/ThumbDown';
 import Alert from '@material-ui/lab/Alert';
 import FolderSharedIcon from '@material-ui/icons/FolderShared';
+import Box from '@material-ui/core/Box';
+import Checkbox from '@material-ui/core/Checkbox';
+
 
 import logo from "../uwo.png"
 import QuestionAnswerModal from "./QuestionAnswerModal";
@@ -156,6 +159,11 @@ export default function CourseInfoCard({
     const [modifiedTaHours, setModifiedTaHours] = useState("");
     const [open, setOpen] = useState(false);
     const [tempRanking, setTempRanking] = useState({});
+    const [tempApp, setTempApp] = useState("");
+    const [tempApp2, setTempApp2] = useState("");
+    // const [tempApp3, setTempApp3] = useState("");
+    // const [tempApp4, setTempApp4] = useState("");
+    let tempApp3, tempApp4, tempApp5, tempApp6, tempApp7;
 
     const [openCoursePopup, setCoursePopup] = useState(false);
     const [openAllocPopup, setAllocPopup] = useState(false);
@@ -221,6 +229,17 @@ export default function CourseInfoCard({
       };
       const handleExperienceFilterChange = (event) => {
         setExperienceFilter(event.target.value);
+      };
+
+      
+    
+    const testingChange = (event) => {
+        setTempApp({ ...tempApp, [event.target.value]: event.target.checked });
+        //setTempApp(event.target.value)
+      };
+      const testingChange2 = (event) => {
+        setTempApp2({ ...tempApp2, [event.target.value]: event.target.checked });
+        //setTempApp2(event.target.value)
       };
     
     function updateTaHours() {
@@ -390,7 +409,7 @@ export default function CourseInfoCard({
                     </Grid>
                     <Grid item xs={4} className={classes.icons}>
                     {!editPrivilege && (
-                            <div>
+                        <div>
                         <FolderSharedIcon style={{marginRight: 5}}/> 
                         <span style={{marginRight: 20, fontSize: 14}}>{courseState.applicant_list.length} Applicants</span>
                             </div>
@@ -429,7 +448,7 @@ export default function CourseInfoCard({
                 </Grid>
             </CardContent>
         </Card>
-        {"allocation_list" in courseState && courseState.allocation_list.length > 0 ? (
+        {"allocation_list" in courseState &&
             <Dialog fullScreen open={openAllocPopup} onClose={handleAllocClose} TransitionComponent={Transition} className={classes.dialogFull}>
         <Toolbar>
                 <IconButton edge="start" color="inherit" onClick={handleAllocClose} aria-label="close">
@@ -445,6 +464,12 @@ export default function CourseInfoCard({
                 <Typography className={classes.subtitle}>
                     TA Allocations
                 </Typography>
+                {courseState.allocation_list.length == 0 ? (
+                    <Typography>
+                        <Box fontStyle="italic" >
+                            No TAs have been allocated to this course yet.
+                        </Box>
+                    </Typography>):(
                 <TableContainer className={classes.tableContainer}>
                         <Table className={classes.table} size="small">
                         <TableHead>
@@ -488,15 +513,8 @@ export default function CourseInfoCard({
                     <span style={{fontStyle: "italic"}}> (Reason: {allocation.rejection_reason})</span>
                     }
                     </TableCell>
-                    {courseState["applicant_list"].map((a)=>{
-                    if(a.email == allocation.email){
-                        return(
-                        <TableCell align="right">
-                            <QuestionAnswerModal questionAnswers={a.questionAnswerPairs} />
-                        </TableCell>
-                    )
-                    }
-                    })}
+                    
+
                     <TableCell align="right">
                         {(allocation.status == "Pending" || allocation.status == "Rejected") &&
                             <Button
@@ -534,12 +552,21 @@ export default function CourseInfoCard({
                         </Button>
                         )}
                     </TableCell>
+                    {courseState["applicant_list"].map((a)=>{
+                        if(a.email==allocation.email ){
+                            return(
+                                <TableCell align="right">
+                                    <QuestionAnswerModal questionAnswers={a.questionAnswerPairs} />
+                                </TableCell>
+                            )
+                        }
+                    })}
                 </TableRow>
                 )
             })}
                         </TableBody>
                     </Table>
-                </TableContainer>
+                </TableContainer>)}
                 {editPrivilege && (
                     <div>
                         <Typography className={classes.subtitle}>
@@ -600,16 +627,7 @@ export default function CourseInfoCard({
                     </div>
                 )}
             </div>
-        </Dialog>
-        ) : (
-            <Dialog open={openAllocPopup} onClose={handleAllocClose}>
-               <DialogContent>
-                    <DialogContentText id="alert-dialog-description">
-                        No TAs have been allocated yet.
-                    </DialogContentText>
-                </DialogContent>
-            </Dialog>
-        )}
+        </Dialog>}
 
 {"applicant_list" in courseState && courseState.applicant_list.length > 0 ? (
             <Dialog fullScreen open={openCoursePopup} onClose={handlePopupClose} TransitionComponent={Transition} className={classes.dialogFull}>
@@ -628,8 +646,69 @@ export default function CourseInfoCard({
                     <div>
                     <Typography className={classes.subtitle}>
                         Applicants
-                        <FormControl className={classes.formControl}>
-                            <InputLabel id="demo-simple-select-label">Fundability Filter</InputLabel>
+                    </Typography>
+                        
+                    {/* <Card className={classes.container} variant="outlined">
+                    <CardContent className={classes.cell}>
+                        <Grid container>
+                            <Grid item xs={1}>
+                            <InputLabel>Status</InputLabel>
+                            </Grid>
+                            <Grid item xs={1.5}>
+                            <FormGroup>
+                            <FormControlLabel
+                                control={<Checkbox value={1} onChange={testingChange} />}
+                                label="Fundable"
+                            />
+                            {console.log(tempApp)}
+                            </FormGroup>
+                            </Grid>
+                            <Grid item xs={1.5}>
+                            <FormGroup>
+                            <FormControlLabel
+                                control={<Checkbox value={2} onChange={testingChange} />}
+                                label="Non-fundable"
+                            />
+                            </FormGroup>
+                            </Grid>
+                            <Grid item xs={2}>
+                            <FormGroup>
+                            <FormControlLabel
+                                control={<Checkbox value={3} onChange={testingChange}/>}
+                                label="External"
+                            />
+                            </FormGroup>
+                            </Grid>
+                            <Grid item xs={2}>
+                                <InputLabel>Experience Level</InputLabel>
+                            </Grid>
+                            <Grid item xs={1.5}>
+                            <FormGroup>
+                            <FormControlLabel
+                                control={<Checkbox value={1} onChange={testingChange2} />}
+                                label="Experienced"
+                            />
+                            </FormGroup>
+                            </Grid>
+                            <Grid item xs={0}>
+                            <FormGroup>
+                            <FormControlLabel
+                                control={<Checkbox value={2} onChange={testingChange2} />}
+                                label="New"
+                            />
+                            {console.log(tempApp2)}
+                            </FormGroup>
+                            </Grid>
+                        </Grid>
+                    </CardContent>
+                    </Card> */}
+
+                    <Card className={classes.container} variant="outlined">
+                    <CardContent className={classes.cell}>
+                        <Grid container>
+                            <Grid item xs={3}>
+                            <FormControl className={classes.formControl}>
+                            <InputLabel id="demo-simple-select-label">Status</InputLabel>
                                 <Select
                                 labelId="demo-simple-select-label"
                                 id="demo-simple-select"
@@ -642,7 +721,9 @@ export default function CourseInfoCard({
                                 <MenuItem value={3}>External</MenuItem>
                                 </Select>
                         </FormControl>
-                        <FormControl className={classes.formControl}>
+                            </Grid>
+                            <Grid item xs={1.5}>
+                            <FormControl className={classes.formControl}>
                             <InputLabel id="demo-simple-select-label">Experience Filter</InputLabel>
                                 <Select
                                 labelId="demo-simple-select-label"
@@ -655,7 +736,16 @@ export default function CourseInfoCard({
                                 <MenuItem value={10}>Experienced</MenuItem>
                                 </Select>
                         </FormControl>
-                    </Typography>
+                            </Grid>
+                            
+                        </Grid>
+                    </CardContent>
+                    </Card>
+
+
+                    
+                        
+        
                     <TableContainer className={classes.tableContainer}>
                         <Table className={classes.table} size="small">
                             <TableHead>
@@ -679,9 +769,44 @@ export default function CourseInfoCard({
                                     console.log(experienceFilter, "filter")
                                     console.log(applicant.availability, "db")
                                     console.log( (experienceFilter == 0 ))
+                                    console.log(tempApp, "try")
+                                    Object.keys(tempApp).forEach(function(key) {
+                                        if (tempApp[key]) {
+                                            if(key==1){
+                                                tempApp3 = true; 
+                                            }
+                                            else if(key==2){
+                                                tempApp4 = true;
+                                            }
+                                            else if(key==3){
+                                                tempApp5 = true;
+                                            }
+                                         else{
+                                             tempApp3 = false;
+                                             tempApp4 = false;
+                                             tempApp5 = false;
+                                         }
+                                        }
+                                    });
+                                    Object.keys(tempApp2).forEach(function(key) {
+                                        if (tempApp2[key]) {
+                                            if(key==1){
+                                                tempApp6 = true; 
+                                            }
+                                            else if(key==2){
+                                                tempApp7 = true;
+                                            }
+                                         else{
+                                             tempApp6 = false;
+                                             tempApp7 = false;
+                                         }
+                                        }
+                                    });
                                     return (
                                         <React.Fragment>
-                                        {(fundableFilter == 0 || applicant.fundable == fundableFilter) && (experienceFilter == 0 || applicant.availability == experienceFilter) &&
+                                            {/* {( tempApp3? (applicant.fundable == 1): tempApp4?(applicant.fundable ==2):tempApp5?(applicant.fundable==3):(applicant.fundable))
+                                             && (tempApp6?(applicant.availability ==10):tempApp7?(applicant.availability==5):(applicant.availability)) && */}
+                                        {(fundableFilter == 0 || applicant.fundable == fundableFilter) && (experienceFilter == 0 || applicant.availability == experienceFilter) && 
                                             <TableRow key={courseState["course"]}>
                                             <TableCell>{applicant.name}</TableCell>
                                             <TableCell>{applicant.email}</TableCell>
