@@ -8,7 +8,6 @@ import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import { useAuth } from "../contexts/AuthContext";
 import CourseInfoCard from "./CourseInfoCard";
 import { Alert } from "@material-ui/lab";
 const useStyles = makeStyles({

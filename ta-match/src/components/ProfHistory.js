@@ -1,113 +1,118 @@
-import React, { useState } from 'react';
-import {Button } from '@material-ui/core';
-import SearchIcon from '@material-ui/icons/Search';
-import axios from 'axios';
+import React, { useEffect, useState } from "react";
+import { Button } from "@material-ui/core";
+import SearchIcon from "@material-ui/icons/Search";
+import axios from "axios";
 
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import { withStyles, makeStyles } from '@material-ui/core/styles';
+import Table from "@material-ui/core/Table";
+import TableBody from "@material-ui/core/TableBody";
+import TableCell from "@material-ui/core/TableCell";
+import TableContainer from "@material-ui/core/TableContainer";
+import TableHead from "@material-ui/core/TableHead";
+import TableRow from "@material-ui/core/TableRow";
+import { withStyles, makeStyles } from "@material-ui/core/styles";
+import { AuthContext } from "../contexts/AuthContext";
 
-import FormControl from '@material-ui/core/FormControl';
-import InputLabel from '@material-ui/core/InputLabel';
-import Select from '@material-ui/core/Select';
-import MenuItem from '@material-ui/core/MenuItem';
+import FormControl from "@material-ui/core/FormControl";
+import InputLabel from "@material-ui/core/InputLabel";
+import Select from "@material-ui/core/Select";
+import MenuItem from "@material-ui/core/MenuItem";
 
-const apiURL = 'http://localhost:5000/api';
+const apiURL = "http://localhost:5000/api";
 
 const useStyles = makeStyles((theme) => ({
     formControl: {
-      margin: theme.spacing(1),
-      minWidth: 120,
+        margin: theme.spacing(1),
+        minWidth: 120,
     },
     searchIcon: {
         margin: theme.spacing(2.5),
     },
     container: {
         marginTop: 20,
-      },
-      table: {
+    },
+    table: {
         minWidth: 650,
-      },
-      row: {
-          fontSize: 22,
-          fontWeight: "bold",
-          backgroundColor: "#ECECEC"
-      },
-      dialogText: {
+    },
+    row: {
+        fontSize: 22,
+        fontWeight: "bold",
+        backgroundColor: "#ECECEC",
+    },
+    dialogText: {
         fontSize: 18,
-      },
-      txtField: {
+    },
+    txtField: {
         marginLeft: 10,
-      },
-      overrideBtn: {
+    },
+    overrideBtn: {
         marginRight: 20,
-        marginBottom: 10
-      },
-      btn: {
+        marginBottom: 10,
+    },
+    btn: {
         margin: theme.spacing(2.5),
     },
-
-  }));
+}));
 
 const StyledTableCell = withStyles((theme) => ({
     head: {
-      backgroundColor: theme.palette.primary.main,
-      color: theme.palette.common.white,
-      fontSize: 16,
+        backgroundColor: theme.palette.primary.main,
+        color: theme.palette.common.white,
+        fontSize: 16,
     },
-  }))(TableCell);
+}))(TableCell);
 
 export default function ProfHistory() {
     const classes = useStyles();
-    const [semester, setSemester] = useState('');
-    const [year, setYear] = useState('');
+    const [semester, setSemester] = useState("");
+    const [year, setYear] = useState("");
     const [semesterInfo, setSemesterInfo] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+
+    const userContext = React.useContext(AuthContext);
 
     const handleSemester = (event) => {
         const updatedSemester = event.target.value;
         setSemester(updatedSemester);
-    }
+    };
 
     const handleYear = (event) => {
         const updatedYear = event.target.value;
         setYear(updatedYear);
-    }
+    };
 
     const getSemesterInfo = () => {
         let response = [];
         let semesterAndYear = semester + year;
-        console.log(semesterAndYear)
-        axios.get(apiURL + `/semester/${semesterAndYear}`)
-        .then(res => {
-            console.log(res)
-            res.data.forEach(course => {
-                //hardcoded for now
-                if(course.details.instructor=="john@uwo.ca"){
-                    response.push(course);
-                }
-                if(response.length==0){
-                    setIsLoading(true);
-                }
-                else{
-                    setIsLoading(false)
-                }
+        console.log(semesterAndYear);
+        axios
+            .get(apiURL + `/semester/${semesterAndYear}`)
+            .then((res) => {
+                console.log(res);
+                res.data.forEach((course) => {
+                    if (userContext.currentUser) {
+                        if (
+                            course.details.instructor ===
+                            userContext.currentUser.email
+                        ) {
+                            response.push(course);
+                        }
+                    }
+                    if (response.length == 0) {
+                        setIsLoading(true);
+                    } else {
+                        setIsLoading(false);
+                    }
+                });
+                setSemesterInfo(response);
             })
-            setSemesterInfo(response);
-        })
-        .catch(err => {
-            console.log(err);
-            window.alert("That semester does not exist!");
-            setSemesterInfo([]);
-            
-        });
-    }
+            .catch((err) => {
+                console.log(err);
+                window.alert("That semester does not exist!");
+                setSemesterInfo([]);
+            });
+    };
 
-    return(
+    return (
         <div>
             <h1>View Past Semesters</h1>
             <FormControl className={classes.formControl}>
@@ -128,67 +133,95 @@ export default function ProfHistory() {
                     <MenuItem value="2017">2017</MenuItem>
                 </Select>
             </FormControl>
-            <Button className={classes.btn} onClick={getSemesterInfo} color="primary" variant="contained">
-                    Search
+            <Button
+                className={classes.btn}
+                onClick={getSemesterInfo}
+                color="primary"
+                variant="contained"
+            >
+                Search
             </Button>
-            {!isLoading ?
-            <TableContainer className={classes.container}>
-                <Table className={classes.table}>
-                    <TableHead>
-                        <TableRow className={classes.row}>
-                            <TableCell>Course</TableCell>
-                            <TableCell>TA Hours Required</TableCell>
-                            <TableCell>Applicants</TableCell>
-                            <TableCell>Allocated TAs</TableCell>
-                            <TableCell>Hours Allocated</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody> 
-                        {
-                            semesterInfo.map(course => {
-                                console.log(course)
-                                return(
+            {!isLoading ? (
+                <TableContainer className={classes.container}>
+                    <Table className={classes.table}>
+                        <TableHead>
+                            <TableRow className={classes.row}>
+                                <TableCell>Course</TableCell>
+                                <TableCell>TA Hours Required</TableCell>
+                                <TableCell>Applicants</TableCell>
+                                <TableCell>Allocated TAs</TableCell>
+                                <TableCell>Hours Allocated</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {semesterInfo.map((course) => {
+                                console.log(course);
+                                return (
                                     <TableRow key={course.course}>
                                         <TableCell>{course.course}</TableCell>
-                                        <TableCell>{course.details.ta_hours}</TableCell>
-                                        <TableCell>{
-                                            course.applicants.map(a => {
-                                                return(
-                                                <div>
-                                                    <li style={{listStyleType: 'none'}}key={a}>{a}</li>
-
-                                                </div>
-                                                )
-                                            })
-                                        }</TableCell>
-                                        <TableCell>{
-                                            course.allocation.map(ta => {
-                                                return(
-                                                <div>
-                                                    <li style={{listStyleType: 'none'}}key={ta}>{ta}</li>
-
-                                                </div>
-                                                )
-                                            })
-                                        }</TableCell>
-                                        <TableCell>{
-                                            course.hours_allocated.map(h => {
-                                                return(
-                                                <div>
-                                                    <li style={{listStyleType: 'none'}}key={h}>{h}</li>
-
-                                                </div>
-                                                )
-                                            })
-                                        }</TableCell>
+                                        <TableCell>
+                                            {course.details.ta_hours}
+                                        </TableCell>
+                                        <TableCell>
+                                            {course.applicants.map((a) => {
+                                                return (
+                                                    <div>
+                                                        <li
+                                                            style={{
+                                                                listStyleType:
+                                                                    "none",
+                                                            }}
+                                                            key={a}
+                                                        >
+                                                            {a}
+                                                        </li>
+                                                    </div>
+                                                );
+                                            })}
+                                        </TableCell>
+                                        <TableCell>
+                                            {course.allocation.map((ta) => {
+                                                return (
+                                                    <div>
+                                                        <li
+                                                            style={{
+                                                                listStyleType:
+                                                                    "none",
+                                                            }}
+                                                            key={ta}
+                                                        >
+                                                            {ta}
+                                                        </li>
+                                                    </div>
+                                                );
+                                            })}
+                                        </TableCell>
+                                        <TableCell>
+                                            {course.hours_allocated.map((h) => {
+                                                return (
+                                                    <div>
+                                                        <li
+                                                            style={{
+                                                                listStyleType:
+                                                                    "none",
+                                                            }}
+                                                            key={h}
+                                                        >
+                                                            {h}
+                                                        </li>
+                                                    </div>
+                                                );
+                                            })}
+                                        </TableCell>
                                     </TableRow>
-                                )
-                            })
-                        }
-                    </TableBody>
-                </Table>
-            </TableContainer>
-            : <div></div>}
+                                );
+                            })}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+            ) : (
+                <div></div>
+            )}
         </div>
-    )
+    );
 }
