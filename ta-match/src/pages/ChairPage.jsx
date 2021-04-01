@@ -54,7 +54,7 @@ const useStyles = makeStyles((theme) => ({
     },
     tabs: {
       borderRight: `1px solid ${theme.palette.divider}`,
-      width: 350,
+      width: 300,
     },
     tabPanel: {
         width: "100%"

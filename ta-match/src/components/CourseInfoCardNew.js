@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Select, MenuItem, InputLabel, FormControl, Grid, Card, CardContent, Typography, Button, TextField, Dialog, DialogActions, DialogContent, DialogContentText, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Divider, Toolbar, IconButton, Slide } from "@material-ui/core";
 
 import { makeStyles } from "@material-ui/core/styles";
@@ -12,6 +12,7 @@ import EditIcon from '@material-ui/icons/Edit';
 import ThumbUpIcon from '@material-ui/icons/ThumbUp';
 import ThumbDownIcon from '@material-ui/icons/ThumbDown';
 import Alert from '@material-ui/lab/Alert';
+import FolderSharedIcon from '@material-ui/icons/FolderShared';
 
 import logo from "../uwo.png"
 import QuestionAnswerModal from "./QuestionAnswerModal";
@@ -157,6 +158,7 @@ export default function CourseInfoCard({
     const [tempRanking, setTempRanking] = useState({});
 
     const [openCoursePopup, setCoursePopup] = useState(false);
+    const [openAllocPopup, setAllocPopup] = useState(false);
     const [error, setError] = useState("");
     const [rejectModal, setRejectModal] = useState(false);
     const [description, setDescription] = useState("")
@@ -168,9 +170,17 @@ export default function CourseInfoCard({
     const handlePopupOpen = () => {
         setCoursePopup(true);
     };
+
+    const handleAllocPopupOpen = () => {
+        setAllocPopup(true);
+    };
     
     const handlePopupClose = () => {
         setCoursePopup(false);
+    };
+
+    const handleAllocClose = () => {
+        setAllocPopup(false);
     };
 
     const handleClickOpen = (courseCode, TaEmail, TaHours) => {
@@ -362,7 +372,7 @@ export default function CourseInfoCard({
                     <Grid item xs={1}>
                         <img className={classes.logo} src={logo} />
                     </Grid>
-                    <Grid item xs={5}>
+                    <Grid item xs={3}>
                         <Typography className={classes.pos} variant="h5" component="h2">
                             {courseState["course_code"]}: <span style={{fontWeight: "normal"}}>{courseState["course_name"]}</span>
                         </Typography>
@@ -371,26 +381,50 @@ export default function CourseInfoCard({
                         </Typography>
                     </Grid>
                     <Grid item xs={4} className={classes.icons}>
+                    {!editPrivilege && (
+                            <div>
+                        <FolderSharedIcon style={{marginRight: 5}}/> 
+                        <span style={{marginRight: 20, fontSize: 14}}>{courseState.applicant_list.length} Applicants</span>
+                            </div>
+                        )}
+                    
+                        <div>
                         <ScheduleIcon style={{marginRight: 5}}/> 
                         <span style={{marginRight: 20, fontSize: 14}}>{courseState["ta_hours"]} TA Hours</span>
+                        </div>  
+                        <div>
                         <PersonIcon style={{marginRight: 5}}/>
                         <span style={{fontSize: 14}}>{courseState.allocation_list.length} Allocations</span>
+                        </div>
+                        
+                    </Grid>
+                    <Grid item xs={2}>
+                    {!editPrivilege &&(
+                        <Button
+                        disabled={courseState.allocation_list.length !== 0}
+                        className={classes.moreBtn}
+                        variant="contained"
+                        onClick={handlePopupOpen}
+                    >Applicants
+                    </Button>
+                    )}
+                    
                     </Grid>
                     <Grid item xs={2}>
                     <Button
                         className={classes.moreBtn}
                         variant="contained"
-                        onClick={handlePopupOpen}
-                    >Manage
+                        onClick={handleAllocPopupOpen}
+                    >Allocations
                     </Button>
                     </Grid>
                 </Grid>
             </CardContent>
         </Card>
         {"allocation_list" in courseState && courseState.allocation_list.length > 0 ? (
-            <Dialog fullScreen open={openCoursePopup} onClose={handlePopupClose} TransitionComponent={Transition} className={classes.dialogFull}>
+            <Dialog fullScreen open={openAllocPopup} onClose={handleAllocClose} TransitionComponent={Transition} className={classes.dialogFull}>
         <Toolbar>
-                <IconButton edge="start" color="inherit" onClick={handlePopupClose} aria-label="close">
+                <IconButton edge="start" color="inherit" onClick={handleAllocClose} aria-label="close">
                 <CloseIcon />
                 </IconButton>
             </Toolbar>
@@ -400,70 +434,6 @@ export default function CourseInfoCard({
                 <Typography className={classes.dCode}>{courseState["course_code"]}: <span style={{fontWeight: "normal"}}>{courseState["course_name"]}</span></Typography>
                 <Divider/>
                 {error && <Alert severity="error">{error}</Alert>}
-                {viewApplicant && (
-                    <div>
-                    <Typography className={classes.subtitle}>
-                        Applicants
-                    </Typography>
-                    <TableContainer className={classes.tableContainer}>
-                        <Table className={classes.table} size="small">
-                            <TableHead>
-                                <TableRow className={classes.row}>
-                                    <TableCell>Name</TableCell>
-                                    <TableCell>Email</TableCell>
-                                    <TableCell>Fundable</TableCell>
-                                    <TableCell>Current Rank</TableCell>
-                                    <TableCell>Update Rank</TableCell>
-                                    <TableCell></TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {courseState["applicant_list"].map((applicant,index) => {
-                                    if (!applicant.profRank) {
-                                        applicant.profRank = "Unranked";
-                                    }
-                                    return (
-                                        <TableRow key={courseState["course"]}>
-                                            <TableCell>{applicant.name}</TableCell>
-                                            <TableCell>{applicant.email}</TableCell>
-                                            <TableCell>{applicant.fundable}</TableCell>
-                                            <TableCell>{applicant.profRank}</TableCell>
-                                            <TableCell>
-                                                <FormControl className={classes.formControlSelect}>
-                                                    <Select defaultValue="Unranked" id="select" displayEmpty onChange={(e) => {
-                                                        setRank(applicant.email,e.target.value)
-                                                    }}>
-                                                        <MenuItem value="Unranked">
-                                                            Unranked
-                                                        </MenuItem>
-                                                        {courseState["applicant_list"].map((applicant,index) => {
-                                                            return (
-                                                                <MenuItem key={index} value={index+1}>
-                                                                    {index+1}
-                                                                </MenuItem>
-                                                            )
-                                                        })}
-                                                    </Select>
-                                                </FormControl>
-                                                <Button className={classes.rankBtn}
-                                                    color="primary"
-                                                    onClick={() => {
-                                                        updateRank(courseState["course_code"],applicant.email)
-                                                    }}>
-                                                        Submit
-                                                    </Button>
-                                            </TableCell>
-                                            <TableCell align="right">
-                                                <QuestionAnswerModal questionAnswers={applicant.questionAnswerPairs} />
-                                            </TableCell>
-                                        </TableRow>
-                                    )
-                                })}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
-                    </div>
-                )}
                 <Typography className={classes.subtitle}>
                     TA Allocations
                 </Typography>
@@ -477,10 +447,13 @@ export default function CourseInfoCard({
                             <TableCell>Hours Assigned</TableCell>
                             <TableCell>Status</TableCell>
                             <TableCell></TableCell>
+                            <TableCell></TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
             {courseState["allocation_list"].map((allocation, index) => {
+                console.log(courseState)
+                
                 return (
                     <TableRow key={index}>
                     <TableCell>{allocation.name}</TableCell>
@@ -507,6 +480,15 @@ export default function CourseInfoCard({
                     <span style={{fontStyle: "italic"}}> (Reason: {allocation.rejection_reason})</span>
                     }
                     </TableCell>
+                    {courseState["applicant_list"].map((a)=>{
+                    if(a.email == allocation.email){
+                        return(
+                        <TableCell align="right">
+                            <QuestionAnswerModal questionAnswers={a.questionAnswerPairs} />
+                        </TableCell>
+                    )
+                    }
+                    })}
                     <TableCell align="right">
                         {(allocation.status == "Pending" || allocation.status == "Rejected") &&
                             <Button
@@ -612,10 +594,100 @@ export default function CourseInfoCard({
             </div>
         </Dialog>
         ) : (
-            <Dialog open={openCoursePopup} onClose={handlePopupClose}>
+            <Dialog open={openAllocPopup} onClose={handleAllocClose}>
                <DialogContent>
                     <DialogContentText id="alert-dialog-description">
                         No TAs have been allocated yet.
+                    </DialogContentText>
+                </DialogContent>
+            </Dialog>
+        )}
+
+{"applicant_list" in courseState && courseState.applicant_list.length > 0 ? (
+            <Dialog fullScreen open={openCoursePopup} onClose={handlePopupClose} TransitionComponent={Transition} className={classes.dialogFull}>
+        <Toolbar>
+                <IconButton edge="start" color="inherit" onClick={handlePopupClose} aria-label="close">
+                <CloseIcon />
+                </IconButton>
+            </Toolbar>
+            <div className={classes.dialogContainer}>
+                <Typography className={classes.dName}>Professor: {courseState["instructor"]}</Typography>
+                <Typography className={classes.dHrs}><span style={{fontWeight:"bold"}}>Number of TA Hours:</span> {courseState["ta_hours"]}</Typography>
+                <Typography className={classes.dCode}>{courseState["course_code"]}: <span style={{fontWeight: "normal"}}>{courseState["course_name"]}</span></Typography>
+                <Divider/>
+                {error && <Alert severity="error">{error}</Alert>}
+                {viewApplicant && (
+                    <div>
+                    <Typography className={classes.subtitle}>
+                        Applicants
+                    </Typography>
+                    <TableContainer className={classes.tableContainer}>
+                        <Table className={classes.table} size="small">
+                            <TableHead>
+                                <TableRow className={classes.row}>
+                                    <TableCell>Name</TableCell>
+                                    <TableCell>Email</TableCell>
+                                    <TableCell>Fundable</TableCell>
+                                    <TableCell>Current Rank</TableCell>
+                                    <TableCell>Update Rank</TableCell>
+                                    <TableCell></TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {courseState["applicant_list"].map((applicant,index) => {
+                                    console.log(courseState)
+                                    if (!applicant.profRank) {
+                                        applicant.profRank = "Unranked";
+                                    }
+                                    return (
+                                        <TableRow key={courseState["course"]}>
+                                            <TableCell>{applicant.name}</TableCell>
+                                            <TableCell>{applicant.email}</TableCell>
+                                            <TableCell>{applicant.fundable == 1 ? "Fundable" : applicant.fundable == 2 ? "Non-fundable" : "External"}</TableCell>
+                                            <TableCell>{applicant.profRank}</TableCell>
+                                            <TableCell>
+                                                <FormControl className={classes.formControlSelect}>
+                                                    <Select defaultValue="Unranked" id="select" displayEmpty onChange={(e) => {
+                                                        setRank(applicant.email,e.target.value)
+                                                    }}>
+                                                        <MenuItem value="Unranked">
+                                                            Unranked
+                                                        </MenuItem>
+                                                        {courseState["applicant_list"].map((applicant,index) => {
+                                                            return (
+                                                                <MenuItem key={index} value={index+1}>
+                                                                    {index+1}
+                                                                </MenuItem>
+                                                            )
+                                                        })}
+                                                    </Select>
+                                                </FormControl>
+                                                <Button className={classes.rankBtn}
+                                                    color="primary"
+                                                    onClick={() => {
+                                                        updateRank(courseState["course_code"],applicant.email)
+                                                    }}>
+                                                        Submit
+                                                    </Button>
+                                            </TableCell>
+                                            <TableCell align="right">
+                                                <QuestionAnswerModal questionAnswers={applicant.questionAnswerPairs} />
+                                            </TableCell>
+                                        </TableRow>
+                                    )
+                                })}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                    </div>
+                )}
+            </div>
+        </Dialog>
+        ) : (
+            <Dialog open={openCoursePopup} onClose={handlePopupClose}>
+               <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                        No applicants yet.
                     </DialogContentText>
                 </DialogContent>
             </Dialog>

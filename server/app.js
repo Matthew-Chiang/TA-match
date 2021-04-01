@@ -79,9 +79,8 @@ app.post("/api/uploadApplicantsFile", function (req, res) {
 
     upload(req, res, function (err) {
         // console.log(req.file);
-        //@leslie: check
-        //parseApplicantsData(month+year);
-        parseApplicantsData("summer2018");
+        parseApplicantsData(month+year);
+        //parseApplicantsData("summer2018");
         res.status(200).send({ data: "Successful upload" });
     });
 });
@@ -121,12 +120,12 @@ app.get("/api/signin/:email", async (req, res) => {
 
 app.get("/api/getAllApplicantData", async (req, res) => {
     try {
-        //let profs = await buildProfsObj(month+year);
-        let profs = await buildProfsObj("summer2018");
+        let profs = await buildProfsObj(month+year);
+        //let profs = await buildProfsObj("summer2018");
         // sends information back about what term we're looking at
         // changing the above line should also change the line below
-        //const responseObj = { profs, semester: `${month} ${year}` };
-        const responseObj = { profs, semester: "summer2018" };
+        const responseObj = { profs, semester: `${month} ${year}` };
+        //const responseObj = { profs, semester: "summer2018" };
         res.send(responseObj);
     } catch (err) {
         console.log(err);
@@ -137,13 +136,13 @@ app.get("/api/getApplicantData/:email", async (req, res) => {
     const email = req.params.email;
 
     try {
-        //let profs = await buildProfsObj(month+year);
-        let profs = await buildProfsObj("summer2018");
+        let profs = await buildProfsObj(month+year);
+        //let profs = await buildProfsObj("summer2018");
         // sends information back about what term we're looking at
         // changing the above line should also change the line below
         if (profs[email]) {
-            //const responseObj = { ...profs[email], semester: `${month} ${year}` };
-            const responseObj = { ...profs[email], semester: "summer2018" };
+            const responseObj = { ...profs[email], semester: `${month} ${year}` };
+            //const responseObj = { ...profs[email], semester: "summer2018" };
             res.send(responseObj);
         } else {
             res.send({});
@@ -155,6 +154,7 @@ app.get("/api/getApplicantData/:email", async (req, res) => {
 
 app.get("/api/allocateTAs/", async (req, res) => {
     const semester = req.query.semester ? req.params.semester : month+year;
+    //const semester = "summer2018"
     const preference = req.query.preference;
 
     try {
@@ -227,8 +227,8 @@ app.post("/api/rank", async (req, res) => {
 
 //calculate and populate the recommended TA hours into the db
 app.post("/api/calcHours", async (req, res) => {
-    //const sem = month+year;
-    const sem = "summer2018";
+    const sem = month+year;
+    //const sem = "summer2018";
     const calcHours = req.body.hours;
 
     let calculation = [];
@@ -278,8 +278,8 @@ app.post("/api/calcHours", async (req, res) => {
 
 //retrieve all TA hours
 app.get("/api/getHours", async (req, res) => {
-    //const sem = month+year;
-    const sem = "summer2018"
+    const sem = month+year;
+    //const sem = "summer2018"
     let hours = [];
 
     try {
@@ -306,8 +306,8 @@ app.get("/api/getHours", async (req, res) => {
 app.put("/api/updateHours", async (req, res) => {
     const course = req.body.course;
     const hours = req.body.hours;
-    const sem = "summer2018";
-    //const sem = month+year;
+    //const sem = "summer2018";
+    const sem = month+year;
 
     try {
         await db
@@ -334,16 +334,16 @@ app.post("/api/uploadInstructorsFile", function (req, res) {
 
     upload(req, res, function (err) {
         // console.log(req.file);
-        //parseProfData(month, year);
-        parseProfData("summer","2018")
+        parseProfData(month, year);
+        //parseProfData("summer","2018")
         res.status(200).send({ data: "Successful upload" });
     });
 });
 
 //retrieve all instructors
 app.get("/api/getInstructors", async (req, res) => {
-    //const sem = month+year;
-    const sem = "summer2018"
+    const sem = month+year;
+    //const sem = "summer2018"
     let instructors = [];
 
     try {
@@ -366,8 +366,8 @@ app.get("/api/getInstructors", async (req, res) => {
 
 //calculate and populate the recommended TA hours into the db
 app.post("/api/uploadCourseFile", async (req, res) => {
-    //const sem = month+year;
-    const sem = "summer2018";
+    const sem = month+year;
+    //const sem = "summer2018";
     const courses = req.body.coursesInfo;
     console.log(courses)
     let courseData = [];
@@ -411,8 +411,8 @@ app.post("/api/uploadCourseFile", async (req, res) => {
 
 //retrieve all course codes and course names
 app.get("/api/getCourses", async (req, res) => {
-    const sem = "summer2018";
-    //const sem = month+year;
+    //const sem = "summer2018";
+    const sem = month+year;
     let courses = [];
 
     try {
@@ -435,8 +435,8 @@ app.get("/api/getCourses", async (req, res) => {
 });
 
 app.post("/api/assignInstructors", async (req,res)=>{
-    const sem = "summer2018";
-    //const sem = month+year;
+    //const sem = "summer2018";
+    const sem = month+year;
     const course = req.body.course;
     const instructor = req.body.instructor;
 
@@ -536,8 +536,8 @@ app.get("/api/pastQuestions/:professor", async (req, res) => {
 
 app.post("/api/allocation/changeStatus/:email", async (req, res) => {
     const email = req.params.email;
-    // const semester = month+year;
-    const semester="summer2018"
+    const semester = month+year;
+    //const semester="summer2018"
     const courseName = req.body.courseName;
     const newStatus = req.body.newStatus;
     const rejectionReason = req.body.rejectionReason
@@ -564,8 +564,8 @@ app.post("/api/updateTaHours", async (req, res) => {
     const TAHours = parseInt(req.body.hours);
     const TaEmail = req.body.TaEmail;
     const courseName = req.body.course; 
-    // const semester = month+year;   
-    const semester="summer2018" 
+    const semester = month+year;   
+    //const semester="summer2018" 
     try {   
         const courseData = await db    
             .collection("courses")    
@@ -595,8 +595,8 @@ app.post("/api/updateTaHours", async (req, res) => {
     });
 
 app.post("/api/allocation/add", async (req, res) => {
-    const semester = "summer2018"
-    // const semester = month+year;
+    //const semester = "summer2018"
+    const semester = month+year;
     const courseName = req.body.courseName;
     const email = req.body.email;
     const fundability = req.body.fundability
@@ -630,8 +630,8 @@ app.post("/api/allocation/add", async (req, res) => {
 });
 
 app.delete("/api/allocation/delete", async (req, res) => {
-    const semester="summer2018"
-    // const semester = month+year;
+    //const semester="summer2018"
+    const semester = month+year;
     const courseName = req.body.courseName;
     const email = req.body.email;
 
@@ -652,8 +652,8 @@ app.delete("/api/allocation/delete", async (req, res) => {
 
 //get all applicant info
 app.get("/api/semester/:semester", async (req, res) => {
-    const semester = "summer2018"
-    //const semester = req.params.semester;
+    //const semester = "summer2018"
+    const semester = req.params.semester;
     let response = [];
     let courseIDs = [];
     let courseData = [];
