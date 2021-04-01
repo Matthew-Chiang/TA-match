@@ -6,13 +6,17 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import React, { useState } from "react";
 import CourseInfo from "../components/CourseInfo";
+import { AuthContext } from "../contexts/AuthContext";
 
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import { NativeSelect } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
+import { auth } from "../firebase";
 
 const ProfPage = () => {
+    const userContext = React.useContext(AuthContext);
+
     const [openTaApp, setOpenTaApp] = useState(false);
     const [taQuestions, setTaQuestions] = useState([]);
     const [courseName, setCourseName] = useState("");
@@ -64,11 +68,15 @@ const ProfPage = () => {
     };
 
     const getOldQuestions = () => {
-        // hardcoded to john
-        fetch(`http://localhost:5000/api/pastQuestions/${"john@uwo.ca"}`, {
-            method: "GET",
-            headers: { "Content-Type": "application/json" },
-        })
+        fetch(
+            `http://localhost:5000/api/pastQuestions/${
+                userContext.currentUser ? userContext.currentUser.email : ""
+            }`,
+            {
+                method: "GET",
+                headers: { "Content-Type": "application/json" },
+            }
+        )
             .then((res) => {
                 console.log(res);
                 res.json()
@@ -87,11 +95,16 @@ const ProfPage = () => {
     const getAllSemesters = () => {
         // we prob do this call elsewhere in the flow
         // in the future, we should refactor this behaviour so that this data is only called once
-        // hardcoded to john
-        fetch(`http://localhost:5000/api/getApplicantData/${"john@uwo.ca"}`, {
-            method: "GET",
-            headers: { "Content-Type": "application/json" },
-        })
+
+        fetch(
+            `http://localhost:5000/api/getApplicantData/${
+                userContext.currentUser ? userContext.currentUser.email : ""
+            }`,
+            {
+                method: "GET",
+                headers: { "Content-Type": "application/json" },
+            }
+        )
             .then((res) => {
                 console.log(res);
                 res.json()
@@ -110,124 +123,141 @@ const ProfPage = () => {
 
     return (
         <div className="container">
-            <Dashboard role="professor" />
-            <Button
-                variant="contained"
-                color="primary"
-                className={classes.btn}
-                onClick={() => {
-                    setOpenTaApp(true);
-                    getOldQuestions();
-                    getAllSemesters();
-                }}
-            >
-                New TA Application
-            </Button>
-            <h1>
-                Welcome,{" "}
-                <span style={{ fontWeight: "normal" }}>Professor!</span>
-            </h1>
-            <h3>Your Courses:</h3>
-            <CourseInfo email="john@uwo.ca"></CourseInfo>
-            <Dialog
-                open={openTaApp}
-                onClose={() => {
-                    setOpenTaApp(false);
-                }}
-                fullWidth={true}
-                maxWidth="md"
-            >
-                <DialogActions>
+            {userContext.currentUser && (
+                <div>
+                    <Dashboard role="professor" />
                     <Button
+                        variant="contained"
+                        color="primary"
+                        className={classes.btn}
                         onClick={() => {
+                            setOpenTaApp(true);
+                            getOldQuestions();
+                            getAllSemesters();
+                        }}
+                    >
+                        New TA Application
+                    </Button>
+                    <h1>
+                        Welcome,{" "}
+                        <span style={{ fontWeight: "normal" }}>Professor!</span>
+                    </h1>
+                    <h3>Your Courses:</h3>
+                    <CourseInfo
+                        email={
+                            userContext.currentUser
+                                ? userContext.currentUser.email
+                                : ""
+                        }
+                    ></CourseInfo>
+                    <Dialog
+                        open={openTaApp}
+                        onClose={() => {
                             setOpenTaApp(false);
                         }}
-                        color="primary"
+                        fullWidth={true}
+                        maxWidth="md"
                     >
-                        Close
-                    </Button>
-                </DialogActions>
-                <div style={{ backgroundColor: "white" }}>
-                    <DialogTitle>
-                        <h1 className={classes.dialogTitle}>
-                            Create TA Application
-                        </h1>
-                    </DialogTitle>
-                    <DialogContent className={classes.dialogContainer}>
-                        <p>Course Name: </p>
+                        <DialogActions>
+                            <Button
+                                onClick={() => {
+                                    setOpenTaApp(false);
+                                }}
+                                color="primary"
+                            >
+                                Close
+                            </Button>
+                        </DialogActions>
+                        <div style={{ backgroundColor: "white" }}>
+                            <DialogTitle>
+                                <h1 className={classes.dialogTitle}>
+                                    Create TA Application
+                                </h1>
+                            </DialogTitle>
+                            <DialogContent className={classes.dialogContainer}>
+                                <p>Course Name: </p>
 
-                        <NativeSelect
-                            id="select"
-                            onChange={(e) => {
-                                setCourseName(e.target.value);
-                            }}
-                        >
-                            <option value=""> Select course</option>
-                            {currentCourseList.map((currentCourse, index) => {
-                                return (
-                                    <option key={index}>
-                                        {currentCourse.course_code}
-                                    </option>
-                                );
-                            })}
-                        </NativeSelect>
-                        {taQuestions.map((question, index) => {
-                            return (
-                                <div key={index}>
-                                    <p>Question {index + 1}:</p>
-                                    <TextField
-                                        value={taQuestions[index]}
-                                        onChange={(event) => {
-                                            handleQuestionTextChange(
-                                                event,
-                                                index
-                                            );
-                                        }}
-                                    />
-                                    <p>OR select a previous question</p>
-
-                                    <NativeSelect
-                                        id="select"
-                                        onChange={(e) => {
-                                            handleQuestionTextChange(e, index);
-                                        }}
-                                    >
-                                        <option value="">
-                                            {" "}
-                                            Select question
-                                        </option>
-                                        {oldQuestions.map((question, index) => {
+                                <NativeSelect
+                                    id="select"
+                                    onChange={(e) => {
+                                        setCourseName(e.target.value);
+                                    }}
+                                >
+                                    <option value=""> Select course</option>
+                                    {currentCourseList.map(
+                                        (currentCourse, index) => {
                                             return (
                                                 <option key={index}>
-                                                    {question}
+                                                    {currentCourse.course_code}
                                                 </option>
                                             );
-                                        })}
-                                    </NativeSelect>
-                                </div>
-                            );
-                        })}
-                        <Button
-                            className={classes.addQuestionBtn}
-                            onClick={() => {
-                                setTaQuestions([...taQuestions, ""]);
-                            }}
-                        >
-                            Add Question
-                        </Button>
-                    </DialogContent>
-                    <DialogActions>
-                        <Button
-                            onClick={() => {
-                                console.log(taQuestions);
-                                saveQuestions();
-                            }}
-                        >
-                            Save
-                        </Button>
-                    </DialogActions>
+                                        }
+                                    )}
+                                </NativeSelect>
+                                {taQuestions.map((question, index) => {
+                                    return (
+                                        <div key={index}>
+                                            <p>Question {index + 1}:</p>
+                                            <TextField
+                                                value={taQuestions[index]}
+                                                onChange={(event) => {
+                                                    handleQuestionTextChange(
+                                                        event,
+                                                        index
+                                                    );
+                                                }}
+                                            />
+                                            <p>OR select a previous question</p>
+
+                                            <NativeSelect
+                                                id="select"
+                                                onChange={(e) => {
+                                                    handleQuestionTextChange(
+                                                        e,
+                                                        index
+                                                    );
+                                                }}
+                                            >
+                                                <option value="">
+                                                    {" "}
+                                                    Select question
+                                                </option>
+                                                {oldQuestions.map(
+                                                    (question, index) => {
+                                                        return (
+                                                            <option key={index}>
+                                                                {question}
+                                                            </option>
+                                                        );
+                                                    }
+                                                )}
+                                            </NativeSelect>
+                                        </div>
+                                    );
+                                })}
+                                <Button
+                                    className={classes.addQuestionBtn}
+                                    onClick={() => {
+                                        setTaQuestions([...taQuestions, ""]);
+                                    }}
+                                >
+                                    Add Question
+                                </Button>
+                            </DialogContent>
+                            <DialogActions>
+                                <Button
+                                    onClick={() => {
+                                        console.log(taQuestions);
+                                        saveQuestions();
+                                    }}
+                                >
+                                    Save
+                                </Button>
+                            </DialogActions>
+                        </div>
+                    </Dialog>
                 </div>
-            </Dialog>
+            )}
         </div>
     );
 };

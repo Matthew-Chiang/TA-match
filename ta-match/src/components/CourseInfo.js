@@ -3,6 +3,9 @@ import { makeStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import { useAuth } from "../contexts/AuthContext";
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import Button from "@material-ui/core/Button";
+
 import { Alert } from "@material-ui/lab";
 import CourseInfoCardNew from "./CourseInfoCardNew";
 
@@ -44,6 +47,7 @@ export default function CourseInfo({ email }) {
     const [isLoading, setIsLoading] = useState(true);
     const [courseData, setCourseData] = useState([]);
     const { currentUser } = useAuth();
+
     const [error, setError] = useState("");
     let ranking = 0;
 

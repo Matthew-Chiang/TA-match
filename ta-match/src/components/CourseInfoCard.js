@@ -9,13 +9,12 @@ import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import { useAuth } from "../contexts/AuthContext";
 import TextField from "@material-ui/core/TextField";
 import Modal from "@material-ui/core/Modal";
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
@@ -88,7 +87,7 @@ export default function CourseInfoCard({
     const [oldTaHours, setOldTaHours] = useState("");
     const [modifiedTaHours, setModifiedTaHours] = useState("");
     const [open, setOpen] = useState(false);
-    const [rejectionReason, setRejectionReaon] = useState("")
+    const [rejectionReason, setRejectionReaon] = useState("");
     const [tempRanking, setTempRanking] = useState({});
 
     function setRank(email, rank) {
@@ -98,21 +97,21 @@ export default function CourseInfoCard({
         setTempRanking({ ...tempRanking, [email]: rank});
     }
     const handleClickOpen = (courseCode, TaEmail, TaHours) => {
-        setModifiedCourse(courseCode)
-        setModifiedTa(TaEmail)
-        setOldTaHours(TaHours)
+        setModifiedCourse(courseCode);
+        setModifiedTa(TaEmail);
+        setOldTaHours(TaHours);
         setOpen(true);
-      };
+    };
 
     const handleOverride = () => {
-        updateTaHours()
+        updateTaHours();
         handleClose();
-    }
+    };
 
     const handleClose = () => {
         setOpen(false);
-      };
-    
+    };
+
     function updateTaHours() {
         fetch(`http://localhost:5000/api/updateTaHours`, {
             method: "POST",
@@ -125,7 +124,9 @@ export default function CourseInfoCard({
         })
             .then((response) => {
                 if (response.status == "404") {
+
                     setError("Cannot assign TA hours higher than the course hours");
+
                 } else {
                     const newState = { ...courseState };
                     newState["allocation_list"].filter(
@@ -171,8 +172,8 @@ export default function CourseInfoCard({
     }
 
     const changeTAStatus = (email, status, reason) => {
-        console.log(email)
-        console.log(email, status)
+        console.log(email);
+        console.log(email, status);
         fetch(`http://localhost:5000/api/allocation/changeStatus/${email}`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -180,11 +181,11 @@ export default function CourseInfoCard({
                 newStatus: status,
                 // semester: semester.toLowerCase().replace(/ /g, ""),
                 courseName: course.course_code,
-                rejectionReason: reason
+                rejectionReason: reason,
             }),
         })
             .then((res) => {
-                console.log(courseState)
+                console.log(courseState);
                 const newState = { ...courseState };
                 newState["allocation_list"].filter(
                     (allocation) => allocation.email === email
@@ -193,7 +194,6 @@ export default function CourseInfoCard({
                     (allocation) => allocation.email === email
                 )[0].rejection_reason = reason;
                 setCourseState(newState);
-                
             })
             .catch((e) => {
                 console.log(e);
@@ -215,7 +215,11 @@ export default function CourseInfoCard({
                 let newState = { ...courseState };
                 newState["allocation_list"] = [
                     ...newState["allocation_list"],
-                    { status: "pending", email: addTaEmail, hours_allocated: addTaHours},
+                    {
+                        status: "pending",
+                        email: addTaEmail,
+                        hours_allocated: addTaHours,
+                    },
                 ];
                 setCourseState(newState);
             })
@@ -247,6 +251,7 @@ export default function CourseInfoCard({
     };
 
     return (
+
     <div>
         <Card className={classes.container} variant="outlined">
             <CardContent>
@@ -386,17 +391,49 @@ export default function CourseInfoCard({
                                             <div
                                                 className={
                                                     classes.sideBySideDisplay
+
                                                 }
-                                            >
-                                                <Button
-                                                    onClick={() =>
-                                                        changeTAStatus(
-                                                            allocation.email,
-                                                            "confirmed",
-                                                            "N/A"
-                                                        )
+                                            )}
+                                        </TableBody>
+                                    </Table>
+                                </TableContainer>
+                            </AccordionDetails>
+                        </Accordion>
+                    )}
+                    {"allocation_list" in courseState &&
+                    courseState.allocation_list.length > 0 ? (
+                        <Accordion>
+                            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                                <div>TA Allocations:</div>
+                            </AccordionSummary>
+                            <AccordionDetails>
+                                {courseState["allocation_list"].map(
+                                    (allocation, index) => {
+                                        return (
+                                            <div key={index}>
+                                                <p>Email: {allocation.email}</p>
+                                                <p>
+                                                    Status: {allocation.status}
+                                                </p>
+                                                {allocation.status ==
+                                                    "rejected" && (
+                                                    <p>
+                                                        Reason for Rejection:{" "}
+                                                        {
+                                                            allocation.rejection_reason
+                                                        }{" "}
+                                                    </p>
+                                                )}
+                                                <p>
+                                                    Hours:{" "}
+                                                    {allocation.hours_allocated}
+                                                </p>
+                                                <div
+                                                    className={
+                                                        classes.sideBySideDisplay
                                                     }
                                                 >
+
                                                     Accept into Course
                                                 </Button>
                                                 <RejectTA
@@ -411,100 +448,142 @@ export default function CourseInfoCard({
                                             {editPrivilege && (
                                                 <div>
                                                     
+
                                                     <Button
-                                                        onClick={() => {
-                                                            deleteTaAllocation(
-                                                                allocation.email
-                                                            );
-                                                        }}
+                                                        onClick={() =>
+                                                            changeTAStatus(
+                                                                allocation.email,
+                                                                "confirmed",
+                                                                "N/A"
+                                                            )
+                                                        }
                                                     >
+
                                                         Delete TA Allocation
                                                     </Button>
                                                     
                                                     <Button variant="contained" color="default" onClick={() => {handleClickOpen(courseState["course_code"], allocation.email, allocation.hours_allocated)}}>
                                                         Modify Hours
-                                                    </Button>
-                                                </div>
-                                            )}
-                                            <br></br>
-                                        </div>
-                                    );
-                                }
-                            )}
-                        </AccordionDetails>
-                    </Accordion>
-                ) : (
-                    <Typography>No TAs have been allocated yet.</Typography>
-                )}
 
-                {editPrivilege && (
-                    <div>
+                                                    </Button>
+                                                    <RejectTA
+                                                        email={allocation.email}
+                                                        course={
+                                                            courseState.course_code
+                                                        }
+                                                        rejectionAPIcall={
+                                                            changeTAStatus
+                                                        }
+                                                    ></RejectTA>
+                                                </div>
+                                                {editPrivilege && (
+                                                    <div>
+                                                        <Button
+                                                            onClick={() => {
+                                                                deleteTaAllocation(
+                                                                    allocation.email
+                                                                );
+                                                            }}
+                                                        >
+                                                            Delete TA Allocation
+                                                        </Button>
+
+                                                        <Button
+                                                            variant="contained"
+                                                            color="default"
+                                                            onClick={() => {
+                                                                handleClickOpen(
+                                                                    courseState[
+                                                                        "course_code"
+                                                                    ],
+                                                                    allocation.email,
+                                                                    allocation.hours_allocated
+                                                                );
+                                                            }}
+                                                        >
+                                                            Modify Hours
+                                                        </Button>
+                                                    </div>
+                                                )}
+                                                <br></br>
+                                            </div>
+                                        );
+                                    }
+                                )}
+                            </AccordionDetails>
+                        </Accordion>
+                    ) : (
+                        <Typography>No TAs have been allocated yet.</Typography>
+                    )}
+
+                    {editPrivilege && (
+                        <div>
+                            <br />
+                            <Typography variant="h6">
+                                Manually Allocate TA's
+                            </Typography>
+                            <TextField
+                                label="email"
+                                value={addTaEmail}
+                                onChange={(event) => {
+                                    setAddTaEmail(event.target.value);
+                                }}
+                            />
+                            <TextField
+                                label="hours"
+                                value={addTaHours}
+                                onChange={(event) => {
+                                    setAddTaHours(event.target.value);
+                                }}
+                            />
+                            <Button
+                                onClick={() => {
+                                    addTaAllocation();
+                                }}
+                                disabled={
+                                    addTaEmail.length === 0 ||
+                                    addTaHours.length === 0
+                                }
+                            >
+                                Add TA Allocation
+                            </Button>
+                        </div>
+                    )}
+                </CardContent>
+            </Card>
+            <Dialog open={open} fullWidth={true} onClose={handleClose}>
+                <DialogContent>
+                    <DialogContentText className={classes.dialogText}>
+                        <b>Course:</b> {modifiedCourse}
                         <br />
-                        <Typography variant="h6">
-                            Manually Allocate TA's
-                        </Typography>
+                        <br />
+                        <b>TA:</b> {modifiedTa}
+                        <br />
+                        <br />
+                        <b>Old Hours:</b> {oldTaHours}
+                        <br />
+                        <br />
+                        <b>New Hours:</b>
                         <TextField
-                            label="email"
-                            value={addTaEmail}
-                            onChange={(event) => {
-                                setAddTaEmail(event.target.value);
-                            }}
+                            className={classes.txtField}
+                            id="standard-basic"
+                            value={modifiedTaHours}
+                            onChange={(e) => setModifiedTaHours(e.target.value)}
                         />
-                        <TextField
-                            label="hours"
-                            value={addTaHours}
-                            onChange={(event) => {
-                                setAddTaHours(event.target.value);
-                            }}
-                        />
-                        <Button
-                            onClick={() => {
-                                addTaAllocation();
-                            }}
-                            disabled={addTaEmail.length === 0 || addTaHours.length === 0}
-                        >
-                            Add TA Allocation
-                        </Button>
-                        
-                    </div>
-                )}
-            </CardContent>
-        </Card>
-        <Dialog
-          open={open}
-          fullWidth={true}
-          onClose={handleClose}
-        >
-          <DialogContent>
-            <DialogContentText className={classes.dialogText}>
-              <b>Course:</b> {modifiedCourse}
-              <br />
-              <br />
-              <b>TA:</b> {modifiedTa}
-              <br />
-              <br />
-              <b>Old Hours:</b> {oldTaHours}
-              <br />
-              <br />
-              <b>New Hours:</b>
-              <TextField 
-                className={classes.txtField} 
-                id="standard-basic" 
-                value={modifiedTaHours}
-                onChange={e => setModifiedTaHours(e.target.value)}
-              />
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button 
-                className={classes.overrideBtn} variant="contained" color="primary"
-                disabled={modifiedTaHours.length === 0}
-                onClick={handleOverride}
-            >
-              Override
-            </Button>
-          </DialogActions>
-      </Dialog>
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button
+                        className={classes.overrideBtn}
+                        variant="contained"
+                        color="primary"
+                        disabled={modifiedTaHours.length === 0}
+                        onClick={handleOverride}
+                    >
+                        Override
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </div>
     );
 }

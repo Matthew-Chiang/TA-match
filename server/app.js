@@ -567,6 +567,7 @@ app.post("/api/updateTaHours", async (req, res) => {
     const semester = month+year;
     var totalCurrentHours = 0;   
     //const semester="summer2018" 
+
     try {   
         const courseData = await db    
             .collection("courses")    
@@ -605,6 +606,7 @@ app.post("/api/updateTaHours", async (req, res) => {
             .update({ hours_allocated: TAHours });
             return res.send("return")   
         }  
+
     } catch (err) {  
         res.send(err);   
     }
