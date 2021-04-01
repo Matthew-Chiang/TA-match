@@ -77,7 +77,7 @@ export default function RejectTA(
   return (
     <div>
       <Button onClick={() => handleClickOpen()}>
-            Reject From Course
+            Reject
         </Button >
       <Dialog
           open={open}

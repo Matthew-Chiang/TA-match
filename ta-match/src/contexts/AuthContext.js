@@ -22,7 +22,7 @@ export function AuthProvider({ children }) {
     }
 
     function logout() {
-        localStorage.clear();
+        //localStorage.clear();
         return auth.signOut();
     }
 
