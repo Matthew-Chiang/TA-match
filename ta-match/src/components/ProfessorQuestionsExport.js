@@ -96,7 +96,7 @@ class ProfessorQuestionsExport extends React.Component {
          
         return (
             <div>
-                <h2>Export Questions</h2>
+                <h3>Export Questions</h3>
                 <FormControl className={classes.formControl} >
                 <InputLabel>Semester</InputLabel>
                 <Select value={this.state.semester} onChange={this.handleSemester}>
@@ -116,7 +116,13 @@ class ProfessorQuestionsExport extends React.Component {
                 </Select>
                 </FormControl>
 
-                <Button className={classes.btn} onClick={this.handleExport} color="primary" variant="contained">
+                <Button className={classes.btn} 
+                    onClick={() => {
+                        this.handleExport(); 
+                        this.props.setUplaodFlag(true)}}
+                    // onClick={this.handleExport} 
+                    color="primary" 
+                    variant="contained">
                     View Questions for Export
                 </Button>
                 {isLoaded ? <TableContainer className={classes.container}>

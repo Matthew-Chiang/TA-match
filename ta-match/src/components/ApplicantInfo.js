@@ -5,7 +5,6 @@ import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 import DisplayApplicants from './DisplayApplicants.js';
 
-
 const apiURL = 'http://localhost:5000/api';
 
 class AdminFilesUpload extends React.Component {
@@ -33,10 +32,8 @@ class AdminFilesUpload extends React.Component {
       console.log(filename);
       console.log(this.state['ApplicantsFile'])
       const data = new FormData();
-      data.append(filename, this.state[filename]);
-      data.append('semester', this.state.semester);
-      data.append('year', this.state.year);
-      axios.post(apiURL + '/upload' + filename, data, { 
+      data.append('ApplicantsFile', this.state[filename]);
+      axios.post(apiURL + '/uploadApplicantsFile', data, { 
   
       }).then(res => {
        console.log(res.statusText);
@@ -47,12 +44,10 @@ class AdminFilesUpload extends React.Component {
     }
 
     render() {
-      const {applicants} = this.state;
-      console.log(applicants)
       return (
         <div>
     
-            <h3>Upload Applicant Data</h3>
+            <h3>Import Applicant Information</h3>
             <Typography component="div">
               <Box fontStyle="italic" >
               This function will load all the application information into the database in preparation for the TA matching process.
@@ -71,7 +66,10 @@ class AdminFilesUpload extends React.Component {
           <Button className="submitButton"
             color="primary"
             variant="contained"
-            onClick={()=>this.sendFile('ApplicantsFile')}
+            onClick={()=>{
+              this.sendFile('ApplicantsFile')
+              this.props.setAllCourseFlag(true)
+            }}
             >
             Submit 
           </Button>
@@ -81,23 +79,6 @@ class AdminFilesUpload extends React.Component {
           <DisplayApplicants></DisplayApplicants>
 
           : <div></div>} 
-      
-
-          {/* // <br/>
-          // <br/>
-          // Choose Instructors File: <input
-          //     type="file"
-          //     id="instructorsData"
-          //     accept=".xlsx, .xls, .csv"
-          //     onChange={(e)=>this.onChangeHandler(e, 'InstructorsFile')}
-          //   />
-          // <Button className="submitButton"
-          //   color="primary"
-          //   variant="contained"
-          //   onClick={()=>this.sendFile('InstructorsFile')}
-          //   >
-          //   Submit 
-          // </Button> */}
         </div>
         
       );

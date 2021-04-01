@@ -39,10 +39,15 @@ const useStyles = makeStyles({
   },
   row: {
     backgroundColor: "#ECECEC"
+  },
+  submitBtn:{
+    marginLeft: 20,
   }
 });
 
-export default function HoursCalculation() {
+export default function HoursCalculation({
+  setExportFlag,
+}) {
   // styles
   const classes = useStyles();
 
@@ -87,7 +92,7 @@ export default function HoursCalculation() {
       })
       .then(response=>{
         if (response.status == 400) {
-          alert("Spreadsheet Invalid. Please upload one with the following columns: Instructor, Course, Hrs 2020,Enrol 2020, Enrol 2021.")
+          alert("Spreadsheet Invalid. Please upload one with the following columns: Course Code, Previous Enrollments, Previous TA Hours, Current Enrollments.")
         }
         else {
           console.log(response)
@@ -141,12 +146,19 @@ export default function HoursCalculation() {
         response.json()
           .then((data)=>{
             setCalcHours(data);
-            if(data.length == 0){
-              setIsLoading(true);
-            }else{
-              setIsLoading(false);
-            }
-            
+            data.forEach((h)=>{
+              if(data.length != 0){
+                if(typeof h["ta_hours"] != "undefined"){
+                  setIsLoading(false);
+                }
+                else{
+                  setIsLoading(true);
+                }
+              }else{
+                //setExportFlag(false);
+                setIsLoading(true);
+              }
+            })
             console.log(data)
           })
           .catch((err)=>{
@@ -158,7 +170,12 @@ export default function HoursCalculation() {
       })
   }, [updating,test]);
 
-  
+  //did this so that we don't need two buttons lolz
+  function doThis(){
+    setTest(test+1)
+    setExportFlag(true)
+  }
+
   return (
     <div>
       <h3>Calculate TA Hours</h3>
@@ -167,7 +184,7 @@ export default function HoursCalculation() {
               This function will load all the course enrolment information to calculate recommended TA hours for each course.
               </Box>
           </Typography>
-      <p>Please upload a file in the form of a spreadsheet (XLS, XLSX, CSV) and that includes the following columns: Instructor (email), Course, Hrs 2020, Enrol 2020, Enrol 2021.</p>
+      <p>Please upload a file in the form of a spreadsheet (XLS, XLSX, CSV) and that includes the following columns: Course Code, Previous Enrollments, Previous TA Hours, Current Enrollments.</p>
       <br></br>
       Upload spreadsheet: <input
         type="file"
@@ -180,15 +197,26 @@ export default function HoursCalculation() {
       <Button 
             color="primary"
             variant="contained"
-            onClick={() => setTest(test+1)}
+            onClick={() => 
+              doThis()}
              >
             Calculate TA Hours 
-          </Button>
+      </Button>
+      {/* <Button
+        className = {classes.submitBtn} 
+        color="primary"
+        variant="contained"
+        onClick={() => setExportFlag(true)}
+        >
+        Submit Time Hour Edits 
+          </Button> */}
         {!isLoading ? <TableContainer className={classes.container}>
         <Table className={classes.table} size="small">
           <TableHead>
             <TableRow className={classes.row}>
-              <TableCell>Course</TableCell>
+              <TableCell>Course Code</TableCell>
+              <TableCell>Course Name</TableCell>
+              <TableCell>Instructor</TableCell>
               <TableCell>Calculated Hours</TableCell>
               <TableCell></TableCell>
             </TableRow>
@@ -198,6 +226,8 @@ export default function HoursCalculation() {
               return (
                 <TableRow key={course["course"]}>
                   <TableCell component="th" scope="row">{course["course"]}</TableCell>
+                  <TableCell>{course["course_name"]}</TableCell>
+                  <TableCell>{course["instructor"]}</TableCell>
                   <TableCell>{course["ta_hours"]}</TableCell>
                   <TableCell align="right">
                   <Button variant="contained" color="default" onClick={() => handleClickOpen(course["course"],course["ta_hours"])}>

@@ -5,8 +5,7 @@ import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import { withStyles, makeStyles } from '@material-ui/core/styles';
-import { Checkbox } from "@material-ui/core";
+import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles({
     container: {
@@ -47,9 +46,6 @@ const useStyles = makeStyles({
     const classes = useStyles();
     const [applicantData, setApplicantData] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [updating, setUpdating] = useState(0);
-    const [test, setTest] = useState(0);
-    
 
     useEffect(() => {
         let c = [];
