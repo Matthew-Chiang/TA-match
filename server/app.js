@@ -42,6 +42,7 @@ if (!fs.existsSync(tempDir)) {
 }
 
 const admin = require("firebase-admin");
+const firebaseTools = require("firebase-tools");
 const serviceAccount = require("./ta-match-gcp-service-key.json");
 
 admin.initializeApp({
@@ -793,6 +794,62 @@ app.get("/api/notifications/:email", async (req, res) => {
 
     res.send(response);
 });
+
+
+// Erase current semester data
+app.get("/api/blowUpDB", async (req, res) => {
+    try {
+
+        const semester = month + year;
+
+        let collection = db
+                .collection("courses")
+                .doc(semester)
+                .collection("courses");
+
+        let collectionSnap = await collection.get();
+        
+        collectionSnap.forEach(async (doc) => {
+
+            applicantsCol = db.collection('courses').doc(semester).collection('courses').doc(doc.id).collection('applicants');
+            applicantsCol.get().then((applicantsSnapshot) => {
+                applicantsSnapshot.forEach((applicant) => {
+                    applicant.ref.delete();
+                  });
+            });
+
+            allocation = db.collection('courses').doc(semester).collection('courses').doc(doc.id).collection('allocation');
+            allocation.get().then((allocationSnap) => {
+                allocationSnap.forEach((allocatedTA) => {
+                    allocatedTA.ref.delete();
+                  });
+            });
+        });
+
+        collectionSnap.forEach(async (doc) => {
+            await collection.doc(doc.id).delete();
+        });
+
+        let profCollection = db
+            .collection("courses")
+            .doc(semester)
+            .collection("profs");
+
+        let profsSnap = await profCollection.get();
+
+        profsSnap.forEach(async (prof) => {
+            await profCollection.doc(prof.id).delete();
+        });
+
+        await db.collection("courses").doc(semester).delete();
+
+        res.send('success');
+
+    } catch (err) {
+        console.log(err);
+    }
+});
+
 
 app.listen(port, hostname, () => {
     console.log("Listening on: " + port);
