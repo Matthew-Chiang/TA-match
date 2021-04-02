@@ -29,7 +29,8 @@ const useStyles = makeStyles({
     }
   });
 
-  export default function DisplayApplicants() {
+  export default function DisplayApplicants({
+  }) {
     let newDate = new Date()
     let month = newDate.getMonth() + 1;
     let year = newDate.getFullYear();

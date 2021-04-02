@@ -8,9 +8,11 @@ import CourseSetup from "../components/CourseSetup";
 import "../App.css";
 
 import React, {useState, useEffect} from "react";
+import DeleteIcon from '@material-ui/icons/Delete';
 import PropTypes from "prop-types";
 import { makeStyles } from "@material-ui/core/styles";
 import Tabs from "@material-ui/core/Tabs";
+import Button from "@material-ui/core/Button";
 import Tab from "@material-ui/core/Tab";
 import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
@@ -37,6 +39,20 @@ function TabPanel(props) {
       )}
     </div>
   );
+}
+
+function deleteAllData(){
+  //fix
+  fetch(`http://localhost:5000/api/blowUpDB`)
+    .then((response)=>{
+      alert("All semester data has been deleted")
+      console.log(response)
+      localStorage.clear();
+      window.location.reload();
+    })
+    .catch((err)=>{
+      console.log(err)
+    })
 }
 
 TabPanel.propTypes = {
@@ -114,6 +130,11 @@ const ChairPage = () => {
                     <Tab label="5. Export Question List" disabled = {!exportFlag}/>
                     <Tab label="6. Import Applicants" disabled = {!uplaodFlag}/>
                     <Tab label="7. Match TA and Courses" disabled = {!allCourseFlag}/>
+                    <Button color="secondary"  
+                      disabled = {!instructorFlag}
+                      onClick={deleteAllData}>
+                      Delete all semester data
+                    </Button>
                 </Tabs>
                 <TabPanel value={value} index={0} className={classes.tabPanel}>
                     <CourseSetup 

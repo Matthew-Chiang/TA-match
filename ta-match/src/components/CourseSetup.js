@@ -47,6 +47,7 @@ export default function CourseSetup({
   const [courseInfo, setCourseInfo] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [test, setTest] = useState(0);
+  const [block, setBlock] = useState('');
 
   const readExcel = (file) => {
     const promise = new Promise((resolve, reject) => {
@@ -101,8 +102,10 @@ export default function CourseSetup({
             if(data.length == 0){
               setIsLoading(true);
               localStorage.clear()
+              setBlock(false);
             }else{
               setIsLoading(false);
+              setBlock(true);
             }
             
             console.log(data)
@@ -128,6 +131,7 @@ export default function CourseSetup({
       <p>Please upload a file in the form of a spreadsheet (XLS, XLSX, CSV) and that includes the following columns: Course Code, Course Name.</p>
       <br></br>
       Upload spreadsheet: <input
+        disabled={block}
         type="file"
         accept=".xlsx, .xls, .csv"
         onChange={(e) => {
@@ -138,6 +142,7 @@ export default function CourseSetup({
       <Button 
             color="primary"
             variant="contained"
+            disabled={block}
             onClick={() => {
               setTest(test+1);
               

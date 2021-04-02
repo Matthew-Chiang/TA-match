@@ -61,6 +61,7 @@ export default function HoursCalculation({
   const [course,setCourse] = useState("");
   const [hours,setHours] = useState("N/A");
   const [newHours, setNewHours] = useState("");
+  const [block, setBlock] = useState('');
 
   const readExcel = (file) => {
     const promise = new Promise((resolve, reject) => {
@@ -148,11 +149,13 @@ export default function HoursCalculation({
             setCalcHours(data);
             data.forEach((h)=>{
               if(data.length != 0){
+                setBlock(true);
                 if(typeof h["ta_hours"] != "undefined"){
                   setIsLoading(false);
                 }
                 else{
                   setIsLoading(true);
+                  setBlock(false);
                 }
               }else{
                 //setExportFlag(false);
@@ -187,6 +190,7 @@ export default function HoursCalculation({
       <p>Please upload a file in the form of a spreadsheet (XLS, XLSX, CSV) and that includes the following columns: Course Code, Previous Enrollments, Previous TA Hours, Current Enrollments.</p>
       <br></br>
       Upload spreadsheet: <input
+        disabled={block}
         type="file"
         accept=".xlsx, .xls, .csv"
         onChange={(e) => {
@@ -197,6 +201,7 @@ export default function HoursCalculation({
       <Button 
             color="primary"
             variant="contained"
+            disabled={block}
             onClick={() => 
               doThis()}
              >

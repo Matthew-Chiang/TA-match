@@ -50,6 +50,8 @@ export default function CourseInstructorAssociation({
   let courseMatch = [];
   let instructorMatch = [];
   let invalid = 0;
+  let blockCheck = [];
+  const [block, setBlock] = useState('');
 
   useEffect(() => {
     fetch(`${apiURL}/getInstructors`)
@@ -60,6 +62,7 @@ export default function CourseInstructorAssociation({
             setInstructorInfo(data);
             if(data.length == 0){
               setIsLoading(true);
+              setBlock(false);
             }else{
               setIsLoading(false);
             }
@@ -78,6 +81,22 @@ export default function CourseInstructorAssociation({
           .then((data)=>{
             setCourseInfo(data);
             console.log(data)
+            data.forEach((i)=>{
+              console.log(i.ta_hours)
+              if(i.ta_hours){
+                blockCheck.push(i.ta_hours)
+                setBlock(true);
+              }
+            })
+            console.log(blockCheck.length)
+            console.log(courseInfo)
+            console.log(courseInfo.length)
+            if(blockCheck.length==data.length){
+              setBlock(true);
+            }
+            else{
+              setBlock(false);
+            }
           })
           .catch((err)=>{
             console.log(err);
@@ -86,6 +105,7 @@ export default function CourseInstructorAssociation({
       .catch((err)=>{
         console.log(err)
       })
+      
 
   }, [test]);
 
@@ -144,6 +164,7 @@ export default function CourseInstructorAssociation({
               This function will assign instructors to courses for the current semester.
               <Button 
                 className={classes.submitBtn}
+                disabled={block}
                 color="primary"
                 variant="contained"
                 onClick={() => {
@@ -179,7 +200,6 @@ export default function CourseInstructorAssociation({
                   <FormControl className={classes.formControl}>
                   <InputLabel>Select professor</InputLabel>
                   <Select defaultValue="" id="select" onChange={(e) => {
-                         // assignInstructor(course["course"],e.target.value)
                           storeAssignments(course["course"],e.target.value)
                         }}>
                     {instructorInfo.map(

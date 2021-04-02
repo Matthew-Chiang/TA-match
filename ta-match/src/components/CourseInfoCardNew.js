@@ -769,39 +769,39 @@ export default function CourseInfoCard({
                                     console.log(experienceFilter, "filter")
                                     console.log(applicant.availability, "db")
                                     console.log( (experienceFilter == 0 ))
-                                    console.log(tempApp, "try")
-                                    Object.keys(tempApp).forEach(function(key) {
-                                        if (tempApp[key]) {
-                                            if(key==1){
-                                                tempApp3 = true; 
-                                            }
-                                            else if(key==2){
-                                                tempApp4 = true;
-                                            }
-                                            else if(key==3){
-                                                tempApp5 = true;
-                                            }
-                                         else{
-                                             tempApp3 = false;
-                                             tempApp4 = false;
-                                             tempApp5 = false;
-                                         }
-                                        }
-                                    });
-                                    Object.keys(tempApp2).forEach(function(key) {
-                                        if (tempApp2[key]) {
-                                            if(key==1){
-                                                tempApp6 = true; 
-                                            }
-                                            else if(key==2){
-                                                tempApp7 = true;
-                                            }
-                                         else{
-                                             tempApp6 = false;
-                                             tempApp7 = false;
-                                         }
-                                        }
-                                    });
+                                    // console.log(tempApp, "try")
+                                    // Object.keys(tempApp).forEach(function(key) {
+                                    //     if (tempApp[key]) {
+                                    //         if(key==1){
+                                    //             tempApp3 = true; 
+                                    //         }
+                                    //         else if(key==2){
+                                    //             tempApp4 = true;
+                                    //         }
+                                    //         else if(key==3){
+                                    //             tempApp5 = true;
+                                    //         }
+                                    //      else{
+                                    //          tempApp3 = false;
+                                    //          tempApp4 = false;
+                                    //          tempApp5 = false;
+                                    //      }
+                                    //     }
+                                    // });
+                                    // Object.keys(tempApp2).forEach(function(key) {
+                                    //     if (tempApp2[key]) {
+                                    //         if(key==1){
+                                    //             tempApp6 = true; 
+                                    //         }
+                                    //         else if(key==2){
+                                    //             tempApp7 = true;
+                                    //         }
+                                    //      else{
+                                    //          tempApp6 = false;
+                                    //          tempApp7 = false;
+                                    //      }
+                                    //     }
+                                    // });
                                     return (
                                         <React.Fragment>
                                             {/* {( tempApp3? (applicant.fundable == 1): tempApp4?(applicant.fundable ==2):tempApp5?(applicant.fundable==3):(applicant.fundable))

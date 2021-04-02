@@ -440,6 +440,7 @@ app.get("/api/getCourses", async (req, res) => {
                 course: e.id,
                 course_name: e.data().course_name,
                 instructor: e.data().instructor,
+                ta_hours: e.data().ta_hours,
             });
         });
         res.send(courses);

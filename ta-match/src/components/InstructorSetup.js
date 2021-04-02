@@ -49,6 +49,7 @@ export default function InstructorSetup({
   const [updating, setUpdating] = useState(0);
   const [test, setTest] = useState(0);
   const [file, setFile] = useState();
+  const [block, setBlock] = useState('');
 
   const sendFile = ({file}) => {
     const filename = file.name;
@@ -81,8 +82,10 @@ export default function InstructorSetup({
             setInstructorInfo(data);
             if(data.length == 0){
               setIsLoading(true);
+              setBlock(false);
             }else{
               setIsLoading(false);
+              setBlock(true);
             }
           })
           .catch((err)=>{
@@ -106,6 +109,7 @@ export default function InstructorSetup({
       <p>Please upload a file in the form of a spreadsheet (XLS, XLSX, CSV) and that includes the following columns: Instructor Name, Instructor Email.</p>
       <br></br>
       Upload spreadsheet: <input
+      disabled={block}
         type="file"
         accept=".xlsx, .xls, .csv"
         onChange={(e) => {
@@ -117,6 +121,7 @@ export default function InstructorSetup({
       <Button 
             color="primary"
             variant="contained"
+            disabled={block}
             onClick={() => {
               sendFile({file});
               setAssociationFlag(true);

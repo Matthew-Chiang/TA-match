@@ -9,6 +9,7 @@ const apiURL = 'http://localhost:5000/api';
 
 class AdminFilesUpload extends React.Component {
     constructor(props) {
+      
       super(props);
       this.state = {
         ApplicantsFile: null,
@@ -17,6 +18,7 @@ class AdminFilesUpload extends React.Component {
         year: 2021,
         applicants: "",
         isLoading: false,
+        block: '',
       }
 
       this.onChangeHandler.bind(this);
