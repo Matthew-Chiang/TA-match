@@ -58,17 +58,15 @@ function SimpleDialog(props) {
 
     return (
         <div>
-        <Dialog onClose={handleClose} fullWidth={true} aria-labelledby="simple-dialog-title" open={open}>
-             <DialogTitle id="simple-dialog-title">Set Priority</DialogTitle>
+        <Dialog onClose={handleClose} fullWidth={true} open={open}>
+             <DialogTitle><b>Set Priority</b></DialogTitle>
              <List>
                  {priorities.map((priority) => (
                     <ListItem button onClick={() => handleListItemClick(priority)} key={priority}>
                         <ListItemAvatar>
-                             <Avatar className={classes.avatar}>
-                                <PersonIcon />
-                            </Avatar>
+                             <PersonIcon />
                          </ListItemAvatar>
-                        <ListItemText primary={priority} />
+                        <ListItemText primary={priority}/>
                     </ListItem>
                  ))}
              </List>

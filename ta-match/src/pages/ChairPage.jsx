@@ -8,13 +8,12 @@ import CourseSetup from "../components/CourseSetup";
 import "../App.css";
 
 import React, {useState, useEffect} from "react";
+import { Select, MenuItem, InputLabel, FormControl, FormGroup, FormControlLabel, Grid, Card, CardContent, Typography, Button, TextField, Dialog, DialogActions, DialogContent, DialogContentText, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Divider, Toolbar, IconButton, Slide } from "@material-ui/core";
 import DeleteIcon from '@material-ui/icons/Delete';
 import PropTypes from "prop-types";
 import { makeStyles } from "@material-ui/core/styles";
 import Tabs from "@material-ui/core/Tabs";
-import Button from "@material-ui/core/Button";
 import Tab from "@material-ui/core/Tab";
-import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
 import ProfessorQuestionsExport from "../components/ProfessorQuestionsExport";
 import InstructorSetup from "../components/InstructorSetup";
@@ -41,19 +40,6 @@ function TabPanel(props) {
   );
 }
 
-function deleteAllData(){
-  //fix
-  fetch(`http://localhost:5000/api/blowUpDB`)
-    .then((response)=>{
-      alert("All semester data has been deleted")
-      console.log(response)
-      localStorage.clear();
-      window.location.reload();
-    })
-    .catch((err)=>{
-      console.log(err)
-    })
-}
 
 TabPanel.propTypes = {
   children: PropTypes.node,
@@ -86,6 +72,7 @@ const ChairPage = () => {
     const [exportFlag, setExportFlag] = useState()
     const [uplaodFlag, setUplaodFlag] = useState()
     const [allCourseFlag, setAllCourseFlag] = useState()
+    const [open, setOpen] = useState(false);
     const handleChange = (event, newValue) => {
       setValue(newValue);
     };
@@ -109,11 +96,35 @@ const ChairPage = () => {
       localStorage.setItem("localAllCourseFlag", allCourseFlag);
     },[instructorFlag, associationFlag, hoursFlag, exportFlag, uplaodFlag, allCourseFlag])
 
+    function deleteAllData(){
+      //fix
+      fetch(`http://localhost:5000/api/blowUpDB`)
+        .then((response)=>{
+          handleClose();
+          alert("All semester data has been deleted")
+          console.log(response)
+          
+          localStorage.clear();
+          window.location.reload();
+        })
+        .catch((err)=>{
+          console.log(err)
+        })
+    }
+
+    const handleOpen = () => {
+      setOpen(true);
+  }
+    
+    const handleClose = () => {
+        setOpen(false);
+    }
+
     return (
         <div className="container">
             <Dashboard role="chair"/>
             <br></br>
-            <h1>Welcome, <span style={{fontWeight: "normal"}}>Undergraduate Chair!</span></h1>
+            <h1>Welcome, <span style={{fontWeight: "normal"}}>Undergraduate Chair / Admin!</span></h1>
             <div className={classes.root}>
                 <Tabs
                     orientation="vertical"
@@ -132,7 +143,7 @@ const ChairPage = () => {
                     <Tab label="7. Match TA and Courses" disabled = {!allCourseFlag}/>
                     <Button color="secondary"  
                       disabled = {!instructorFlag}
-                      onClick={deleteAllData}>
+                      onClick={handleOpen}>
                       Delete all semester data
                     </Button>
                 </Tabs>
@@ -171,6 +182,36 @@ const ChairPage = () => {
                     <AllCourseInfo editPrivilege />
                 </TabPanel>
                 </div>
+                <Dialog
+                    open={open}
+                    fullWidth={true}
+                    onClose={handleClose}
+                  >
+                    <DialogContent>
+                      <DialogContentText>
+                      <Typography >
+                    
+                      <b>Are you sure you want to delete all the current semester data?</b>
+                    
+                   </Typography>
+                      
+                      </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                    <Button 
+                           variant="contained" color="primary"
+                          onClick={handleClose}
+                      >
+                        No, do not delete all data
+                      </Button>
+                      <Button 
+                           variant="contained" color="secondary"
+                          onClick={deleteAllData}
+                      >
+                        Yes
+                      </Button>
+                    </DialogActions>
+                </Dialog>
         </div>
     );
 };
