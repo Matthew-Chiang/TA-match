@@ -128,6 +128,8 @@ async function parseApplicantsData(semester) {
         newApplicant["fundable"] = applicant[fundableKey];
         newApplicant["rank"] = applicant[rankKey];
         newApplicant["availability"] = applicant[hoursKey];
+        // so we can query all applicants in a certain semester
+        newApplicant["semester"] = semester;
 
         const applicantCol = db.collection(
             //@leslie: check
