@@ -755,7 +755,6 @@ export default function CourseInfoCard({
                                     <TableCell>Fundable</TableCell>
                                     <TableCell>Experience Level</TableCell>
                                     <TableCell>Current Rank</TableCell>
-                                    <TableCell>Update Rank</TableCell>
                                     <TableCell></TableCell>
                                     <TableCell></TableCell>
                                 </TableRow>
@@ -812,7 +811,6 @@ export default function CourseInfoCard({
                                             <TableCell>{applicant.email}</TableCell>
                                             <TableCell>{applicant.fundable == 1 ? "Fundable" : applicant.fundable == 2 ? "Non-fundable" : "External"}</TableCell>
                                             <TableCell>{applicant.availability == 5 ? "New"  : "Experienced"}</TableCell>
-                                            <TableCell>{applicant.profRank}</TableCell>
                                             <TableCell>{applicant.profRank}</TableCell>
                                             <TableCell>
                                                 <FormControl className={classes.formControlSelect}>
