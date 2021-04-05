@@ -88,6 +88,7 @@ export default function Dashboard(props) {
             {showNotifications && (
                 <NotificationPopper
                     open={showNotifications}
+                    setOpen={setShowNotifications}
                     target={notificationAnchor}
                 ></NotificationPopper>
             )}

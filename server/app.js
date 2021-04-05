@@ -786,44 +786,56 @@ app.get("/api/notifications/:email", async (req, res) => {
     const notificationsCollection = await db
         .collection("notifications")
         .doc(email)
+        .collection("events")
         .get();
 
     const response = [];
     notificationsCollection.forEach((notif) => {
-        response.push(notif);
+        response.push({
+            timestamp: notif.id,
+            text: notif.data().text,
+            title: notif.data().title,
+        });
     });
 
     res.send(response);
 });
 
-
 // Erase current semester data
 app.get("/api/blowUpDB", async (req, res) => {
     try {
-
         const semester = month + year;
 
         let collection = db
-                .collection("courses")
-                .doc(semester)
-                .collection("courses");
+            .collection("courses")
+            .doc(semester)
+            .collection("courses");
 
         let collectionSnap = await collection.get();
-        
-        collectionSnap.forEach(async (doc) => {
 
-            applicantsCol = db.collection('courses').doc(semester).collection('courses').doc(doc.id).collection('applicants');
+        collectionSnap.forEach(async (doc) => {
+            applicantsCol = db
+                .collection("courses")
+                .doc(semester)
+                .collection("courses")
+                .doc(doc.id)
+                .collection("applicants");
             applicantsCol.get().then((applicantsSnapshot) => {
                 applicantsSnapshot.forEach((applicant) => {
                     applicant.ref.delete();
-                  });
+                });
             });
 
-            allocation = db.collection('courses').doc(semester).collection('courses').doc(doc.id).collection('allocation');
+            allocation = db
+                .collection("courses")
+                .doc(semester)
+                .collection("courses")
+                .doc(doc.id)
+                .collection("allocation");
             allocation.get().then((allocationSnap) => {
                 allocationSnap.forEach((allocatedTA) => {
                     allocatedTA.ref.delete();
-                  });
+                });
             });
         });
 
@@ -844,13 +856,11 @@ app.get("/api/blowUpDB", async (req, res) => {
 
         await db.collection("courses").doc(semester).delete();
 
-        res.send('success');
-
+        res.send("success");
     } catch (err) {
         console.log(err);
     }
 });
-
 
 app.listen(port, hostname, () => {
     console.log("Listening on: " + port);
