@@ -315,7 +315,6 @@ export default function CourseInfoCard({
             }),
         })
             .then((res) => {
-                console.log(courseState);
                 const newState = { ...courseState };
                 newState["allocation_list"].filter(
                     (allocation) => allocation.email === email
@@ -396,13 +395,10 @@ export default function CourseInfoCard({
 
     function setRank(email, rank) {
         // for profs
-        console.log(email);
-        console.log(rank);
         setTempRanking({ ...tempRanking, [email]: rank });
     }
 
     function updateRank(course, email) {
-        console.log(tempRanking[email]);
         fetch(`http://localhost:5000/api/rank`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -484,7 +480,6 @@ export default function CourseInfoCard({
                             <div>
                                 <PersonIcon style={{ marginRight: 5 }} />
                                 <span style={{ fontSize: 14 }}>
-                                    {console.log(courseState)}
                                     {courseState.allocation_list.length}{" "}
                                     Allocations
                                 </span>
@@ -581,8 +576,6 @@ export default function CourseInfoCard({
                                     <TableBody>
                                         {courseState["allocation_list"].map(
                                             (allocation, index) => {
-                                                console.log(courseState);
-
                                                 return (
                                                     <TableRow key={index}>
                                                         <TableCell>
@@ -1022,22 +1015,10 @@ export default function CourseInfoCard({
                                         <TableBody>
                                             {courseState["applicant_list"].map(
                                                 (applicant, index) => {
-                                                    console.log(courseState);
                                                     if (!applicant.profRank) {
                                                         applicant.profRank =
                                                             "Unranked";
                                                     }
-                                                    console.log(
-                                                        experienceFilter,
-                                                        "filter"
-                                                    );
-                                                    console.log(
-                                                        applicant.availability,
-                                                        "db"
-                                                    );
-                                                    console.log(
-                                                        experienceFilter == 0
-                                                    );
                                                     // console.log(tempApp, "try")
                                                     // Object.keys(tempApp).forEach(function(key) {
                                                     //     if (tempApp[key]) {

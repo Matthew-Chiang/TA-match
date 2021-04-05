@@ -56,7 +56,6 @@ function SimpleDialog({
                 },
             })
             .then((res) => {
-                console.log(res);
                 setForceUpdate(forceUpdate + 1);
             });
     };

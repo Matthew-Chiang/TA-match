@@ -54,15 +54,11 @@ export default function AllCourseInfo({ editPrivilege, forceUpdate }) {
     }
     return (
         <div key={forceUpdate}>
-            {console.log(forceUpdate)}
             {error && <Alert severity="error">{error}</Alert>}
             <Grid container spacing={3}>
-                {console.log(courseData)}
-
                 {Object.keys(courseData["profs"]).map((prof, index) => {
                     return courseData.profs[prof].courseList.map(
                         (course, index) => {
-                            console.log(course);
                             return (
                                 <Grid key={index} item xs={12}>
                                     <CourseInfoCardNew
