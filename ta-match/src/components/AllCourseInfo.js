@@ -55,7 +55,7 @@ export default function AllCourseInfo({ editPrivilege, forceUpdate }) {
     return (
         <div key={forceUpdate}>
             {error && <Alert severity="error">{error}</Alert>}
-            <Grid container spacing={3}>
+            <Grid container spacing={0.75}>
                 {Object.keys(courseData["profs"]).map((prof, index) => {
                     return courseData.profs[prof].courseList.map(
                         (course, index) => {
