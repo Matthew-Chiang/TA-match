@@ -214,6 +214,65 @@ app.post("/api/rank", async (req, res) => {
                 .doc(applicantEmail)
                 .update({ profRank: rank });
             // console.log(update);
+
+            // look for all applicant collections for documents with
+            // no profRank attribute in current semester
+            const allApplicantsCollection = await db
+                .collectionGroup("applicants")
+                .where("semester", "==", semester)
+                .get();
+
+            // coppied from /addQuestionsForTA
+            let allDone = true;
+            allApplicantsCollection.forEach((applicant) => {
+                console.log(applicant.data());
+                if (!("profRank" in applicant.data())) {
+                    allDone = false;
+                }
+            });
+
+            if (allDone) {
+                const admins = await db
+                    .collection("users")
+                    .where("type", "==", "administrator")
+                    .get();
+                const chairs = await db
+                    .collection("users")
+                    .where("type", "==", "chair")
+                    .get();
+
+                notificationsCollection = db.collection("notifications");
+
+                admins.forEach((admin) => {
+                    // should probably be a helper function
+                    const currentTimestamp = +new Date();
+                    notificationsCollection
+                        .doc(admin.id)
+                        .collection("events")
+                        .doc(currentTimestamp.toString())
+                        .set({
+                            title:
+                                "All ranks have been submitted by professors.",
+                            text:
+                                "TA matching algorithm is now ready to be run.",
+                        });
+                });
+                chairs.forEach((chair) => {
+                    // should probably be a helper function
+                    const currentTimestamp = +new Date();
+                    notificationsCollection
+                        .doc(chair.id)
+                        .collection("events")
+                        .doc(currentTimestamp.toString())
+                        .set({
+                            title:
+                                "All ranks have been submitted by professors.",
+                            text:
+                                "TA matching algorithm is now ready to be run.",
+                        });
+                });
+            }
+
             res.send("success");
         } else {
             res.status(404).send(
@@ -512,6 +571,7 @@ app.post("/api/addQuestionsForTA", async (req, res) => {
                 .collection("courses")
                 .get();
 
+            // coppied into /rank
             let allDone = true;
             allCoursesCollection.forEach((course) => {
                 if (!("questions" in course.data())) {
