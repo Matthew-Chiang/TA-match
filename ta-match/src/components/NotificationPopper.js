@@ -52,7 +52,7 @@ export default function NotificationPopper({ open, setOpen, target }) {
         >
             <Popper open={open} anchorEl={target}>
                 <div className={classes.backgroundPopper}>
-                    {notifications.map((notif) => (
+                    {[...notifications].reverse().map((notif) => (
                         <NotificationCard
                             key={notif.timestamp}
                             timestamp={notif.timestamp}

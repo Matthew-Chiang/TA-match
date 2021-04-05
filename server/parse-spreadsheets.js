@@ -146,9 +146,8 @@ async function parseApplicantsData(semester) {
     notificationsCollection = db.collection("notifications");
 
     existingProfs.forEach((profEmail) => {
+        // should probably be a helper function
         const currentTimestamp = +new Date();
-        console.log(profEmail);
-        console.log(currentTimestamp.toString());
         notificationsCollection
             .doc(profEmail)
             .collection("events")

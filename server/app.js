@@ -456,6 +456,7 @@ app.post("/api/assignInstructors", async (req, res) => {
     const instructor = req.body.instructor;
 
     try {
+        notificationsCollection = db.collection("notifications");
         for (let i = 0; i < course.length; i++) {
             const assign = await db
                 .collection("courses")
@@ -463,6 +464,20 @@ app.post("/api/assignInstructors", async (req, res) => {
                 .collection("courses")
                 .doc(course[i])
                 .update({ instructor: instructor[i] });
+
+            // should probably be a helper function
+            const currentTimestamp = +new Date();
+            notificationsCollection
+                .doc(instructor[i])
+                .collection("events")
+                .doc(currentTimestamp.toString())
+                .set({
+                    title: "You have been assigned to a course",
+                    text:
+                        "Begin creating the TA application for the course : " +
+                        course[i],
+                });
+
             //console.log(assign);
         }
         res.send("success");
