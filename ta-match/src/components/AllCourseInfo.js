@@ -56,7 +56,7 @@ export default function AllCourseInfo({ email, editPrivilege }) {
         <div>
 
             {error && <Alert severity="error">{error}</Alert>}
-            <Grid container spacing={3}>
+            <Grid container spacing={0.75}>
                 {console.log(courseData)}
 
                 {Object.keys(courseData["profs"]).map((prof, index) => {

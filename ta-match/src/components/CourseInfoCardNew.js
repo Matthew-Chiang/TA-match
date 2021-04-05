@@ -460,7 +460,7 @@ export default function CourseInfoCard({
                 <Typography className={classes.dHrs}><span style={{fontWeight:"bold"}}>Number of TA Hours:</span> {courseState["ta_hours"]}</Typography>
                 <Typography className={classes.dCode}>{courseState["course_code"]}: <span style={{fontWeight: "normal"}}>{courseState["course_name"]}</span></Typography>
                 <Divider/>
-                {error && <Alert severity="error">{error}</Alert>}
+                {error && <Alert severity="error" style={{marginTop: 20}}>{error}</Alert>}
                 <Typography className={classes.subtitle}>
                     TA Allocations
                 </Typography>
