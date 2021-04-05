@@ -477,8 +477,6 @@ app.post("/api/assignInstructors", async (req, res) => {
                         "Begin creating the TA application for the course : " +
                         course[i],
                 });
-
-            //console.log(assign);
         }
         res.send("success");
     } catch (err) {
@@ -491,18 +489,80 @@ app.post("/api/addQuestionsForTA", async (req, res) => {
     //@leslie: check
     const semester = month + year;
     const courseName = req.body.courseName;
-    const questions = req.body.questions;
+    let questions = req.body.questions;
 
-    try {
-        const type = await db
-            .collection("courses")
-            .doc(semester)
-            .collection("courses")
-            .doc(courseName)
-            .update({ questions: questions });
-        res.send("return");
-    } catch (err) {
-        console.log(err);
+    questions = questions.filter((question) => {
+        return question.length > 0;
+    });
+
+    if (questions.length === 0) {
+        res.status(400).send("No questions to add");
+    } else {
+        try {
+            const type = await db
+                .collection("courses")
+                .doc(semester)
+                .collection("courses")
+                .doc(courseName)
+                .update({ questions: questions });
+
+            const allCoursesCollection = await db
+                .collection("courses")
+                .doc(semester)
+                .collection("courses")
+                .get();
+
+            let allDone = true;
+            allCoursesCollection.forEach((course) => {
+                if (!("questions" in course.data())) {
+                    allDone = false;
+                }
+            });
+
+            if (allDone) {
+                const admins = await db
+                    .collection("users")
+                    .where("type", "==", "administrator")
+                    .get();
+                const chairs = await db
+                    .collection("users")
+                    .where("type", "==", "chair")
+                    .get();
+
+                notificationsCollection = db.collection("notifications");
+
+                admins.forEach((admin) => {
+                    // should probably be a helper function
+                    const currentTimestamp = +new Date();
+                    notificationsCollection
+                        .doc(admin.id)
+                        .collection("events")
+                        .doc(currentTimestamp.toString())
+                        .set({
+                            title:
+                                "All questions have been created by professors.",
+                            text: "Question list is now ready to be exported.",
+                        });
+                });
+                chairs.forEach((chair) => {
+                    // should probably be a helper function
+                    const currentTimestamp = +new Date();
+                    notificationsCollection
+                        .doc(chair.id)
+                        .collection("events")
+                        .doc(currentTimestamp.toString())
+                        .set({
+                            title:
+                                "All questions have been created by professors.",
+                            text: "Question list is now ready to be exported.",
+                        });
+                });
+            }
+
+            res.send("return");
+        } catch (err) {
+            console.log(err);
+        }
     }
 });
 

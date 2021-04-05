@@ -247,6 +247,14 @@ const ProfPage = () => {
                             <DialogActions>
                                 <Button
                                     onClick={() => {
+                                        setCourseName("");
+                                        setTaQuestions([]);
+                                    }}
+                                >
+                                    Clear
+                                </Button>
+                                <Button
+                                    onClick={() => {
                                         console.log(taQuestions);
                                         saveQuestions();
                                     }}
