@@ -1,47 +1,46 @@
 const fs = require("fs");
 const csv = require("csv-parser");
 const admin = require("firebase-admin");
-var XLSX = require('xlsx')
-
+var XLSX = require("xlsx");
 
 const db = admin.firestore();
 
-
 function parseProfData(month, year) {
-
-    var workbook = XLSX.readFile("./temp/InstructorsFile-temp.xlsx")
+    var workbook = XLSX.readFile("./temp/InstructorsFile-temp.xlsx");
     var sheet_name_list = workbook.SheetNames;
     var xlData = XLSX.utils.sheet_to_json(workbook.Sheets[sheet_name_list[0]]);
-    
+
     var nameKey = "";
     var emailKey = "";
 
-    // Find relevant column names using likely substrings    
+    // Find relevant column names using likely substrings
     Object.keys(xlData[0]).forEach((key) => {
-
-        if (key.toLowerCase().includes("name")) { // Get header for instructor name
+        if (key.toLowerCase().includes("name")) {
+            // Get header for instructor name
             nameKey = key;
-        } else if (key.toLowerCase().includes("email")) { // Get header for instructor email
+        } else if (key.toLowerCase().includes("email")) {
+            // Get header for instructor email
             emailKey = key;
         }
     });
 
     // Write profs data to db
     for (prof of xlData) {
-        const profDoc = db.collection(`/courses/${month + year}/profs`).doc(prof[emailKey]); // Check if this needs to be async
+        const profDoc = db
+            .collection(`/courses/${month + year}/profs`)
+            .doc(prof[emailKey]); // Check if this needs to be async
         profDoc.set({
-            name: prof[nameKey]
+            name: prof[nameKey],
         });
     }
 }
 
 async function parseApplicantsData(semester) {
-
-    var workbook = XLSX.readFile("./temp/ApplicantsFile-temp.xlsx")
+    var workbook = XLSX.readFile("./temp/ApplicantsFile-temp.xlsx");
     var sheet_name_list = workbook.SheetNames;
     var sheet = XLSX.utils.sheet_to_json(workbook.Sheets[sheet_name_list[0]]);
-    
-    existingCourses = [];
+
+    const existingProfs = new Set();
     const questionKeys = [];
     const answerKeys = [];
     var courseCodeKey = "";
@@ -51,7 +50,7 @@ async function parseApplicantsData(semester) {
     var emailKey = "";
     var fundableKey = "";
 
-    // Find relevant column names using likely substrings    
+    // Find relevant column names using likely substrings
     Object.keys(sheet[0]).forEach((key) => {
         if (key.toLowerCase().includes("code")) {
             // Get key for course code
@@ -98,9 +97,10 @@ async function parseApplicantsData(semester) {
             `courses/${semester}/courses`
         );
 
-        var courseRef = await coursesCol
-            .doc(applicant[courseCodeKey])
-            .get();
+        var courseRef = await coursesCol.doc(applicant[courseCodeKey]).get();
+        console.log(courseRef.data());
+
+        existingProfs.add(courseRef.data().instructor);
 
         data = {};
         applicantsList = [];
@@ -120,7 +120,7 @@ async function parseApplicantsData(semester) {
 
             questionAnswerPairs.push({
                 question: applicant[questionKey],
-                answer: `${applicant[answerKey] ? applicant[answerKey] : ''}`,
+                answer: `${applicant[answerKey] ? applicant[answerKey] : ""}`,
             });
         }
 
@@ -132,21 +132,33 @@ async function parseApplicantsData(semester) {
 
         const applicantCol = db.collection(
             //@leslie: check
-            `courses/${semester}/courses/${
-                applicant[courseCodeKey]
-            }/applicants`
+            `courses/${semester}/courses/${applicant[courseCodeKey]}/applicants`
         );
 
         // Add course and applicant if course doesnt exist
         if (!courseRef.exists) {
-            success = await coursesCol
-                .doc(applicant[courseCodeKey])
-                .set(data);
+            success = await coursesCol.doc(applicant[courseCodeKey]).set(data);
             applicantCol.doc(applicant[emailKey]).set(newApplicant);
         } else {
             applicantCol.doc(applicant[emailKey]).set(newApplicant);
         }
     }
+
+    notificationsCollection = db.collection("notifications");
+
+    existingProfs.forEach((profEmail) => {
+        const currentTimestamp = +new Date();
+        console.log(profEmail);
+        console.log(currentTimestamp.toString());
+        notificationsCollection
+            .doc(profEmail)
+            .collection("events")
+            .doc(currentTimestamp.toString())
+            .set({
+                text:
+                    "Application Spreadsheet uploaded! Please rank applicants for all courses by the deadline.",
+            });
+    });
 }
 // Resolve to Obejct with all profs and their courses & TA applicants
 async function buildProfsObj(semester) {
@@ -154,14 +166,12 @@ async function buildProfsObj(semester) {
     coursesList = [];
     profsObj = {};
 
-    const coursesRef = await db
-        .collection(`courses/${semester}/courses`)
-        .get();
+    const coursesRef = await db.collection(`courses/${semester}/courses`).get();
 
     // course per term
     coursesRef.forEach(async (course) => {
         tempCourse = course.data();
-        console.log(course.data())
+        console.log(course.data());
         tempCourse.course_code = course.id;
         coursesList.push(tempCourse);
     });
@@ -176,9 +186,7 @@ async function buildProfsObj(semester) {
         courseId = course.course_code;
         applicantsList = [];
         const applicantsCol = await db
-            .collection(
-                `courses/${semester}/courses/${courseId}/applicants`
-            )
+            .collection(`courses/${semester}/courses/${courseId}/applicants`)
             .get();
         applicantsCol.forEach((applicant) => {
             newApplicant = applicant.data();
@@ -189,9 +197,7 @@ async function buildProfsObj(semester) {
 
         allocationsList = [];
         const allocationsCol = await db
-            .collection(
-                `courses/${semester}/courses/${courseId}/allocation`
-            )
+            .collection(`courses/${semester}/courses/${courseId}/allocation`)
             .get();
 
         allocationsCol.forEach((allocation) => {
