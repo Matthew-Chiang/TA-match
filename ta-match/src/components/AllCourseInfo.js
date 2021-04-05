@@ -26,7 +26,7 @@ const useStyles = makeStyles({
     },
 });
 
-export default function AllCourseInfo({ email, editPrivilege }) {
+export default function AllCourseInfo({ editPrivilege, forceUpdate }) {
     const [isLoading, setIsLoading] = useState(true);
     const [courseData, setCourseData] = useState([]);
     const [error, setError] = useState("");
@@ -47,40 +47,29 @@ export default function AllCourseInfo({ email, editPrivilege }) {
             .catch((err) => {
                 console.log(err);
             });
-    }, []);
+    }, [forceUpdate]);
 
     if (isLoading) {
         return <div className="App">Loading...</div>;
     }
     return (
-        <div>
-
+        <div key={forceUpdate}>
             {error && <Alert severity="error">{error}</Alert>}
             <Grid container spacing={0.75}>
-                {console.log(courseData)}
-
                 {Object.keys(courseData["profs"]).map((prof, index) => {
-                    return (
-                        courseData.profs[prof].courseList.map(
-                            (course, index) => {
-                                return (
-                                    <Grid
-                                        key={index}
-                                        item
-                                        xs={12}
-                                    >
-                                        <CourseInfoCardNew
-                                            course={course}
-                                            semester={courseData.semester}
-
-                                            setError={setError}
-
-                                            editPrivilege
-                                        ></CourseInfoCardNew>
-                                    </Grid>
-                                );
-                            }
-                        )
+                    return courseData.profs[prof].courseList.map(
+                        (course, index) => {
+                            return (
+                                <Grid key={index} item xs={12}>
+                                    <CourseInfoCardNew
+                                        course={course}
+                                        semester={courseData.semester}
+                                        setError={setError}
+                                        editPrivilege
+                                    ></CourseInfoCardNew>
+                                </Grid>
+                            );
+                        }
                     );
                 })}
             </Grid>
