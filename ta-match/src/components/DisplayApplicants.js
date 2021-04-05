@@ -29,8 +29,8 @@ const useStyles = makeStyles({
     }
   });
 
-  export default function DisplayApplicants({
-  }) {
+  export default function DisplayApplicants({hasDataCallback}){
+ {
     let newDate = new Date()
     let month = newDate.getMonth() + 1;
     let year = newDate.getFullYear();
@@ -52,6 +52,7 @@ const useStyles = makeStyles({
         let c = [];
         fetch(`http://localhost:5000/api/semester/${month+year}`)
           .then((response)=>{
+            
             response.json()
               .then((data)=>{
                 setApplicantData(data);
@@ -78,6 +79,7 @@ const useStyles = makeStyles({
           .catch((err)=>{
             console.log(err)
           })
+          hasDataCallback(!isLoading);
       }, []);
     
     return (

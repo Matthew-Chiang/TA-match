@@ -16,6 +16,7 @@ class AdminFilesUpload extends React.Component {
         InstructorsFile: null,
         semester: 'summer',
         year: 2021,
+        hasData: false,
         applicants: "",
         isLoading: false,
         block: '',
@@ -23,6 +24,7 @@ class AdminFilesUpload extends React.Component {
 
       this.onChangeHandler.bind(this);
       this.sendFile.bind(this);
+      this.hasDataCallback.bind(this);
       
     }
     onChangeHandler(event, filename){
@@ -30,6 +32,13 @@ class AdminFilesUpload extends React.Component {
         [filename]: event.target.files[0]
       });
     }
+
+    hasDataCallback(hasData){
+      this.setState({
+        hasData: hasData
+      });
+    }
+
     sendFile(filename){
       console.log(filename);
       console.log(this.state['ApplicantsFile'])
@@ -48,7 +57,7 @@ class AdminFilesUpload extends React.Component {
     render() {
       return (
         <div>
-    
+
             <h3>Import Applicant Information</h3>
             <Typography component="div">
               <Box fontStyle="italic" >
@@ -60,12 +69,14 @@ class AdminFilesUpload extends React.Component {
            
             <br></br>
             Upload spreadsheet: <input
+              disabled={!this.state.hasData}
               type="file"
               id="applicantData"
               accept=".xlsx, .xls, .csv"
               onChange={(e)=>this.onChangeHandler(e, 'ApplicantsFile')}
             />
           <Button className="submitButton"
+            disabled={!this.state.hasData}
             color="primary"
             variant="contained"
             onClick={()=>{
@@ -75,7 +86,7 @@ class AdminFilesUpload extends React.Component {
             >
             Submit 
           </Button>
-          <DisplayApplicants></DisplayApplicants>
+          <DisplayApplicants hasDataCallback={this.hasDataCallback}></DisplayApplicants>
 
           {this.state.isLoading ? 
           <DisplayApplicants></DisplayApplicants>
