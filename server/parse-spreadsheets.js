@@ -98,7 +98,6 @@ async function parseApplicantsData(semester) {
         );
 
         var courseRef = await coursesCol.doc(applicant[courseCodeKey]).get();
-        console.log(courseRef.data());
 
         existingProfs.add(courseRef.data().instructor);
 
@@ -155,8 +154,8 @@ async function parseApplicantsData(semester) {
             .collection("events")
             .doc(currentTimestamp.toString())
             .set({
-                text:
-                    "Application Spreadsheet uploaded! Please rank applicants for all courses by the deadline.",
+                title: "Application Spreadsheet uploaded!",
+                text: "Please rank applicants for all courses by the deadline.",
             });
     });
 }
@@ -171,7 +170,6 @@ async function buildProfsObj(semester) {
     // course per term
     coursesRef.forEach(async (course) => {
         tempCourse = course.data();
-        console.log(course.data());
         tempCourse.course_code = course.id;
         coursesList.push(tempCourse);
     });
