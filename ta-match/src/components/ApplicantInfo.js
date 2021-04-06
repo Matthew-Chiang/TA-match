@@ -3,13 +3,15 @@ import Button from '@material-ui/core/Button';
 import axios from 'axios';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
-import DisplayApplicants from './DisplayApplicants.js';
+import DisplayApplicants from './DisplayApplicants';
+
 
 const apiURL = 'http://localhost:5000/api';
 
+
 class AdminFilesUpload extends React.Component {
+    
     constructor(props) {
-      
       super(props);
       this.state = {
         ApplicantsFile: null,
@@ -19,18 +21,66 @@ class AdminFilesUpload extends React.Component {
         hasData: false,
         applicants: "",
         isLoading: false,
-        block: '',
+        block: false,
       }
 
+      let c = [];
+      let newDate = new Date()
+      let month = newDate.getMonth() + 1;
+      let year = newDate.getFullYear();
+      if(month >= 1 && month <= 4){
+        month = "winter";
+      }
+      else if(month >= 5 && month <= 8){
+          month = "summer";
+      }
+      else{
+          month = "fall";
+      }
+      fetch(`http://localhost:5000/api/semester/${month+year}`)
+      .then((response)=>{
+        
+        response.json()
+          .then((data)=>{
+            data.map((k)=>{
+                k.applicants.map((a)=>{
+                    c.push(a)
+                })
+            })
+            if(data.length == 0){
+              this.setState({isLoading:false})
+            }
+            else if(c.length == 0){
+              this.setState({isLoading:false})
+            }
+            else{
+              this.setState({isLoading:true})
+              this.setState({block:true})
+            }
+            console.log(data)
+          })
+          .catch((err)=>{
+            console.log(err);
+          })
+          
+      })
+      .catch((err)=>{
+        console.log(err)
+      })
+      
       this.onChangeHandler.bind(this);
       this.sendFile.bind(this);
-      this.hasDataCallback.bind(this);
+      this.hasDataCallback = this.hasDataCallback.bind(this);
       
     }
+
+    
     onChangeHandler(event, filename){
       this.setState({
         [filename]: event.target.files[0]
       });
+      this.sendFile('ApplicantsFile')
+      this.props.setAllCourseFlag(true)
     }
 
     hasDataCallback(hasData){
@@ -48,14 +98,15 @@ class AdminFilesUpload extends React.Component {
   
       }).then(res => {
        console.log(res.statusText);
-       this.setState({
-         isLoading: true,
-       })
+      //  this.setState({
+      //    isLoading: true,
+      //  })
      });
     }
 
     render() {
       return (
+        
         <div>
 
             <h3>Import Applicant Information</h3>
@@ -69,28 +120,33 @@ class AdminFilesUpload extends React.Component {
            
             <br></br>
             Upload spreadsheet: <input
-              disabled={!this.state.hasData}
+              //disabled={!this.state.hasData}
+              disabled={this.state.block}
               type="file"
               id="applicantData"
               accept=".xlsx, .xls, .csv"
               onChange={(e)=>this.onChangeHandler(e, 'ApplicantsFile')}
             />
           <Button className="submitButton"
-            disabled={!this.state.hasData}
+            //disabled={!this.state.hasData}
+            disabled={this.state.block}
             color="primary"
             variant="contained"
             onClick={()=>{
-              this.sendFile('ApplicantsFile')
-              this.props.setAllCourseFlag(true)
+              
+              this.setState({isLoading:true})
+              this.setState({block:true})
             }}
+
             >
             Submit 
           </Button>
-          <DisplayApplicants hasDataCallback={this.hasDataCallback}></DisplayApplicants>
+          {/* <DisplayApplicants hasDataCallback={this.hasDataCallback}></DisplayApplicants> */}
+          {/* <DisplayApplicants></DisplayApplicants> */}
 
           {this.state.isLoading ? 
-          <DisplayApplicants></DisplayApplicants>
-
+          // <DisplayApplicants hasDataCallback={this.hasDataCallback}></DisplayApplicants>
+           <DisplayApplicants></DisplayApplicants>
           : <div></div>} 
         </div>
         

@@ -29,7 +29,7 @@ const useStyles = makeStyles({
     }
   });
 
-  export default function DisplayApplicants({hasDataCallback}){
+  export default function DisplayApplicants()
  {
     let newDate = new Date()
     let month = newDate.getMonth() + 1;
@@ -75,11 +75,12 @@ const useStyles = makeStyles({
               .catch((err)=>{
                 console.log(err);
               })
+              
           })
           .catch((err)=>{
             console.log(err)
           })
-          hasDataCallback(!isLoading);
+      //hasDataCallback(!isLoading);
       }, []);
     
     return (

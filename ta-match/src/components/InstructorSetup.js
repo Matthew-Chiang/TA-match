@@ -64,7 +64,7 @@ export default function InstructorSetup({
         alert("Spreadsheet Invalid. Please upload one with the following columns: Instructor Name, Instructor Email.")
       }
       else {
-        setTest(test+1);
+        
         console.log(response)
       }
       })
@@ -116,6 +116,7 @@ export default function InstructorSetup({
           const file = e.target.files[0];
           setFile(file);
           console.log({file});
+          sendFile({file});
         }}
       />
       <Button 
@@ -123,8 +124,9 @@ export default function InstructorSetup({
             variant="contained"
             disabled={block}
             onClick={() => {
-              sendFile({file});
+              
               setAssociationFlag(true);
+              setTest(test+1);
             }}
              >
             Submit
